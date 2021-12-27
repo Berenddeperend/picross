@@ -3,13 +3,15 @@ import { ref } from 'vue';
 import { isEqual } from 'lodash';
 import {onMounted} from "vue";
 
+type Grid = string[][];
+
 const gridSize = 10;
 const grid = ref(createGrid(gridSize))
 
 const cursorCell = ref([0,0]);
 
-function cellClicked(row:number, column:number) {
-  this.grid[row][column] = 'x';
+function cellClicked(grid:Grid, row:number, column:number) {
+  grid[row][column] = 'x';
 }
 
 onMounted(()=> {
@@ -24,7 +26,8 @@ onMounted(()=> {
     } else if(e.key === 'ArrowDown') {
       cursorCell.value[0]++;
     } else if(e.key === ' ') {
-      grid.value[cursorCell.value[0]][cursorCell.value[1]] = 'd'
+      const cell = grid.value[cursorCell.value[0]][cursorCell.value[1]];
+      grid.value[cursorCell.value[0]][cursorCell.value[1]] = cell === 'd' ? ' ' : 'd'
     }
   })
 })
@@ -37,11 +40,27 @@ function createGrid(size:number):any[][] {
 </script>
 
 <template>
-  <table>
-    <tr v-for="(row, rowIndex) in gridSize">
-      <td
+  <div class="playfield-container">
+    <div class="horizontal-thing"></div>
+
+    <div class="row legend legend-column">
+      <div class="cell" v-for="(cell, cellIndex) in gridSize">
+        <div>2</div>
+        <div>1</div>
+      </div>
+    </div>
+    <div class="row" v-for="(row, rowIndex) in gridSize">
+      <div class="legend legend-row">
+        <div class="cell">
+          <div>2</div>
+          <div>1</div>
+        </div>
+      </div>
+
+      <div
+        class="cell"
         v-for="(cell, cellIndex) in gridSize"
-        @click="cellClicked(rowIndex, cellIndex)"
+        @click="cellClicked(grid, rowIndex, cellIndex)"
         :class="{
           'cursor': isEqual([rowIndex, cellIndex], cursorCell),
           'filled': grid[rowIndex][cellIndex] == 'd'
@@ -49,51 +68,76 @@ function createGrid(size:number):any[][] {
         }"
       >
         {{ grid[rowIndex][cellIndex] === 'd' ? "" : " " }}
-      </td>
-    </tr>
-  </table>
+      </div>
+    </div>
+  </div>
 
   <div>{{grid}}</div>
 </template>
 
 <style lang="scss">
 
-table {
-  border-spacing: 0;
-  border-collapse: collapse;
+.playfield-container {
+  background: gray;
+  display: inline-block;
+  position: relative;
+  padding: 1px;
 }
 
-.cursor {
+.horizontal-thing {
+  position: absolute;
+  top:50%;
+  height: 2px;
+  transform: translateY(-50%);
+  width: 100%;
+  background: greenyellow;
+}
+
+.cell.cursor,
+.cell:hover {
   font-weight: bold;
   //border-color: red;
+  //background-color: #42b983;
+
 
   z-index: 2;
-  box-shadow: 0px 0px 0px 1px inset red;
+  box-shadow: 0px 0px 0px 2px cyan;
 }
 
-tr:nth-child(5) {
-  td {
-    border-bottom: 1px solid deepskyblue;
-    //background-color: rgba(255,0,0,0.1);
+.legend .cell {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.legend-row {
+    margin: 1px;
+
+  .cell {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
   }
 }
 
+.row {
+  display: flex;
+}
 
-
-td {
+.cell {
+  margin: 1px;
+  border-radius: 2px;
   width: 25px;
   height: 25px;
   vertical-align: center;
-  border: 1px solid lightgray;
+  //border: 1px solid lightgray;
+  background: white;
+  transition: background-color 0.1s;
 
   &.filled {
-    background-color: green;
+    background-color: #444;
   }
-
-  &:nth-child(5) {
-  border-right: 1px solid deepskyblue;
-
-}
 }
 
 </style>
