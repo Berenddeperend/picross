@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { isEqual } from 'lodash';
+import { isEqual, clamp } from 'lodash';
 import {onMounted} from "vue";
 
 type Grid = string[][];
@@ -9,6 +9,10 @@ const gridSize = 10;
 const grid = ref(createGrid(gridSize))
 
 const cursorCell = ref([0,0]);
+
+function clampToGrid(value:number) {
+  return clamp(value, 0, gridSize -1);
+}
 
 function indexToXY(index:number):[number, number] {
   const x = index % gridSize;
@@ -34,16 +38,18 @@ function cellClicked(grid:Grid, row:number, column:number) {
 }
 
 onMounted(()=> {
+
+
   window.addEventListener('keydown', (e) => {
     // e.preventDefault();
     if(e.key === 'ArrowLeft') {
-      cursorCell.value[0]--;
+      cursorCell.value[0] = clampToGrid(cursorCell.value[0] -1)
     } else if(e.key === 'ArrowRight') {
-      cursorCell.value[0]++;
+      cursorCell.value[0] = clampToGrid(cursorCell.value[0] +1)
     } else if(e.key === 'ArrowUp') {
-      cursorCell.value[1]--;
+      cursorCell.value[1] = clampToGrid(cursorCell.value[1] -1)
     } else if(e.key === 'ArrowDown') {
-      cursorCell.value[1]++;
+      cursorCell.value[1] = clampToGrid(cursorCell.value[1] +1)
     } else if(e.key === ' ') {
       const cell = grid.value[cursorCell.value[1]][cursorCell.value[0]];
       grid.value[cursorCell.value[1]][cursorCell.value[0]] = cell === 'd' ? ' ' : 'd'
