@@ -1,20 +1,50 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { isEqual, clamp } from 'lodash';
-import {onMounted} from "vue";
+import {onMounted, ref, watch} from "vue";
+
+import SampleLevel from './../sample-level.json'
 
 type Grid = string[][];
 
 const gridSize = 10;
-const grid = ref(createGrid(gridSize))
-
+// const grid = ref(createGrid(gridSize))
+const grid = ref(SampleLevel)
 const cursorCell = ref([0,0]);
+
+const legendForColumns = ref<HTMLDivElement>()
+const legendForRows = ref<HTMLDivElement>()
+
+const horizontalLegendStyle = ref({
+
+})
 
 function clampToGrid(value:number) {
   return clamp(value, 0, gridSize -1);
 }
 
-function indexToXY(index:number):[number, number] {
+function hitsInRow(rowNumber: number): number[] {
+  return getHits(grid.value[rowNumber]);
+}
+
+function hitsInColumn(colNumber: number): number[] {
+  return getHits(grid.value.map(x => x[colNumber]))
+}
+
+function getHits(arr: string[]): number[] {
+  return arr.reduce((acc:number[], curr, i, arr) => {
+    if(curr === 'd') {
+      if( acc.length > 0 && arr[i -1] === 'd' ) {
+        acc[acc.length -1]++
+      } else {
+        acc.push(1)
+      }
+    }
+    return acc;
+  }, []);
+}
+
+
+function indexToXY(index:number): [number, number] {
   const x = index % gridSize;
   const y = Math.floor(index/gridSize)
   return [x,y];
@@ -25,8 +55,10 @@ function cellIndexIsFilled(index: number):boolean {
     return grid.value[y][x] === 'd'
 }
 
-console.log(grid.value)
-
+watch(()=> grid, (grid) => {
+  console.log('grid changed,', grid)
+  console.log(legendForRows.value!.offsetWidth)
+}, { deep: true})
 
 function xYToIndex(xy:[number,number]):number {
   const [x,y] = xy;
@@ -58,7 +90,6 @@ onMounted(()=> {
 })
 
 function createGrid(size:number):any[][] {
-  // const grid = new Array(size).fill(new Array(size).fill(0))
   const grid = new Array(size).fill('').map(d => new Array(size).fill(' '))
   return grid;
 }
@@ -68,19 +99,20 @@ function createGrid(size:number):any[][] {
 
   {{cursorCell}}
   <div class="playfield-container">
-<!--    <div class="horizontal-thing"></div>-->
+    <div class="optical-guide horizontal" ref="guidehorizontal"></div>
+    <div class="optical-guide vertical" ref="guidevertical"></div>
 
 
 
     <div class="corner"></div>
-    <div class="legend horizontal">
+    <div class="legend horizontal" ref="legendForColumns">
       <div class="cell" v-for="(cell, index) in gridSize">
-        <div>1</div>
+        <div v-for="hit in hitsInColumn(index)">{{hit}}</div>
       </div>
     </div>
-    <div class="legend vertical">
+    <div class="legend vertical" ref="legendForRows">
       <div class="cell" v-for="(cell, index) in gridSize">
-        <div>2</div>
+        <div v-for="hit in hitsInRow(index)">{{hit}}</div>
       </div>
     </div>
     <div
@@ -117,34 +149,55 @@ function createGrid(size:number):any[][] {
   //height: 100px;
 }
 
-.legend.horizontal {
-  grid-column: span 10;
-  display:flex;
-
-  .cell {
-    height: auto;
-  }
-}
-.legend.vertical {
-  display:flex;
-  flex-direction: column;
-
+.legend {
   .cell {
     display: flex;
-    width: auto;
+    justify-content: flex-end;
   }
-  grid-row: span 10;
 
+  &.horizontal {
+    grid-column: span 10;
+    display:flex;
+
+    .cell {
+      flex-direction: column;
+      height: auto;
+    }
+  }
+
+  &.vertical {
+    display:flex;
+    flex-direction: column;
+
+    .cell {
+      display: flex;
+      width: auto;
+    }
+     grid-row: span 10;
+  }
 }
 
-//.horizontal-thing {
-//  position: absolute;
-//  top:50%;
-//  height: 2px;
-//  transform: translateY(-50%);
-//  width: 100%;
-//  background: greenyellow;
-//}
+.optical-guide {
+  background: greenyellow;
+  position: absolute;
+
+  &.horizontal {
+    bottom: 134px;
+    height: 2px;
+    width: 100%;
+    transform: translateY(-50%);
+  }
+
+  &.vertical {
+    //right: calc(50% - 13px);
+    //right: calc(50% - 13px);
+    right: 134px;
+    width: 2px;
+    height: 100%;
+    transform: translateX(-50%);
+  }
+
+}
 
 .cell.cursor,
 .cell:hover {
