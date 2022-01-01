@@ -5,6 +5,7 @@ import {onMounted, ref, watch} from "vue";
 import SampleLevel from './../sample-level.json'
 
 type Grid = string[][];
+type Intention = 'build';
 
 const gridSize = 10;
 const grid = ref<Grid>(createGrid(gridSize))
@@ -16,6 +17,11 @@ const legendForRows = ref<HTMLDivElement>()
 
 const horizontalLegendStyle = ref({
 
+})
+
+const interaction = ref({
+  spacePressed: false,
+  intention: 'build'
 })
 
 function clampToGrid(value:number) {
@@ -54,9 +60,14 @@ function indexToXY(index:number): [number, number] {
   return [x,y];
 }
 
-function cellIndexIsFilled(index: number):boolean {
+function cellIndexIs(index: number, value: string):boolean {
     const [x,y] = indexToXY(index);
-    return grid.value[y][x] === 'd'
+    return grid.value[y][x] === value
+}
+
+function cellIndexIsFilled(index: number):boolean {
+  const [x,y] = indexToXY(index);
+  return grid.value[y][x] === 'd'
 }
 
 watch(()=> grid, (grid) => {
@@ -72,22 +83,43 @@ function cellClicked(grid:Grid, row:number, column:number) {
   grid[row][column] = 'x';
 }
 
+function toggleCellValue(value:string) {
+  const cell = grid.value[cursorCell.value[1]][cursorCell.value[0]];
+  if(cell === value) {
+    interaction.value.intention = 'clear';
+    grid.value[cursorCell.value[1]][cursorCell.value[0]] = ' ';
+  } else {
+    interaction.value.intention = 'build';
+    grid.value[cursorCell.value[1]][cursorCell.value[0]] = value;
+  }
+}
+
 onMounted(()=> {
-
-
   window.addEventListener('keydown', (e) => {
     // e.preventDefault();
     if(e.key === 'ArrowLeft') {
       cursorCell.value[0] = clampToGrid(cursorCell.value[0] -1)
+      if(interaction.value.spacePressed) toggleCellValue('d')
     } else if(e.key === 'ArrowRight') {
       cursorCell.value[0] = clampToGrid(cursorCell.value[0] +1)
+      if(interaction.value.spacePressed) toggleCellValue('d')
     } else if(e.key === 'ArrowUp') {
       cursorCell.value[1] = clampToGrid(cursorCell.value[1] -1)
+      if(interaction.value.spacePressed) toggleCellValue('d')
     } else if(e.key === 'ArrowDown') {
       cursorCell.value[1] = clampToGrid(cursorCell.value[1] +1)
+      if(interaction.value.spacePressed) toggleCellValue('d')
+    } else if(e.key === 'f') {
+      toggleCellValue('x')
     } else if(e.key === ' ') {
-      const cell = grid.value[cursorCell.value[1]][cursorCell.value[0]];
-      grid.value[cursorCell.value[1]][cursorCell.value[0]] = cell === 'd' ? ' ' : 'd'
+      interaction.value.spacePressed = true
+      toggleCellValue('d')
+    }
+  })
+
+  window.addEventListener('keyup', (e) => {
+    if(e.key === ' ') {
+      interaction.value.spacePressed = false;
     }
   })
 })
@@ -99,7 +131,6 @@ function createGrid(size:number):any[][] {
 </script>
 
 <template>
-
   levelIsCleared: {{levelIsCleared()}}
   <div class="playfield-container">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
@@ -122,12 +153,11 @@ function createGrid(size:number):any[][] {
       class="cell" v-for="(cell, index) in gridSize*gridSize"
       :class="{
         'cursor': isEqual(cursorCell, indexToXY(index)),
-        'filled': cellIndexIsFilled(index)
+        'filled': cellIndexIs(index, 'd'),
+        'flagged': cellIndexIs(index, 'x'),
       }"
     ></div>
   </div>
-
-  <div>{{grid}}</div>
 </template>
 
 <style lang="scss">
@@ -230,6 +260,9 @@ function createGrid(size:number):any[][] {
 
   &.filled {
     background-color: #444;
+  }
+  &.flagged {
+    background-color: red;
   }
 }
 
