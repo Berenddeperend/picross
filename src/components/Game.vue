@@ -7,8 +7,8 @@ import SampleLevel from './../sample-level.json'
 type Grid = string[][];
 
 const gridSize = 10;
-// const grid = ref(createGrid(gridSize))
-const grid = ref(SampleLevel)
+const grid = ref<Grid>(createGrid(gridSize))
+const solution = ref<Grid>(SampleLevel)
 const cursorCell = ref([0,0]);
 
 const legendForColumns = ref<HTMLDivElement>()
@@ -23,11 +23,15 @@ function clampToGrid(value:number) {
 }
 
 function hitsInRow(rowNumber: number): number[] {
-  return getHits(grid.value[rowNumber]);
+  return getHits(solution.value[rowNumber]);
 }
 
 function hitsInColumn(colNumber: number): number[] {
-  return getHits(grid.value.map(x => x[colNumber]))
+  return getHits(solution.value.map(x => x[colNumber]))
+}
+
+function levelIsCleared() {
+  return isEqual(grid.value, solution.value);
 }
 
 function getHits(arr: string[]): number[] {
@@ -56,7 +60,6 @@ function cellIndexIsFilled(index: number):boolean {
 }
 
 watch(()=> grid, (grid) => {
-  console.log('grid changed,', grid)
   console.log(legendForRows.value!.offsetWidth)
 }, { deep: true})
 
@@ -97,7 +100,7 @@ function createGrid(size:number):any[][] {
 
 <template>
 
-  {{cursorCell}}
+  levelIsCleared: {{levelIsCleared()}}
   <div class="playfield-container">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
     <div class="optical-guide vertical" ref="guidevertical"></div>
