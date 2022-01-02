@@ -58,21 +58,20 @@ function cellIndexIsFilled(index: number):boolean {
   return grid.value[y][x] === 'd'
 }
 
-watch(levelIsCleared, ((levelIsCleared, oldValue) => {
-  if(levelIsCleared) {
+watch(levelIsCleared, ((value) => {
+  if(value) {
     confetti({
       zIndex: -1,
-      particleCount: 100,
+      particleCount: 50,
       spread: 70,
       angle: 60,
       origin: { y: 0.6 }
     });
     confetti({
       zIndex: -1,
-      particleCount: 100,
+      particleCount: 50,
       spread: 70,
       angle: 120,
-
       origin: { y: 0.6 }
     });
   }
@@ -81,6 +80,14 @@ watch(levelIsCleared, ((levelIsCleared, oldValue) => {
 watch(()=> grid, (grid) => {
   console.log(legendForRows.value!.offsetWidth)
 }, { deep: true})
+
+function columnLegendActive(index: number) {
+  return cursorCell.value[0] === index;
+}
+
+function rowLegendActive(index: number) {
+  return cursorCell.value[1] === index;
+}
 
 function xYToIndex(xy:[number,number]):number {
   const [x,y] = xy;
@@ -160,12 +167,12 @@ function createGrid(size:number):any[][] {
 
     <div class="corner"></div>
     <div class="legend horizontal" ref="legendForColumns">
-      <div class="cell" v-for="(cell, index) in gridSize">
+      <div class="cell" :class="{'highlighted': columnLegendActive(index)}" v-for="(cell, index) in gridSize">
         <div v-for="hit in hitsInColumn(index)">{{hit}}</div>
       </div>
     </div>
     <div class="legend vertical" ref="legendForRows">
-      <div class="cell" v-for="(cell, index) in gridSize">
+      <div class="cell" :class="{'highlighted': rowLegendActive(index)}" v-for="(cell, index) in gridSize">
         <div v-for="hit in hitsInRow(index)">{{hit}}</div>
       </div>
     </div>
@@ -188,7 +195,6 @@ function createGrid(size:number):any[][] {
 
 .playfield-container {
   background: gray;
-  display: inline-block;
   position: relative;
   padding: 1px;
   transition: background-color 0.4s;
@@ -211,6 +217,10 @@ function createGrid(size:number):any[][] {
   .cell {
     display: flex;
     justify-content: flex-end;
+
+    &.highlighted {
+      background: lightblue;
+    }
   }
 
   &.horizontal {
@@ -261,7 +271,7 @@ function createGrid(size:number):any[][] {
 .cell:hover {
   font-weight: bold;
   z-index: 2;
-  box-shadow: 0px 0px 0px 2px cyan;
+  box-shadow: 0px 0px 0px 2px lightblue;
 }
 
 
