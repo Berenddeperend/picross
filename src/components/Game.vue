@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { isEqual, clamp } from 'lodash';
 import {onMounted, ref, watch, computed } from "vue";
-import Confetti from 'canvas-confetti';
-
-console.log(Confetti)
+import { getHits } from "../grid-helpers";
+import confetti from 'canvas-confetti';
 
 import SampleLevel from './../sample-level.json'
 
@@ -43,20 +42,6 @@ const levelIsCleared = computed(()=> {
   return isEqual(grid.value, solution.value);
 })
 
-function getHits(arr: string[]): number[] {
-  return arr.reduce((acc:number[], curr, i, arr) => {
-    if(curr === 'd') {
-      if( acc.length > 0 && arr[i -1] === 'd' ) {
-        acc[acc.length -1]++
-      } else {
-        acc.push(1)
-      }
-    }
-    return acc;
-  }, []);
-}
-
-
 function indexToXY(index:number): [number, number] {
   const x = index % gridSize;
   const y = Math.floor(index/gridSize)
@@ -72,6 +57,26 @@ function cellIndexIsFilled(index: number):boolean {
   const [x,y] = indexToXY(index);
   return grid.value[y][x] === 'd'
 }
+
+watch(levelIsCleared, ((levelIsCleared, oldValue) => {
+  if(levelIsCleared) {
+    confetti({
+      zIndex: -1,
+      particleCount: 100,
+      spread: 70,
+      angle: 60,
+      origin: { y: 0.6 }
+    });
+    confetti({
+      zIndex: -1,
+      particleCount: 100,
+      spread: 70,
+      angle: 120,
+
+      origin: { y: 0.6 }
+    });
+  }
+}));
 
 watch(()=> grid, (grid) => {
   console.log(legendForRows.value!.offsetWidth)
@@ -193,7 +198,7 @@ function createGrid(size:number):any[][] {
   grid-template-rows: auto repeat(10, 1fr);
 
   &.cleared {
-    background: green;
+    //background: green;
   }
 }
 
