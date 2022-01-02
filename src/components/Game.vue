@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { isEqual, clamp } from 'lodash';
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, computed } from "vue";
+import Confetti from 'canvas-confetti';
+
+console.log(Confetti)
 
 import SampleLevel from './../sample-level.json'
 
@@ -36,9 +39,9 @@ function hitsInColumn(colNumber: number): number[] {
   return getHits(solution.value.map(x => x[colNumber]))
 }
 
-function levelIsCleared() {
+const levelIsCleared = computed(()=> {
   return isEqual(grid.value, solution.value);
-}
+})
 
 function getHits(arr: string[]): number[] {
   return arr.reduce((acc:number[], curr, i, arr) => {
@@ -94,6 +97,19 @@ function toggleCellValue(value:string) {
   }
 }
 
+function repeatAction() {
+
+  if(interaction.value.spacePressed) {
+    interaction.value.intention
+    toggleCellValue('d')
+  }
+
+}
+
+function setCellValue(value:string) {
+  grid.value[cursorCell.value[1]][cursorCell.value[0]] = value;
+}
+
 onMounted(()=> {
   window.addEventListener('keydown', (e) => {
     // e.preventDefault();
@@ -131,8 +147,7 @@ function createGrid(size:number):any[][] {
 </script>
 
 <template>
-  levelIsCleared: {{levelIsCleared()}}
-  <div class="playfield-container">
+  <div class="playfield-container" :class="{'cleared': levelIsCleared}">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
     <div class="optical-guide vertical" ref="guidevertical"></div>
 
@@ -171,10 +186,15 @@ function createGrid(size:number):any[][] {
   display: inline-block;
   position: relative;
   padding: 1px;
+  transition: background-color 0.4s;
 
   display: inline-grid;
   grid-template-columns: auto repeat(10, 1fr);
   grid-template-rows: auto repeat(10, 1fr);
+
+  &.cleared {
+    background: green;
+  }
 }
 
 .corner {
