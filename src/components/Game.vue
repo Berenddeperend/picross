@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { isEqual, clamp } from 'lodash';
-import { onMounted, ref, watch, computed } from 'vue';
-import { getHits } from '../grid-helpers';
-import confetti from 'canvas-confetti';
+import { isEqual, clamp } from "lodash";
+import { onMounted, ref, watch, computed } from "vue";
+import { getHits } from "../grid-helpers";
+import confetti from "canvas-confetti";
 
-import SampleLevel from './../sample-level.json';
+import SampleLevel from "./../sample-level.json";
 
 type Grid = string[][];
-type Position = [number, number]
+type Position = [number, number];
 
-type Intention = 'build';
+type Intention = "build";
 
 const gridSize = 10;
 const grid = ref<Grid>(createGrid(gridSize));
@@ -23,7 +23,7 @@ const horizontalLegendStyle = ref({});
 
 const interaction = ref({
   spacePressed: false,
-  intention: 'build'
+  intention: "build",
 });
 
 function clampToGrid(value: number) {
@@ -35,7 +35,7 @@ function hitsInRow(rowNumber: number): number[] {
 }
 
 function hitsInColumn(colNumber: number): number[] {
-  return getHits(solution.value.map(x => x[colNumber]));
+  return getHits(solution.value.map((x) => x[colNumber]));
 }
 
 const levelIsCleared = computed(() => {
@@ -55,31 +55,35 @@ function cellIndexIs(index: number, value: string): boolean {
 
 function cellIndexIsFilled(index: number): boolean {
   const [x, y] = indexToXY(index);
-  return grid.value[y][x] === 'd';
+  return grid.value[y][x] === "d";
 }
 
-watch(levelIsCleared, ((value) => {
+watch(levelIsCleared, (value) => {
   if (value) {
     confetti({
       zIndex: -1,
       particleCount: 50,
       spread: 70,
       angle: 60,
-      origin: { y: 0.6 }
+      origin: { y: 0.6 },
     });
     confetti({
       zIndex: -1,
       particleCount: 50,
       spread: 70,
       angle: 120,
-      origin: { y: 0.6 }
+      origin: { y: 0.6 },
     });
   }
-}));
+});
 
-watch(() => grid, (grid) => {
-  console.log(legendForRows.value!.offsetWidth);
-}, { deep: true });
+watch(
+  () => grid,
+  (grid) => {
+    console.log(legendForRows.value!.offsetWidth);
+  },
+  { deep: true }
+);
 
 function columnLegendActive(index: number) {
   return cursorCell.value[0] === index;
@@ -95,27 +99,25 @@ function xYToIndex(xy: Position): number {
 }
 
 function cellClicked(grid: Grid, row: number, column: number) {
-  grid[row][column] = 'x';
+  grid[row][column] = "x";
 }
 
 function toggleCellValue(value: string) {
   const cell = grid.value[cursorCell.value[1]][cursorCell.value[0]];
   if (cell === value) {
-    interaction.value.intention = 'clear';
-    grid.value[cursorCell.value[1]][cursorCell.value[0]] = ' ';
+    interaction.value.intention = "clear";
+    grid.value[cursorCell.value[1]][cursorCell.value[0]] = " ";
   } else {
-    interaction.value.intention = 'build';
+    interaction.value.intention = "build";
     grid.value[cursorCell.value[1]][cursorCell.value[0]] = value;
   }
 }
 
 function repeatAction() {
-
   if (interaction.value.spacePressed) {
     interaction.value.intention;
-    toggleCellValue('d');
+    toggleCellValue("d");
   }
-
 }
 
 function setCellValue(value: string) {
@@ -123,71 +125,78 @@ function setCellValue(value: string) {
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', (e) => {
+  window.addEventListener("keydown", (e) => {
     // e.preventDefault();
-    if (e.key === 'ArrowLeft') {
+    if (e.key === "ArrowLeft") {
       cursorCell.value[0] = clampToGrid(cursorCell.value[0] - 1);
-      if (interaction.value.spacePressed) toggleCellValue('d');
-    } else if (e.key === 'ArrowRight') {
+      if (interaction.value.spacePressed) toggleCellValue("d");
+    } else if (e.key === "ArrowRight") {
       cursorCell.value[0] = clampToGrid(cursorCell.value[0] + 1);
-      if (interaction.value.spacePressed) toggleCellValue('d');
-    } else if (e.key === 'ArrowUp') {
+      if (interaction.value.spacePressed) toggleCellValue("d");
+    } else if (e.key === "ArrowUp") {
       cursorCell.value[1] = clampToGrid(cursorCell.value[1] - 1);
-      if (interaction.value.spacePressed) toggleCellValue('d');
-    } else if (e.key === 'ArrowDown') {
+      if (interaction.value.spacePressed) toggleCellValue("d");
+    } else if (e.key === "ArrowDown") {
       cursorCell.value[1] = clampToGrid(cursorCell.value[1] + 1);
-      if (interaction.value.spacePressed) toggleCellValue('d');
-    } else if (e.key === 'f') {
-      toggleCellValue('x');
-    } else if (e.key === ' ') {
+      if (interaction.value.spacePressed) toggleCellValue("d");
+    } else if (e.key === "f") {
+      toggleCellValue("x");
+    } else if (e.key === " ") {
       interaction.value.spacePressed = true;
-      toggleCellValue('d');
+      toggleCellValue("d");
     }
   });
 
-  window.addEventListener('keyup', (e) => {
-    if (e.key === ' ') {
+  window.addEventListener("keyup", (e) => {
+    if (e.key === " ") {
       interaction.value.spacePressed = false;
     }
   });
 });
 
 function createGrid(size: number): Grid {
-  const grid = new Array(size).fill('').map(d => new Array(size).fill(' '));
+  const grid = new Array(size).fill("").map((d) => new Array(size).fill(" "));
   return grid;
 }
 </script>
 
 <template>
-  <div class="playfield-container" :class="{'cleared': levelIsCleared}">
+  <div class="playfield-container" :class="{ cleared: levelIsCleared }">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
     <div class="optical-guide vertical" ref="guidevertical"></div>
 
-
     <div class="corner"></div>
     <div class="legend horizontal" ref="legendForColumns">
-      <div class="cell" :class="{'highlighted': columnLegendActive(index)}" v-for="(cell, index) in gridSize">
+      <div
+        class="cell"
+        :class="{ highlighted: columnLegendActive(index) }"
+        v-for="(cell, index) in gridSize"
+      >
         <div v-for="hit in hitsInColumn(index)">{{ hit }}</div>
       </div>
     </div>
     <div class="legend vertical" ref="legendForRows">
-      <div class="cell" :class="{'highlighted': rowLegendActive(index)}" v-for="(cell, index) in gridSize">
+      <div
+        class="cell"
+        :class="{ highlighted: rowLegendActive(index) }"
+        v-for="(cell, index) in gridSize"
+      >
         <div v-for="hit in hitsInRow(index)">{{ hit }}</div>
       </div>
     </div>
     <div
-      class="cell" v-for="(cell, index) in gridSize*gridSize"
+      class="cell"
+      v-for="(cell, index) in gridSize * gridSize"
       :class="{
-        'cursor': isEqual(cursorCell, indexToXY(index)),
-        'filled': cellIndexIs(index, 'd'),
-        'flagged': cellIndexIs(index, 'x'),
+        cursor: isEqual(cursorCell, indexToXY(index)),
+        filled: cellIndexIs(index, 'd'),
+        flagged: cellIndexIs(index, 'x'),
       }"
     ></div>
   </div>
 </template>
 
 <style lang="scss">
-
 .horizontal-thing {
   position: absolute;
 }
@@ -264,7 +273,6 @@ function createGrid(size: number): Grid {
     height: 100%;
     transform: translateX(-50%);
   }
-
 }
 
 .cell.cursor,
@@ -273,7 +281,6 @@ function createGrid(size: number): Grid {
   z-index: 2;
   box-shadow: 0px 0px 0px 2px lightblue;
 }
-
 
 .row {
   display: flex;
@@ -301,5 +308,4 @@ function createGrid(size: number): Grid {
     background-color: red;
   }
 }
-
 </style>
