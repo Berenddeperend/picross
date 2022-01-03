@@ -1,33 +1,33 @@
 <script setup lang="ts">
 import { isEqual, clamp } from 'lodash';
-import {onMounted, ref, watch, computed } from "vue";
-import { getHits } from "../grid-helpers";
+import { onMounted, ref, watch, computed } from 'vue';
+import { getHits } from '../grid-helpers';
 import confetti from 'canvas-confetti';
 
-import SampleLevel from './../sample-level.json'
+import SampleLevel from './../sample-level.json';
 
 type Grid = string[][];
+type Position = [number, number]
+
 type Intention = 'build';
 
 const gridSize = 10;
-const grid = ref<Grid>(createGrid(gridSize))
-const solution = ref<Grid>(SampleLevel)
-const cursorCell = ref([0,0]);
+const grid = ref<Grid>(createGrid(gridSize));
+const solution = ref<Grid>(SampleLevel);
+const cursorCell = ref<Position>([0, 0]);
 
-const legendForColumns = ref<HTMLDivElement>()
-const legendForRows = ref<HTMLDivElement>()
+const legendForColumns = ref<HTMLDivElement>();
+const legendForRows = ref<HTMLDivElement>();
 
-const horizontalLegendStyle = ref({
-
-})
+const horizontalLegendStyle = ref({});
 
 const interaction = ref({
   spacePressed: false,
   intention: 'build'
-})
+});
 
-function clampToGrid(value:number) {
-  return clamp(value, 0, gridSize -1);
+function clampToGrid(value: number) {
+  return clamp(value, 0, gridSize - 1);
 }
 
 function hitsInRow(rowNumber: number): number[] {
@@ -35,31 +35,31 @@ function hitsInRow(rowNumber: number): number[] {
 }
 
 function hitsInColumn(colNumber: number): number[] {
-  return getHits(solution.value.map(x => x[colNumber]))
+  return getHits(solution.value.map(x => x[colNumber]));
 }
 
-const levelIsCleared = computed(()=> {
+const levelIsCleared = computed(() => {
   return isEqual(grid.value, solution.value);
-})
+});
 
-function indexToXY(index:number): [number, number] {
+function indexToXY(index: number): Position {
   const x = index % gridSize;
-  const y = Math.floor(index/gridSize)
-  return [x,y];
+  const y = Math.floor(index / gridSize);
+  return [x, y];
 }
 
-function cellIndexIs(index: number, value: string):boolean {
-    const [x,y] = indexToXY(index);
-    return grid.value[y][x] === value
+function cellIndexIs(index: number, value: string): boolean {
+  const [x, y] = indexToXY(index);
+  return grid.value[y][x] === value;
 }
 
-function cellIndexIsFilled(index: number):boolean {
-  const [x,y] = indexToXY(index);
-  return grid.value[y][x] === 'd'
+function cellIndexIsFilled(index: number): boolean {
+  const [x, y] = indexToXY(index);
+  return grid.value[y][x] === 'd';
 }
 
 watch(levelIsCleared, ((value) => {
-  if(value) {
+  if (value) {
     confetti({
       zIndex: -1,
       particleCount: 50,
@@ -77,9 +77,9 @@ watch(levelIsCleared, ((value) => {
   }
 }));
 
-watch(()=> grid, (grid) => {
-  console.log(legendForRows.value!.offsetWidth)
-}, { deep: true})
+watch(() => grid, (grid) => {
+  console.log(legendForRows.value!.offsetWidth);
+}, { deep: true });
 
 function columnLegendActive(index: number) {
   return cursorCell.value[0] === index;
@@ -89,18 +89,18 @@ function rowLegendActive(index: number) {
   return cursorCell.value[1] === index;
 }
 
-function xYToIndex(xy:[number,number]):number {
-  const [x,y] = xy;
+function xYToIndex(xy: Position): number {
+  const [x, y] = xy;
   return y * gridSize + x;
 }
 
-function cellClicked(grid:Grid, row:number, column:number) {
+function cellClicked(grid: Grid, row: number, column: number) {
   grid[row][column] = 'x';
 }
 
-function toggleCellValue(value:string) {
+function toggleCellValue(value: string) {
   const cell = grid.value[cursorCell.value[1]][cursorCell.value[0]];
-  if(cell === value) {
+  if (cell === value) {
     interaction.value.intention = 'clear';
     grid.value[cursorCell.value[1]][cursorCell.value[0]] = ' ';
   } else {
@@ -111,49 +111,49 @@ function toggleCellValue(value:string) {
 
 function repeatAction() {
 
-  if(interaction.value.spacePressed) {
-    interaction.value.intention
-    toggleCellValue('d')
+  if (interaction.value.spacePressed) {
+    interaction.value.intention;
+    toggleCellValue('d');
   }
 
 }
 
-function setCellValue(value:string) {
+function setCellValue(value: string) {
   grid.value[cursorCell.value[1]][cursorCell.value[0]] = value;
 }
 
-onMounted(()=> {
+onMounted(() => {
   window.addEventListener('keydown', (e) => {
     // e.preventDefault();
-    if(e.key === 'ArrowLeft') {
-      cursorCell.value[0] = clampToGrid(cursorCell.value[0] -1)
-      if(interaction.value.spacePressed) toggleCellValue('d')
-    } else if(e.key === 'ArrowRight') {
-      cursorCell.value[0] = clampToGrid(cursorCell.value[0] +1)
-      if(interaction.value.spacePressed) toggleCellValue('d')
-    } else if(e.key === 'ArrowUp') {
-      cursorCell.value[1] = clampToGrid(cursorCell.value[1] -1)
-      if(interaction.value.spacePressed) toggleCellValue('d')
-    } else if(e.key === 'ArrowDown') {
-      cursorCell.value[1] = clampToGrid(cursorCell.value[1] +1)
-      if(interaction.value.spacePressed) toggleCellValue('d')
-    } else if(e.key === 'f') {
-      toggleCellValue('x')
-    } else if(e.key === ' ') {
-      interaction.value.spacePressed = true
-      toggleCellValue('d')
+    if (e.key === 'ArrowLeft') {
+      cursorCell.value[0] = clampToGrid(cursorCell.value[0] - 1);
+      if (interaction.value.spacePressed) toggleCellValue('d');
+    } else if (e.key === 'ArrowRight') {
+      cursorCell.value[0] = clampToGrid(cursorCell.value[0] + 1);
+      if (interaction.value.spacePressed) toggleCellValue('d');
+    } else if (e.key === 'ArrowUp') {
+      cursorCell.value[1] = clampToGrid(cursorCell.value[1] - 1);
+      if (interaction.value.spacePressed) toggleCellValue('d');
+    } else if (e.key === 'ArrowDown') {
+      cursorCell.value[1] = clampToGrid(cursorCell.value[1] + 1);
+      if (interaction.value.spacePressed) toggleCellValue('d');
+    } else if (e.key === 'f') {
+      toggleCellValue('x');
+    } else if (e.key === ' ') {
+      interaction.value.spacePressed = true;
+      toggleCellValue('d');
     }
-  })
+  });
 
   window.addEventListener('keyup', (e) => {
-    if(e.key === ' ') {
+    if (e.key === ' ') {
       interaction.value.spacePressed = false;
     }
-  })
-})
+  });
+});
 
-function createGrid(size:number):any[][] {
-  const grid = new Array(size).fill('').map(d => new Array(size).fill(' '))
+function createGrid(size: number): Grid {
+  const grid = new Array(size).fill('').map(d => new Array(size).fill(' '));
   return grid;
 }
 </script>
@@ -164,16 +164,15 @@ function createGrid(size:number):any[][] {
     <div class="optical-guide vertical" ref="guidevertical"></div>
 
 
-
     <div class="corner"></div>
     <div class="legend horizontal" ref="legendForColumns">
       <div class="cell" :class="{'highlighted': columnLegendActive(index)}" v-for="(cell, index) in gridSize">
-        <div v-for="hit in hitsInColumn(index)">{{hit}}</div>
+        <div v-for="hit in hitsInColumn(index)">{{ hit }}</div>
       </div>
     </div>
     <div class="legend vertical" ref="legendForRows">
       <div class="cell" :class="{'highlighted': rowLegendActive(index)}" v-for="(cell, index) in gridSize">
-        <div v-for="hit in hitsInRow(index)">{{hit}}</div>
+        <div v-for="hit in hitsInRow(index)">{{ hit }}</div>
       </div>
     </div>
     <div
@@ -225,7 +224,7 @@ function createGrid(size:number):any[][] {
 
   &.horizontal {
     grid-column: span 10;
-    display:flex;
+    display: flex;
 
     .cell {
       flex-direction: column;
@@ -234,14 +233,15 @@ function createGrid(size:number):any[][] {
   }
 
   &.vertical {
-    display:flex;
+    display: flex;
     flex-direction: column;
 
     .cell {
       display: flex;
       width: auto;
     }
-     grid-row: span 10;
+
+    grid-row: span 10;
   }
 }
 
@@ -296,6 +296,7 @@ function createGrid(size:number):any[][] {
   &.filled {
     background-color: #444;
   }
+
   &.flagged {
     background-color: red;
   }
