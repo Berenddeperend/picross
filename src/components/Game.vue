@@ -4,6 +4,7 @@ import { onMounted, ref, watch, computed } from "vue";
 import { getHits } from "../grid-helpers";
 import confetti from "canvas-confetti";
 
+console.log("test");
 import { io } from "socket.io-client";
 
 // const socket = io("ws://localhost:3000", { resource: "ws://localhost:4000" });
@@ -162,7 +163,8 @@ onMounted(() => {
       toggleCellValue("d");
     }
 
-    socket.emit("cursorPosition", cursorCell.value);
+    // socket.emit("cursorPosition", cursorCell.value);
+    socket.emit("userStateChanged", {});
   });
 
   window.addEventListener("keyup", (e) => {
