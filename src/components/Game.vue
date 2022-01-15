@@ -4,6 +4,11 @@ import { onMounted, ref, watch, computed } from "vue";
 import { getHits } from "../grid-helpers";
 import confetti from "canvas-confetti";
 
+import { io } from "socket.io-client";
+
+// const socket = io("ws://localhost:3000", { resource: "ws://localhost:4000" });
+const socket = io("ws://localhost:7000");
+
 import SampleLevel from "./../sample-level.json";
 
 type Grid = string[][];
@@ -15,6 +20,7 @@ const gridSize = 10;
 const grid = ref<Grid>(createGrid(gridSize));
 const solution = ref<Grid>(SampleLevel);
 const cursorCell = ref<Position>([0, 0]);
+const playerId = ref<string | null>(null);
 
 const legendForColumns = ref<HTMLDivElement>();
 const legendForRows = ref<HTMLDivElement>();
@@ -125,6 +131,16 @@ function setCellValue(value: string) {
 }
 
 onMounted(() => {
+  socket.on("hi", (things) => {
+    console.log("server said hi", things);
+    playerId.value = things;
+  });
+
+  socket.on("cursorPositions", (things) => {
+    console.log(things);
+    cursorCell.value = things;
+  });
+
   window.addEventListener("keydown", (e) => {
     // e.preventDefault();
     if (e.key === "ArrowLeft") {
@@ -145,6 +161,8 @@ onMounted(() => {
       interaction.value.spacePressed = true;
       toggleCellValue("d");
     }
+
+    socket.emit("cursorPosition", cursorCell.value);
   });
 
   window.addEventListener("keyup", (e) => {
@@ -161,6 +179,7 @@ function createGrid(size: number): Grid {
 </script>
 
 <template>
+  {{ playerId }}
   <div class="playfield-container" :class="{ cleared: levelIsCleared }">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
     <div class="optical-guide vertical" ref="guidevertical"></div>

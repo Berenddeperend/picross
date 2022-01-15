@@ -15,6 +15,5 @@ f: no
 ideas:
 websockets?
     - coop?
-    - vs?
-
+        - Twee fouten binnen 5 seconden? 10s timeout
 
