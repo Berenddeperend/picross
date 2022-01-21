@@ -1,49 +1,29 @@
 <script setup lang="ts">
 import { isEqual, clamp } from "lodash";
 import { onMounted, ref, watch, computed } from "vue";
-import { getHits } from "../grid-helpers";
+import { getHits } from "@/grid-helpers";
 import confetti from "canvas-confetti";
+import useUserStates from "@/hooks/useUserStates";
 
-console.log("test");
 import { io } from "socket.io-client";
+import useGrid from "@/hooks/useGrid";
 
 // const socket = io("ws://localhost:3000", { resource: "ws://localhost:4000" });
 const socket = io("ws://localhost:7000");
 
-import SampleLevel from "./../sample-level.json";
+const { updatePlayerStates, initState, players, playerId } = useUserStates();
+initState(socket);
+updatePlayerStates(socket);
 
-type Grid = string[][];
-type Position = [number, number];
+const { grid, gridSize, solution, clampToGrid, hitsInRow, hitsInColumn } =
+  useGrid();
 
-type Intention = "build";
-
-const gridSize = 10;
-const grid = ref<Grid>(createGrid(gridSize));
-const solution = ref<Grid>(SampleLevel);
-const cursorCell = ref<Position>([0, 0]);
-const playerId = ref<string | null>(null);
-
-const legendForColumns = ref<HTMLDivElement>();
-const legendForRows = ref<HTMLDivElement>();
-
-const horizontalLegendStyle = ref({});
+const cursorPosition = ref<Position>([0, 0]);
 
 const interaction = ref({
   spacePressed: false,
   intention: "build",
 });
-
-function clampToGrid(value: number) {
-  return clamp(value, 0, gridSize - 1);
-}
-
-function hitsInRow(rowNumber: number): number[] {
-  return getHits(solution.value[rowNumber]);
-}
-
-function hitsInColumn(colNumber: number): number[] {
-  return getHits(solution.value.map((x) => x[colNumber]));
-}
 
 const levelIsCleared = computed(() => {
   return isEqual(grid.value, solution.value);
@@ -58,11 +38,6 @@ function indexToXY(index: number): Position {
 function cellIndexIs(index: number, value: string): boolean {
   const [x, y] = indexToXY(index);
   return grid.value[y][x] === value;
-}
-
-function cellIndexIsFilled(index: number): boolean {
-  const [x, y] = indexToXY(index);
-  return grid.value[y][x] === "d";
 }
 
 watch(levelIsCleared, (value) => {
@@ -84,20 +59,12 @@ watch(levelIsCleared, (value) => {
   }
 });
 
-watch(
-  () => grid,
-  (grid) => {
-    console.log(legendForRows.value!.offsetWidth);
-  },
-  { deep: true }
-);
-
 function columnLegendActive(index: number) {
-  return cursorCell.value[0] === index;
+  return cursorPosition.value[0] === index;
 }
 
 function rowLegendActive(index: number) {
-  return cursorCell.value[1] === index;
+  return cursorPosition.value[1] === index;
 }
 
 function xYToIndex(xy: Position): number {
@@ -110,13 +77,13 @@ function cellClicked(grid: Grid, row: number, column: number) {
 }
 
 function toggleCellValue(value: string) {
-  const cell = grid.value[cursorCell.value[1]][cursorCell.value[0]];
+  const cell = grid.value[cursorPosition.value[1]][cursorPosition.value[0]];
   if (cell === value) {
     interaction.value.intention = "clear";
-    grid.value[cursorCell.value[1]][cursorCell.value[0]] = " ";
+    grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = " ";
   } else {
     interaction.value.intention = "build";
-    grid.value[cursorCell.value[1]][cursorCell.value[0]] = value;
+    grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = value;
   }
 }
 
@@ -128,33 +95,32 @@ function repeatAction() {
 }
 
 function setCellValue(value: string) {
-  grid.value[cursorCell.value[1]][cursorCell.value[0]] = value;
+  grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = value;
 }
 
 onMounted(() => {
-  socket.on("hi", (things) => {
-    console.log("server said hi", things);
-    playerId.value = things;
+  socket.on("gridChanged", (newGrid: Grid) => {
+    grid.value = newGrid;
   });
 
-  socket.on("cursorPositions", (things) => {
-    console.log(things);
-    cursorCell.value = things;
-  });
+  // socket.on("userStatesUpdated", (userStates: ) => {
+  //   console.log(things);
+  //   cursorPosition.value = things;
+  // });
 
   window.addEventListener("keydown", (e) => {
     // e.preventDefault();
     if (e.key === "ArrowLeft") {
-      cursorCell.value[0] = clampToGrid(cursorCell.value[0] - 1);
+      cursorPosition.value[0] = clampToGrid(cursorPosition.value[0] - 1);
       if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "ArrowRight") {
-      cursorCell.value[0] = clampToGrid(cursorCell.value[0] + 1);
+      cursorPosition.value[0] = clampToGrid(cursorPosition.value[0] + 1);
       if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "ArrowUp") {
-      cursorCell.value[1] = clampToGrid(cursorCell.value[1] - 1);
+      cursorPosition.value[1] = clampToGrid(cursorPosition.value[1] - 1);
       if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "ArrowDown") {
-      cursorCell.value[1] = clampToGrid(cursorCell.value[1] + 1);
+      cursorPosition.value[1] = clampToGrid(cursorPosition.value[1] + 1);
       if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "f") {
       toggleCellValue("x");
@@ -163,8 +129,9 @@ onMounted(() => {
       toggleCellValue("d");
     }
 
-    // socket.emit("cursorPosition", cursorCell.value);
-    socket.emit("userStateChanged", {});
+    // socket.emit("cursorPosition", cursorPosition.value);
+    // socket.emit("userStateChanged", {});
+    socket.emit("cursorPositionChanged", cursorPosition.value);
   });
 
   window.addEventListener("keyup", (e) => {
@@ -173,15 +140,12 @@ onMounted(() => {
     }
   });
 });
-
-function createGrid(size: number): Grid {
-  const grid = new Array(size).fill("").map((d) => new Array(size).fill(" "));
-  return grid;
-}
 </script>
 
 <template>
-  {{ playerId }}
+  {{ Object.keys(players) }},
+
+  <strong>{{ playerId }}</strong>
   <div class="playfield-container" :class="{ cleared: levelIsCleared }">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
     <div class="optical-guide vertical" ref="guidevertical"></div>
@@ -209,7 +173,7 @@ function createGrid(size: number): Grid {
       class="cell"
       v-for="(cell, index) in gridSize * gridSize"
       :class="{
-        cursor: isEqual(cursorCell, indexToXY(index)),
+        cursor: isEqual(cursorPosition, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
         flagged: cellIndexIs(index, 'x'),
       }"
