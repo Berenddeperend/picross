@@ -156,8 +156,9 @@ onMounted(() => {
         class="cell"
         :class="{ highlighted: columnLegendActive(index) }"
         v-for="(cell, index) in gridSize"
+        :key="index"
       >
-        <div v-for="hit in hitsInColumn(index)">{{ hit }}</div>
+        <div v-for="(hit, hitIndex) in hitsInColumn(index)" :key="hitIndex">{{ hit }}</div>
       </div>
     </div>
     <div class="legend vertical" ref="legendForRows">
@@ -165,13 +166,15 @@ onMounted(() => {
         class="cell"
         :class="{ highlighted: rowLegendActive(index) }"
         v-for="(cell, index) in gridSize"
+        :key="index"
       >
-        <div v-for="hit in hitsInRow(index)">{{ hit }}</div>
+        <div v-for="(hit, hitIndex) in hitsInRow(index)" :key="hitIndex">{{ hit }}</div>
       </div>
     </div>
     <div
       class="cell"
       v-for="(cell, index) in gridSize * gridSize"
+      :key="index"
       :class="{
         cursor: isEqual(cursorPosition, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
