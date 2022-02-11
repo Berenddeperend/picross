@@ -1,29 +1,34 @@
 <script setup lang="ts">
 import { isEqual, clamp } from "lodash";
-import { onMounted, ref, watch, computed } from "vue";
-import { getHits } from "@/grid-helpers";
+import { onMounted, ref, watch, computed, ComputedRef } from "vue";
 import confetti from "canvas-confetti";
-import useUserStates from "@/hooks/useUserStates";
 
-import { io } from "socket.io-client";
-import useGrid from "@/hooks/useGrid";
+import {
+  grid,
+  gridSize,
+  solution,
+  clampToGrid,
+  hitsInRow,
+  hitsInColumn,
+  syncGrid,
+} from "@/hooks/useGrid";
+import {
+  syncPlayersState,
+  initState,
+  players,
+  player,
+  playerId,
+  cursor,
+} from "@/hooks/useUserStates";
+import { initControls } from "@/hooks/useControls";
+import { socket } from "@/hooks/useSocket";
 
-// const socket = io("ws://localhost:3000", { resource: "ws://localhost:4000" });
-const socket = io("ws://localhost:7000");
-
-const { updatePlayerStates, initState, players, playerId } = useUserStates();
-initState(socket);
-updatePlayerStates(socket);
-
-const { grid, gridSize, solution, clampToGrid, hitsInRow, hitsInColumn } =
-  useGrid();
+initState();
+syncPlayersState();
+syncGrid();
+initControls();
 
 const cursorPosition = ref<Position>([0, 0]);
-
-const interaction = ref({
-  spacePressed: false,
-  intention: "build",
-});
 
 const levelIsCleared = computed(() => {
   return isEqual(grid.value, solution.value);
@@ -60,11 +65,13 @@ watch(levelIsCleared, (value) => {
 });
 
 function columnLegendActive(index: number) {
-  return cursorPosition.value[0] === index;
+  // return cursorPosition.value[0] === index;
+  return player.value?.position[0] === index;
 }
 
 function rowLegendActive(index: number) {
-  return cursorPosition.value[1] === index;
+  // return cursorPosition.value[1] === index;
+  return player.value?.position[1] === index;
 }
 
 function xYToIndex(xy: Position): number {
@@ -76,76 +83,13 @@ function cellClicked(grid: Grid, row: number, column: number) {
   grid[row][column] = "x";
 }
 
-function toggleCellValue(value: string) {
-  const cell = grid.value[cursorPosition.value[1]][cursorPosition.value[0]];
-  if (cell === value) {
-    interaction.value.intention = "clear";
-    grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = " ";
-  } else {
-    interaction.value.intention = "build";
-    grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = value;
-  }
-}
-
-function repeatAction() {
-  if (interaction.value.spacePressed) {
-    interaction.value.intention;
-    toggleCellValue("d");
-  }
-}
-
 function setCellValue(value: string) {
   grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = value;
 }
-
-onMounted(() => {
-  socket.on("gridChanged", (newGrid: Grid) => {
-    grid.value = newGrid;
-  });
-
-  // socket.on("userStatesUpdated", (userStates: ) => {
-  //   console.log(things);
-  //   cursorPosition.value = things;
-  // });
-
-  window.addEventListener("keydown", (e) => {
-    // e.preventDefault();
-    if (e.key === "ArrowLeft") {
-      cursorPosition.value[0] = clampToGrid(cursorPosition.value[0] - 1);
-      if (interaction.value.spacePressed) toggleCellValue("d");
-    } else if (e.key === "ArrowRight") {
-      cursorPosition.value[0] = clampToGrid(cursorPosition.value[0] + 1);
-      if (interaction.value.spacePressed) toggleCellValue("d");
-    } else if (e.key === "ArrowUp") {
-      cursorPosition.value[1] = clampToGrid(cursorPosition.value[1] - 1);
-      if (interaction.value.spacePressed) toggleCellValue("d");
-    } else if (e.key === "ArrowDown") {
-      cursorPosition.value[1] = clampToGrid(cursorPosition.value[1] + 1);
-      if (interaction.value.spacePressed) toggleCellValue("d");
-    } else if (e.key === "f") {
-      toggleCellValue("x");
-    } else if (e.key === " ") {
-      interaction.value.spacePressed = true;
-      toggleCellValue("d");
-    }
-
-    // socket.emit("cursorPosition", cursorPosition.value);
-    // socket.emit("userStateChanged", {});
-    socket.emit("cursorPositionChanged", cursorPosition.value);
-  });
-
-  window.addEventListener("keyup", (e) => {
-    if (e.key === " ") {
-      interaction.value.spacePressed = false;
-    }
-  });
-});
 </script>
 
 <template>
-  {{ Object.keys(players) }},
-
-  <strong>{{ playerId }}</strong>
+  {{ players }}
   <div class="playfield-container" :class="{ cleared: levelIsCleared }">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
     <div class="optical-guide vertical" ref="guidevertical"></div>
@@ -158,7 +102,9 @@ onMounted(() => {
         v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div v-for="(hit, hitIndex) in hitsInColumn(index)" :key="hitIndex">{{ hit }}</div>
+        <div v-for="(hit, hitIndex) in hitsInColumn(index)" :key="hitIndex">
+          {{ hit }}
+        </div>
       </div>
     </div>
     <div class="legend vertical" ref="legendForRows">
@@ -168,7 +114,9 @@ onMounted(() => {
         v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div v-for="(hit, hitIndex) in hitsInRow(index)" :key="hitIndex">{{ hit }}</div>
+        <div v-for="(hit, hitIndex) in hitsInRow(index)" :key="hitIndex">
+          {{ hit }}
+        </div>
       </div>
     </div>
     <div
@@ -176,7 +124,7 @@ onMounted(() => {
       v-for="(cell, index) in gridSize * gridSize"
       :key="index"
       :class="{
-        cursor: isEqual(cursorPosition, indexToXY(index)),
+        cursor: isEqual(player?.position, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
         flagged: cellIndexIs(index, 'x'),
       }"

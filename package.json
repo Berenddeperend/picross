@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --host",
+    "serve": "vite --host",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "canvas-confetti": "^1.4.0",
     "lodash": "^4.17.21",
+    "pinia": "^2.0.10",
     "prettier": "^2.5.1",
     "sass": "^1.45.1",
     "socket.io-client": "^4.1",
