@@ -28,8 +28,6 @@ syncPlayersState();
 syncGrid();
 initControls();
 
-const cursorPosition = ref<Position>([0, 0]);
-
 const levelIsCleared = computed(() => {
   return isEqual(grid.value, solution.value);
 });
@@ -38,6 +36,19 @@ function indexToXY(index: number): Position {
   const x = index % gridSize;
   const y = Math.floor(index / gridSize);
   return [x, y];
+}
+
+function cursorStyling(index: number) {
+  const cellIsOwnCursor = isEqual(indexToXY(index), cursor.value);
+  if (cellIsOwnCursor)
+    return `
+    box-shadow: 0px 0px 0px 2px lightblue;
+  `;
+
+  const friend = Object.values(players.value).find((friends) => {
+    return isEqual(indexToXY(index), friends.position);
+  });
+  return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : null;
 }
 
 function cellIndexIs(index: number, value: string): boolean {
@@ -79,12 +90,8 @@ function xYToIndex(xy: Position): number {
   return y * gridSize + x;
 }
 
-function cellClicked(grid: Grid, row: number, column: number) {
-  grid[row][column] = "x";
-}
-
 function setCellValue(value: string) {
-  grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = value;
+  // grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = value;
 }
 </script>
 
@@ -123,8 +130,9 @@ function setCellValue(value: string) {
       class="cell"
       v-for="(cell, index) in gridSize * gridSize"
       :key="index"
+      :style="cursorStyling(index)"
       :class="{
-        cursor: isEqual(player?.position, indexToXY(index)),
+        // cursor: isEqual(player?.position, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
         flagged: cellIndexIs(index, 'x'),
       }"
@@ -215,7 +223,7 @@ function setCellValue(value: string) {
 .cell:hover {
   font-weight: bold;
   z-index: 2;
-  box-shadow: 0px 0px 0px 2px lightblue;
+  box-shadow: 0 0 0 2px lightblue;
 }
 
 .row {

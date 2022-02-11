@@ -13,8 +13,6 @@ export const cursor = computed<Position>(
 );
 
 export function movePlayerCursor(direction: "left" | "right" | "up" | "down") {
-  console.log(Date.now());
-  console.log("-> playerId.value", playerId.value);
   if (playerId.value === null) return;
   const oldPos = (player.value as Player).position;
 
@@ -36,13 +34,11 @@ export function movePlayerCursor(direction: "left" | "right" | "up" | "down") {
 }
 
 export function setPlayersState(newPlayersState: Players) {
-  console.log("setting players", newPlayersState);
   players.value = newPlayersState;
 }
 
 export function initState() {
   socket.once("initPlayer", (data: any) => {
-    console.log("initplayer called", data);
     playerId.value = data.id;
   });
 }
