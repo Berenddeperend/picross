@@ -7,7 +7,8 @@ import useUserStates from "@/hooks/useUserStates";
 
 import { io } from "socket.io-client";
 import useGrid from "@/hooks/useGrid";
-
+import { useStore } from "@/stores/store";
+const store = useStore();
 // const socket = io("ws://localhost:3000", { resource: "ws://localhost:4000" });
 const socket = io("ws://localhost:7000");
 
@@ -158,7 +159,9 @@ onMounted(() => {
         v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div v-for="(hit, hitIndex) in hitsInColumn(index)" :key="hitIndex">{{ hit }}</div>
+        <div v-for="(hit, hitIndex) in hitsInColumn(index)" :key="hitIndex">
+          {{ hit }}
+        </div>
       </div>
     </div>
     <div class="legend vertical" ref="legendForRows">
@@ -168,7 +171,9 @@ onMounted(() => {
         v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div v-for="(hit, hitIndex) in hitsInRow(index)" :key="hitIndex">{{ hit }}</div>
+        <div v-for="(hit, hitIndex) in hitsInRow(index)" :key="hitIndex">
+          {{ hit }}
+        </div>
       </div>
     </div>
     <div
