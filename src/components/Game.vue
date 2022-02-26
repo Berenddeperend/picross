@@ -42,7 +42,7 @@ function cursorStyling(index: number) {
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor.value);
   if (cellIsOwnCursor)
     return `
-    box-shadow: 0px 0px 0px 2px lightblue;
+    box-shadow: 0px 0px 0px 2px ${player.value?.color};
   `;
 
   const friend = Object.values(players.value).find((friends) => {
