@@ -96,7 +96,6 @@ function setCellValue(value: string) {
 </script>
 
 <template>
-  {{ players }}
   <div class="playfield-container" :class="{ cleared: levelIsCleared }">
     <div class="optical-guide horizontal" ref="guidehorizontal"></div>
     <div class="optical-guide vertical" ref="guidevertical"></div>

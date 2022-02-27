@@ -9,9 +9,7 @@ export default defineConfig({
     //   "/localhost": "http://localhost:4000",
     // },
   },
-  base: process.env.NODE_ENV === 'production'
-  ? '/picross/'
-  : '/',
+  base: process.env.NODE_ENV === "production" ? "/nonogram/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
