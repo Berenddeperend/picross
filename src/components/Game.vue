@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isEqual, clamp } from "lodash";
-import { onMounted, ref, watch, computed, ComputedRef } from "vue";
+import { onMounted, ref, watch, computed, ComputedRef, StyleValue } from "vue";
 import confetti from "canvas-confetti";
 
 import {
@@ -38,7 +38,7 @@ function indexToXY(index: number): Position {
   return [x, y];
 }
 
-function cursorStyling(index: number) {
+function cursorStyling(index: number): StyleValue | undefined {
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor.value);
   if (cellIsOwnCursor)
     return `
@@ -48,7 +48,7 @@ function cursorStyling(index: number) {
   const friend = Object.values(players.value).find((friends) => {
     return isEqual(indexToXY(index), friends.position);
   });
-  return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : null;
+  return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : undefined;
 }
 
 function cellIndexIs(index: number, value: string): boolean {
