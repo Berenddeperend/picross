@@ -4,19 +4,42 @@
     <ul>
       <li
         v-for="player in players"
-        :class="{ 'current-player': isCurrentPlayer(player) }"
-        :key="player"
+        :class="[{ 'current-player': isCurrentPlayer(player) }, player.id]"
         contenteditable="true"
+        ref="playersRef"
       >
         {{ player.name }}
       </li>
     </ul>
-    <input type="text" />
+    {{ playersRef }}
+    <input ref="inputRef" type="text" />
   </header>
 </template>
 
 <script setup lang="ts">
 import { players, playerId } from "@/hooks/useUserStates";
+import { createPopper } from "@popperjs/core";
+import { nextTick, onMounted, ref, watch } from "vue";
+
+const playersRef = ref([]);
+const inputRef = ref(null);
+
+onMounted(() => {
+  console.log("-> inputRef", inputRef);
+  //   console.log("-> playersRef", playersRef.value);
+});
+
+// createPopper(player as HTMLElement, $refs["input"] as HTMLDivElement, {
+//   placement: "right",
+//   modifiers: [
+//     {
+//       name: "arrow",
+//       options: {
+//         padding: 5,
+//       },
+//     },
+//   ],
+// });
 
 function isCurrentPlayer(player: Player) {
   return player.id === playerId.value;

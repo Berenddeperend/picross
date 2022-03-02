@@ -1,5 +1,6 @@
 import { onMounted, onUnmounted, ref, computed, watch } from "vue";
 import { socket } from "@/hooks/useSocket";
+import { clampToGrid } from "@/hooks/useGrid";
 
 export let playerId = ref<string | null>(null);
 export let players = ref<Players>({});
@@ -17,17 +18,25 @@ export function movePlayerCursor(direction: "left" | "right" | "up" | "down") {
   const oldPos = (player.value as Player).position;
 
   if (direction === "left") {
-    players.value[playerId.value].position[0]--;
+    players.value[playerId.value].position[0] = clampToGrid(
+      players.value[playerId.value].position[0] - 1
+    );
   }
   if (direction === "right") {
-    players.value[playerId.value].position[0]++;
+    players.value[playerId.value].position[0] = clampToGrid(
+      players.value[playerId.value].position[0] + 1
+    );
   }
 
   if (direction === "up") {
-    players.value[playerId.value].position[1]--;
+    players.value[playerId.value].position[1] = clampToGrid(
+      players.value[playerId.value].position[1] - 1
+    );
   }
   if (direction === "down") {
-    players.value[playerId.value].position[1]++;
+    players.value[playerId.value].position[1] = clampToGrid(
+      players.value[playerId.value].position[1] + 1
+    );
   }
 
   socket.emit("cursorPositionChanged", (player.value as Player).position);
