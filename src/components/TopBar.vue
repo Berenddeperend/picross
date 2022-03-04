@@ -17,7 +17,7 @@
         <!--        />-->
       </li>
     </ul>
-    {{ // playersRef }}
+    {{ playersRef }}
   </header>
 </template>
 
