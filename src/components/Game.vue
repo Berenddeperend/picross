@@ -10,6 +10,7 @@ import {
   hitsInRow,
   hitsInColumn,
   syncGrid,
+  levelIsCleared,
 } from "@/hooks/useGrid";
 import {
   syncPlayersState,
@@ -26,10 +27,6 @@ initState();
 syncPlayersState();
 syncGrid();
 initControls();
-
-const levelIsCleared = computed(() => {
-  return isEqual(grid.value, solution.value);
-});
 
 function indexToXY(index: number): Position {
   const x = index % gridSize;

@@ -1,6 +1,6 @@
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import SampleLevel from "@/sample-level.json";
-import { clamp } from "lodash";
+import { clamp, isEqual } from "lodash";
 import { socket } from "@/hooks/useSocket";
 
 function getHits(arr: string[]): number[] {
@@ -19,6 +19,10 @@ function getHits(arr: string[]): number[] {
 export const gridSize = 10;
 export const grid = ref<Grid>(createGrid(gridSize));
 export const solution = ref<Grid>(SampleLevel);
+
+export const levelIsCleared = computed(() => {
+  return isEqual(grid.value, solution.value);
+});
 
 export const legendForColumns = ref<HTMLDivElement>();
 export const legendForRows = ref<HTMLDivElement>();

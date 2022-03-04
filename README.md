@@ -7,15 +7,16 @@ Main menu:
   - Save
 
 
+
+
+
+
 controls: 
 space: yes
 f: no
 
-
 ideas:
-websockets?
-    - coop?
-        - Twee fouten binnen 5 seconden? 10s timeout
+- highscore per persoon per sessie
 
 
 Reactivity bug:

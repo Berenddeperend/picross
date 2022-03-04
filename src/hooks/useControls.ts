@@ -1,6 +1,6 @@
 import { onMounted, onUnmounted, ref, ComputedRef, computed, watch } from "vue";
 import { movePlayerCursor, player } from "@/hooks/useUserStates";
-import { grid } from "@/hooks/useGrid";
+import { grid, levelIsCleared } from "@/hooks/useGrid";
 import { socket } from "@/hooks/useSocket";
 
 const interaction = ref({
@@ -9,6 +9,10 @@ const interaction = ref({
 });
 
 function toggleCellValue(value: string) {
+  if (levelIsCleared.value) {
+    return;
+  }
+
   const cell =
     grid.value[(player.value as Player).position[1]][
       (player.value as Player).position[0]
