@@ -17,7 +17,6 @@
         <!--        />-->
       </li>
     </ul>
-    {{ playersRef }}
   </header>
 </template>
 
