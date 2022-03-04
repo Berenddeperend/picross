@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { isEqual, clamp } from "lodash";
-import { onMounted, ref, watch, computed, ComputedRef, StyleValue } from "vue";
+import { isEqual } from "lodash";
+import { watch, computed, StyleValue } from "vue";
 import confetti from "canvas-confetti";
 
 import {
   grid,
   gridSize,
   solution,
-  clampToGrid,
   hitsInRow,
   hitsInColumn,
   syncGrid,
@@ -17,11 +16,11 @@ import {
   initState,
   players,
   player,
-  playerId,
   cursor,
 } from "@/hooks/useUserStates";
 import { initControls } from "@/hooks/useControls";
-import { socket } from "@/hooks/useSocket";
+
+import ClearGrid from "@/components/Clear.vue";
 
 initState();
 syncPlayersState();
@@ -137,6 +136,7 @@ function setCellValue(value: string) {
       }"
     ></div>
   </div>
+  <clearGrid />
 </template>
 
 <style lang="scss">

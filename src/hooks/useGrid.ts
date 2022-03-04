@@ -28,6 +28,10 @@ export function createGrid(size: number): Grid {
   return grid;
 }
 
+export function clearGrid() {
+  grid.value = createGrid(gridSize);
+}
+
 export function clampToGrid(value: number) {
   return clamp(value, 0, gridSize - 1);
 }
@@ -41,7 +45,6 @@ export function hitsInColumn(colNumber: number): number[] {
 }
 
 export function setGrid(newGrid: Grid) {
-  console.log("setgrid called:", newGrid);
   grid.value = newGrid;
 }
 

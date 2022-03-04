@@ -5,14 +5,19 @@
       <li
         v-for="player in players"
         :class="[{ 'current-player': isCurrentPlayer(player) }, player.id]"
-        contenteditable="true"
         ref="playersRef"
       >
         {{ player.name }}
+
+        <!--        <input-->
+        <!--          ref="inputRef"-->
+        <!--          v-if="isCurrentPlayer(player)"-->
+        <!--          v-model="player.name"-->
+        <!--          type="text"-->
+        <!--        />-->
       </li>
     </ul>
-    {{ playersRef }}
-    <input ref="inputRef" type="text" />
+    {{ // playersRef }}
   </header>
 </template>
 
@@ -23,6 +28,8 @@ import { nextTick, onMounted, ref, watch } from "vue";
 
 const playersRef = ref([]);
 const inputRef = ref(null);
+
+const name = ref("");
 
 onMounted(() => {
   console.log("-> inputRef", inputRef);
