@@ -16,7 +16,8 @@
     "prettier": "^2.5.1",
     "sass": "^1.45.1",
     "socket.io-client": "^4.1",
-    "vue": "^3.2.25"
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.4.2",

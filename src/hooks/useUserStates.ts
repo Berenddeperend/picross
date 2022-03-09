@@ -9,6 +9,7 @@ export const player = computed(() => {
   return playerId.value !== null ? players.value[playerId.value] : null;
 });
 
+
 export const cursor = computed<Position>(
   () => player?.value?.position as Position
 );
@@ -47,9 +48,11 @@ export function setPlayersState(newPlayersState: Players) {
 }
 
 export function initState() {
-  socket.once("initPlayer", (data: any) => {
+  socket.on("initPlayer", (data: any) => {
     playerId.value = data.id;
   });
+
+  socket.emit("startGame");
 }
 
 export function syncPlayersState() {

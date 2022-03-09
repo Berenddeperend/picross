@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import Game from "@/components/Game.vue";
 import TopBar from "@/components/TopBar.vue";
 
@@ -10,8 +8,9 @@ const gameState: GameState = "playing";
 </script>
 
 <template>
-  <TopBar />
-  <Game />
+  <router-view></router-view>
+  <!--  <TopBar />-->
+  <!--  <Game />-->
 </template>
 
 <style>

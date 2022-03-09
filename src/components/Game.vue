@@ -23,10 +23,12 @@ import { initControls } from "@/hooks/useControls";
 
 import ClearGrid from "@/components/Clear.vue";
 
-initState();
-syncPlayersState();
 syncGrid();
+syncPlayersState();
 initControls();
+initState();
+
+
 
 function indexToXY(index: number): Position {
   const x = index % gridSize;
@@ -137,6 +139,10 @@ function setCellValue(value: string) {
 </template>
 
 <style lang="scss">
+$delay: 1s;
+$transition-time: 0.1s;
+$transition-time-slow: 1s;
+
 .horizontal-thing {
   position: absolute;
 }
@@ -145,14 +151,15 @@ function setCellValue(value: string) {
   background: gray;
   position: relative;
   padding: 1px;
-  transition: background-color 0.4s;
+  //transition: background-color 0.4s;
 
   display: inline-grid;
   grid-template-columns: auto repeat(10, 1fr);
   grid-template-rows: auto repeat(10, 1fr);
 
   &.cleared {
-    //background: green;
+    background: none;
+    transition: background-color $transition-time-slow 1s;
   }
 }
 
@@ -194,6 +201,14 @@ function setCellValue(value: string) {
   }
 }
 
+.cleared .optical-guide,
+.cleared .legend {
+  //width: 0;
+  //height: 0;
+  opacity: 0;
+  transition: $transition-time-slow $delay;
+}
+
 .optical-guide {
   background: greenyellow;
   position: absolute;
@@ -224,6 +239,15 @@ function setCellValue(value: string) {
 
 .row {
   display: flex;
+}
+
+.cleared .cell {
+  margin: 0;
+  border-radius: 0;
+  transition: background-color $transition-time,
+    margin $transition-time-slow $delay * 2,
+    border-radius $transition-time-slow $delay * 2;
+  box-shadow: none !important;
 }
 
 .cell {

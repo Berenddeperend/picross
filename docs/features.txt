@@ -1,0 +1,9 @@
+Hier opschrijven welke features ik allemaal wil hebben.
+
+Main menu
+- create mode
+    - save -> laravel backend
+        - made by
+        - level
+- play
+    - Sidebar met score per user (correct placements, faulty placements, percentage)

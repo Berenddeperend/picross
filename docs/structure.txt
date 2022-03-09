@@ -1,0 +1,7 @@
+app
+    game
+        grid
+        controls
+    build
+        grid
+        controls
