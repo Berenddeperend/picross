@@ -8,7 +8,8 @@ const interaction = ref({
   intention: "build",
 });
 
-function toggleCellValue(value: string) {
+export function toggleCellValue(value: string) {
+  console.log("yoink");
   if (levelIsCleared.value) {
     return;
   }

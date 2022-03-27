@@ -8,6 +8,7 @@ Main menu:
 
 
 
+sudoku.com line clear effect
 
 
 

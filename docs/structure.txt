@@ -5,3 +5,17 @@ app
     build
         grid
         controls
+          socket
+
+
+moet socket boven grid/controls staan en de boel controlleren?
+Misschien een controller erboven met optie tot local/socket,
+
+
+
+
+
+create.vue heeft de state van de player
+Iedere hook returnt een nieuwe instance ipv singleton
+
+Dat idee van die gedupliceerde api/interface is wel goed.

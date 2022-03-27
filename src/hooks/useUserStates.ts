@@ -9,7 +9,6 @@ export const player = computed(() => {
   return playerId.value !== null ? players.value[playerId.value] : null;
 });
 
-
 export const cursor = computed<Position>(
   () => player?.value?.position as Position
 );

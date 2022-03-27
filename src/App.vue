@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Game from "@/components/Game.vue";
+import Game from "@/layout/Game.vue";
 import TopBar from "@/components/TopBar.vue";
 
 type GameState = "playing" | "menu";
@@ -11,6 +11,7 @@ const gameState: GameState = "playing";
   <router-view></router-view>
   <!--  <TopBar />-->
   <!--  <Game />-->
+  <div id="modal-target"></div>
 </template>
 
 <style>

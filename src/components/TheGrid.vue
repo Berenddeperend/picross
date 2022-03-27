@@ -1,105 +1,126 @@
 <script setup lang="ts">
+import { StyleValue, computed, Ref } from "vue";
 import { isEqual } from "lodash";
-import { watch, computed, StyleValue } from "vue";
-import confetti from "canvas-confetti";
-
+// import { cursor, player, players } from "@/hooks/useUserStates";
 import {
-  grid,
   gridSize,
   solution,
   hitsInRow,
   hitsInColumn,
   syncGrid,
   levelIsCleared,
+  indexToXY,
 } from "@/hooks/useGrid";
-import {
-  syncPlayersState,
-  initState,
+import { initControls } from "@/hooks/useControlsNew";
+
+const {
+  enableFlag = false,
+  enableControls = false,
+  enableLegend = false,
+  enableSocket = false,
   players,
   player,
-  cursor,
-} from "@/hooks/useUserStates";
-import { initControls } from "@/hooks/useControls";
+  grid,
+} = defineProps<{
+  enableFlag?: boolean;
+  enableControls?: boolean;
+  enableLegend?: boolean;
+  enableSocket?: boolean;
+  players: Players;
+  player: Player;
+  grid: Grid;
+}>();
 
-import ClearGrid from "@/components/Clear.vue";
+const emit = defineEmits<{
+  (e: "onCellClicked", index: number): void;
+  (e: "gridChanged", grid: Grid): void;
+  (e: "stateChanged", grid: Grid): void;
+  (e: "moveCursor", dir: Direction): void;
+}>();
 
-syncGrid();
-syncPlayersState();
-initControls();
-initState();
+const cursor = computed<Position>(() => player.position as Position);
 
+if (enableControls) {
+  initControls({
+    // onToggleCellValue: () => emit("gridChanged", grid),
+    onToggleCellValue: (value) => {
+      // console.log("dit krijg ik binnen van grid", value);
+      emit("stateChanged", grid);
+    },
+    onMovePlayerCursor: (value) => {
+      emit("moveCursor", value);
+    },
+  });
 
-
-function indexToXY(index: number): Position {
-  const x = index % gridSize;
-  const y = Math.floor(index / gridSize);
-  return [x, y];
+  //ik denk dat dit maar een eventbus moet worden
+  // const {controlEvents} = useControls
+  // controlEvents.on(moveCursor) ofzo.
 }
 
 function cursorStyling(index: number): StyleValue | undefined {
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor.value);
   if (cellIsOwnCursor)
     return `
-    box-shadow: 0px 0px 0px 2px ${player.value?.color};
+    box-shadow: 0px 0px 0px 2px ${player.color};
   `;
 
-  const friend = Object.values(players.value).find((friends) => {
-    return isEqual(indexToXY(index), friends.position);
-  });
-  return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : undefined;
+  if (enableSocket) {
+    const friend = Object.values(players.value).find((friends) => {
+      return isEqual(indexToXY(index), friends.position);
+    });
+    return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : undefined;
+  }
 }
+
+const playfieldStyling = computed((): StyleValue => {
+  const rule = enableLegend ? `auto repeat(10, 1fr)` : `repeat(10, 1fr)`;
+  return `
+    grid-template-columns: ${rule};
+    grid-template-rows: ${rule};
+  `;
+});
 
 function cellIndexIs(index: number, value: string): boolean {
   const [x, y] = indexToXY(index);
-  return grid.value[y][x] === value;
+  return grid[y][x] === value;
 }
-
-watch(levelIsCleared, (value) => {
-  if (value) {
-    confetti({
-      zIndex: -1,
-      particleCount: 50,
-      spread: 70,
-      angle: 60,
-      origin: { y: 0.6 },
-    });
-    confetti({
-      zIndex: -1,
-      particleCount: 50,
-      spread: 70,
-      angle: 120,
-      origin: { y: 0.6 },
-    });
-  }
-});
 
 function columnLegendActive(index: number) {
   // return cursorPosition.value[0] === index;
-  return player.value?.position[0] === index;
+  return player.position[0] === index;
 }
 
 function rowLegendActive(index: number) {
   // return cursorPosition.value[1] === index;
-  return player.value?.position[1] === index;
+  return player.position[1] === index;
 }
 
-function xYToIndex(xy: Position): number {
-  const [x, y] = xy;
-  return y * gridSize + x;
-}
-
-function setCellValue(value: string) {
-  // grid.value[cursorPosition.value[1]][cursorPosition.value[0]] = value;
+function onCellClicked(index: number) {
+  // const [x, y] = indexToXY(index);
+  emit("onCellClicked", index);
+  // grid.value[y][x] = "d";
 }
 </script>
 
 <template>
-  <div class="playfield-container" :class="{ cleared: levelIsCleared }">
-    <div class="optical-guide horizontal" ref="guidehorizontal"></div>
-    <div class="optical-guide vertical" ref="guidevertical"></div>
+  <div
+    class="playfield-container"
+    :class="{ cleared: levelIsCleared }"
+    :style="playfieldStyling"
+  >
+    <div
+      class="optical-guide horizontal"
+      v-if="enableLegend"
+      ref="guidehorizontal"
+    ></div>
+    <div
+      class="optical-guide vertical"
+      v-if="enableLegend"
+      ref="guidevertical"
+    ></div>
 
-    <div class="corner"></div>
-    <div class="legend horizontal" ref="legendForColumns">
+    <div class="corner" v-if="enableLegend"></div>
+    <div class="legend horizontal" v-if="enableLegend" ref="legendForColumns">
       <div
         class="cell"
         :class="{ highlighted: columnLegendActive(index) }"
@@ -111,7 +132,7 @@ function setCellValue(value: string) {
         </div>
       </div>
     </div>
-    <div class="legend vertical" ref="legendForRows">
+    <div class="legend vertical" v-if="enableLegend" ref="legendForRows">
       <div
         class="cell"
         :class="{ highlighted: rowLegendActive(index) }"
@@ -128,6 +149,8 @@ function setCellValue(value: string) {
       v-for="(cell, index) in gridSize * gridSize"
       :key="index"
       :style="cursorStyling(index)"
+      @click="onCellClicked(index)"
+      :i="index"
       :class="{
         // cursor: isEqual(player?.position, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
@@ -135,10 +158,9 @@ function setCellValue(value: string) {
       }"
     ></div>
   </div>
-  <clearGrid />
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $delay: 1s;
 $transition-time: 0.1s;
 $transition-time-slow: 1s;
@@ -154,8 +176,8 @@ $transition-time-slow: 1s;
   //transition: background-color 0.4s;
 
   display: inline-grid;
-  grid-template-columns: auto repeat(10, 1fr);
-  grid-template-rows: auto repeat(10, 1fr);
+  //grid-template-columns: auto repeat(10, 1fr);
+  //grid-template-rows: auto repeat(10, 1fr);
 
   &.cleared {
     background: none;
@@ -251,10 +273,11 @@ $transition-time-slow: 1s;
 }
 
 .cell {
+  $size: 25px;
   margin: 1px;
   border-radius: 2px;
-  width: 25px;
-  height: 25px;
+  width: $size;
+  height: $size;
   vertical-align: center;
   background: white;
   transition: background-color 0.1s;

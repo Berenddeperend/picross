@@ -36,6 +36,17 @@ export function clearGrid() {
   grid.value = createGrid(gridSize);
 }
 
+export function xYToIndex(xy: Position): number {
+  const [x, y] = xy;
+  return y * gridSize + x;
+}
+
+export function indexToXY(index: number): Position {
+  const x = index % gridSize;
+  const y = Math.floor(index / gridSize);
+  return [x, y];
+}
+
 export function clampToGrid(value: number) {
   return clamp(value, 0, gridSize - 1);
 }

@@ -1,14 +1,15 @@
 import { createApp } from "vue";
 // import { createPinia } from "pinia";
 import App from "./App.vue";
-import Game from "./components/Game.vue";
+import Game from "./layout/Game.vue";
+import Create from "./layout/Create.vue";
 import MainMenu from "./layout/MainMenu.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
   { path: "/", component: MainMenu },
   { path: "/play", component: Game },
-  // { path: '/create', component: About },
+  { path: "/create", component: Create },
 ];
 
 const router = createRouter({

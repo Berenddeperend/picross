@@ -7,3 +7,10 @@ Main menu
         - level
 - play
     - Sidebar met score per user (correct placements, faulty placements, percentage)
+
+
+
+grid features:
+- Optional socketio
+- Optional controls/legend
+- Optional flag-control
