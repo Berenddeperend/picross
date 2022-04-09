@@ -28,4 +28,7 @@ const a = reactive({})
 https://wildermuth.com/2020/08/30/Vue-3-To-Vuex-or-Not-to-Vuex
 https://andrejgaluf.com/blog/vue-composition-api-store/
 
+https://dev.to/thomasferro/composition-api-v-renderless-components-let-s-use-vue-3-s-features-to-clean-our-components-n25 <--
+
+
 Of state: Piniajs

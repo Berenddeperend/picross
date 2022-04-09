@@ -21,14 +21,14 @@ body {
   margin: 0;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 #app {

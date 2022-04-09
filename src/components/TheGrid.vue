@@ -26,8 +26,8 @@ const {
   enableControls?: boolean;
   enableLegend?: boolean;
   enableSocket?: boolean;
-  players: Players;
-  player: Player;
+  players?: Players;
+  player?: Player;
   grid: Grid;
 }>();
 
@@ -36,18 +36,19 @@ const emit = defineEmits<{
   (e: "gridChanged", grid: Grid): void;
   (e: "stateChanged", grid: Grid): void;
   (e: "moveCursor", dir: Direction): void;
+  (e: "toggleCellValue", value: string): void;
 }>();
 
-const cursor = computed<Position>(() => player.position as Position);
+const cursor = player
+  ? computed<Position>(() => player.position as Position)
+  : null;
 
 if (enableControls) {
   initControls({
-    // onToggleCellValue: () => emit("gridChanged", grid),
-    onToggleCellValue: (value) => {
-      // console.log("dit krijg ik binnen van grid", value);
-      emit("stateChanged", grid);
+    toggleCellValue: (value) => {
+      emit("toggleCellValue", value);
     },
-    onMovePlayerCursor: (value) => {
+    movePlayerCursor: (value) => {
       emit("moveCursor", value);
     },
   });
@@ -58,6 +59,8 @@ if (enableControls) {
 }
 
 function cursorStyling(index: number): StyleValue | undefined {
+  if (!cursor || !player || !players) return;
+
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor.value);
   if (cellIsOwnCursor)
     return `
@@ -86,17 +89,20 @@ function cellIndexIs(index: number, value: string): boolean {
 }
 
 function columnLegendActive(index: number) {
+  if (!player) return;
   // return cursorPosition.value[0] === index;
   return player.position[0] === index;
 }
 
 function rowLegendActive(index: number) {
+  if (!player) return;
   // return cursorPosition.value[1] === index;
   return player.position[1] === index;
 }
 
 function onCellClicked(index: number) {
   // const [x, y] = indexToXY(index);
+  if (!enableControls) return;
   emit("onCellClicked", index);
   // grid.value[y][x] = "d";
 }
@@ -152,7 +158,7 @@ function onCellClicked(index: number) {
       @click="onCellClicked(index)"
       :i="index"
       :class="{
-        // cursor: isEqual(player?.position, indexToXY(index)),
+        cursor: isEqual(player?.position, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
         flagged: cellIndexIs(index, 'x'),
       }"
@@ -273,9 +279,10 @@ $transition-time-slow: 1s;
 }
 
 .cell {
-  $size: 25px;
-  margin: 1px;
-  border-radius: 2px;
+  $size: 27px;
+  //margin: 1px;
+  border: 1px solid gray;
+  border-radius: 3px;
   width: $size;
   height: $size;
   vertical-align: center;

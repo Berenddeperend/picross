@@ -44,30 +44,31 @@ const interaction = ref({
 // }
 
 export function initControls(fns: {
-  onToggleCellValue: (value: string) => any;
-  onMovePlayerCursor: (value: Direction) => any;
+  toggleCellValue: (value: string) => any;
+  movePlayerCursor: (value: Direction) => any;
 }) {
+  const { toggleCellValue, movePlayerCursor } = fns;
   function controls(e: KeyboardEvent) {
     // e.preventDefault();
     // emit("moveCursor");
 
     if (e.key === "ArrowLeft") {
-      fns.onMovePlayerCursor("left");
-      if (interaction.value.spacePressed) fns.onToggleCellValue("d");
+      movePlayerCursor("left");
+      if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "ArrowRight") {
-      fns.onMovePlayerCursor("right");
-      if (interaction.value.spacePressed) fns.onToggleCellValue("d");
+      movePlayerCursor("right");
+      if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "ArrowUp") {
-      fns.onMovePlayerCursor("up");
-      if (interaction.value.spacePressed) fns.onToggleCellValue("d");
+      movePlayerCursor("up");
+      if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "ArrowDown") {
-      fns.onMovePlayerCursor("down");
-      if (interaction.value.spacePressed) fns.onToggleCellValue("d");
+      movePlayerCursor("down");
+      if (interaction.value.spacePressed) toggleCellValue("d");
     } else if (e.key === "f") {
-      fns.onToggleCellValue("x");
+      toggleCellValue("x");
     } else if (e.key === " ") {
       interaction.value.spacePressed = true;
-      fns.onToggleCellValue("d");
+      toggleCellValue("d");
     }
   }
 

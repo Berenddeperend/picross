@@ -6,7 +6,7 @@ import confetti from "canvas-confetti";
 import {
   grid,
   gridSize,
-  solution,
+  // solution,
   hitsInRow,
   hitsInColumn,
   syncGrid,

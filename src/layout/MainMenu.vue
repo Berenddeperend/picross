@@ -8,6 +8,9 @@
     <li>
       <router-link to="/create">Create Level</router-link>
     </li>
+    <li>
+      <router-link to="/my-puzzles">My puzzles</router-link>
+    </li>
   </ul>
 </template>
 
