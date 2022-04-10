@@ -8,11 +8,10 @@
       :grid="grid"
     />
 
-    <PuzzleList />
+    <!--    <PuzzleList />-->
 
     <Grid
       :enable-controls="true"
-      :enable-legend="true"
       :grid="grid"
       :player="player"
       :players="players"
@@ -36,16 +35,15 @@ import {
 
 import Grid from "@/components/TheGrid.vue";
 import { ref } from "vue";
-import { socket } from "@/hooks/useSocket";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 import PuzzleList from "@/components/PuzzleList.vue";
-import SampleLevel from "@/sample-level.json";
 
 const showSaveGridModal = ref<Boolean>(false);
 
 const grid = ref<Grid>(createGrid(gridSize));
 
 //hier gaan we de userstate bijhouden, niet in het grid component.
+// Maar dat doen we via useState, welke we misschien doorgeven naar het grid?
 const player = ref<Player>({
   id: "1",
   position: [0, 0],

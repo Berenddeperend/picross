@@ -3,8 +3,7 @@ import { StyleValue, computed, Ref, ref } from "vue";
 import { isEqual } from "lodash";
 // import { cursor, player, players } from "@/hooks/useUserStates";
 
-import useGrid from "@/hooks/useGrid";
-import SampleLevel from "@/sample-level.json";
+import useGrid from "@/hooks/useGridNew";
 
 import { initControls } from "@/hooks/useControlsNew";
 
