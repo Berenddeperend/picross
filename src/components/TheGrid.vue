@@ -1,35 +1,33 @@
 <script setup lang="ts">
-import { StyleValue, computed, Ref } from "vue";
+import { StyleValue, computed, Ref, ref } from "vue";
 import { isEqual } from "lodash";
 // import { cursor, player, players } from "@/hooks/useUserStates";
-import {
-  gridSize,
-  solution,
-  hitsInRow,
-  hitsInColumn,
-  syncGrid,
-  levelIsCleared,
-  indexToXY,
-} from "@/hooks/useGrid";
+
+import useGrid from "@/hooks/useGrid";
+import SampleLevel from "@/sample-level.json";
+
 import { initControls } from "@/hooks/useControlsNew";
 
 const {
   enableFlag = false,
   enableControls = false,
-  enableLegend = false,
   enableSocket = false,
   players,
   player,
+  solution,
   grid,
 } = defineProps<{
   enableFlag?: boolean;
   enableControls?: boolean;
-  enableLegend?: boolean;
   enableSocket?: boolean;
   players?: Players;
   player?: Player;
+  solution?: Grid;
   grid: Grid;
 }>();
+
+const { gridSize, hitsInRow, hitsInColumn, levelIsCleared, indexToXY } =
+  useGrid(grid, solution);
 
 const emit = defineEmits<{
   (e: "onCellClicked", index: number): void;
@@ -76,7 +74,7 @@ function cursorStyling(index: number): StyleValue | undefined {
 }
 
 const playfieldStyling = computed((): StyleValue => {
-  const rule = enableLegend ? `auto repeat(10, 1fr)` : `repeat(10, 1fr)`;
+  const rule = solution ? `auto repeat(10, 1fr)` : `repeat(10, 1fr)`;
   return `
     grid-template-columns: ${rule};
     grid-template-rows: ${rule};
@@ -116,17 +114,17 @@ function onCellClicked(index: number) {
   >
     <div
       class="optical-guide horizontal"
-      v-if="enableLegend"
+      v-if="solution"
       ref="guidehorizontal"
     ></div>
     <div
       class="optical-guide vertical"
-      v-if="enableLegend"
+      v-if="solution"
       ref="guidevertical"
     ></div>
 
-    <div class="corner" v-if="enableLegend"></div>
-    <div class="legend horizontal" v-if="enableLegend" ref="legendForColumns">
+    <div class="corner" v-if="solution"></div>
+    <div class="legend horizontal" v-if="solution">
       <div
         class="cell"
         :class="{ highlighted: columnLegendActive(index) }"
@@ -138,7 +136,7 @@ function onCellClicked(index: number) {
         </div>
       </div>
     </div>
-    <div class="legend vertical" v-if="enableLegend" ref="legendForRows">
+    <div class="legend vertical" v-if="solution">
       <div
         class="cell"
         :class="{ highlighted: rowLegendActive(index) }"

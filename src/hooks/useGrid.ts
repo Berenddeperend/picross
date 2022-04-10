@@ -24,8 +24,8 @@ export const levelIsCleared = computed(() => {
   return isEqual(grid.value, solution.value);
 });
 
-export const legendForColumns = ref<HTMLDivElement>();
-export const legendForRows = ref<HTMLDivElement>();
+// export const legendForColumns = ref<HTMLDivElement>();
+// export const legendForRows = ref<HTMLDivElement>();
 
 export function createGrid(size: number): Grid {
   const grid = new Array(size).fill("").map((d) => new Array(size).fill(" "));
@@ -72,3 +72,35 @@ export function syncGrid() {
     socket.off("gridUpdated", setGrid);
   });
 }
+
+const useGrid = (grid: Grid, solution?: Grid) => {
+  const gridSize = computed(() => grid[0].length);
+
+  function indexToXY(index: number): Position {
+    const x = index % gridSize.value;
+    const y = Math.floor(index / gridSize.value);
+    return [x, y];
+  }
+
+  function hitsInColumn(colNumber: number): number[] {
+    return getHits(solution!.map((x) => x[colNumber]));
+  }
+
+  function hitsInRow(rowNumber: number): number[] {
+    return getHits(solution![rowNumber]);
+  }
+
+  const levelIsCleared = computed(() => {
+    return isEqual(grid, solution);
+  });
+
+  return {
+    gridSize,
+    indexToXY,
+    hitsInColumn,
+    hitsInRow,
+    levelIsCleared,
+  };
+};
+
+export default useGrid;

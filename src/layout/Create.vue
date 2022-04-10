@@ -12,6 +12,7 @@
 
     <Grid
       :enable-controls="true"
+      :enable-legend="true"
       :grid="grid"
       :player="player"
       :players="players"
@@ -38,8 +39,10 @@ import { ref } from "vue";
 import { socket } from "@/hooks/useSocket";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 import PuzzleList from "@/components/PuzzleList.vue";
+import SampleLevel from "@/sample-level.json";
 
 const showSaveGridModal = ref<Boolean>(false);
+
 const grid = ref<Grid>(createGrid(gridSize));
 
 //hier gaan we de userstate bijhouden, niet in het grid component.
