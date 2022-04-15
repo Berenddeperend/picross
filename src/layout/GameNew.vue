@@ -6,6 +6,19 @@ import Grid from "@/components/TheGrid.vue";
 
 import { socket } from "@/hooks/useSocket";
 
+const grid = ref<Grid>(createGrid(10));
+const solution = ref<Grid>();
+
+import { createGrid } from "@/utils";
+import useUserStates from "@/hooks/useUserStatesNew";
+// import { initControls, toggleCellValue } from "@/hooks/useControls";
+// initControls();
+import useGrid from "@/hooks/useGridNew";
+
+const { clampToGrid, levelIsCleared, indexToXY } = useGrid(grid.value);
+
+const { players, player } = useUserStates("multiplayer", clampToGrid, setGrid);
+
 onMounted(() => {
   socket.on("solution", setSolution);
 });
@@ -14,33 +27,50 @@ onUnmounted(() => {
   socket.off("solution", setSolution);
 });
 
-import { syncGrid, levelIsCleared } from "@/hooks/useGrid";
-
-import { createGrid } from "@/utils";
-
-const grid = ref<Grid>(createGrid(10));
-const solution = ref<Grid>();
-
-import useUserStates from "@/hooks/useUserStatesNew";
-import { initControls, toggleCellValue } from "@/hooks/useControls";
-import useGrid from "@/hooks/useGridNew";
-
-const { clampToGrid } = useGrid(grid.value);
-
-const { players, player } = useUserStates("multiplayer", clampToGrid, setGrid);
-
 function setGrid(newGrid: Grid) {
   //Deze is vrij lomp overgekopieerd van 'create'
   grid.value = newGrid;
 }
 
 function setSolution(newSolution: any) {
-  solution.value = JSON.parse(newSolution[0].puzzle);
+  solution.value = JSON.parse(newSolution.puzzle);
 }
 
-initControls();
+function onCellClicked(index: number) {
+  const [x, y] = indexToXY(index);
+  grid.value[y][x] = grid.value[y][x] === " " ? "d" : " ";
+}
+
+function onMoveCursor(direction: Direction) {
+  if (direction === "left") {
+    player.value!.position[0] = clampToGrid(player.value!.position[0] - 1);
+  }
+  if (direction === "right") {
+    player.value!.position[0] = clampToGrid(player.value!.position[0] + 1);
+  }
+  if (direction === "up") {
+    player.value!.position[1] = clampToGrid(player.value!.position[1] - 1);
+  }
+  if (direction === "down") {
+    player.value!.position[1] = clampToGrid(player.value!.position[1] + 1);
+  }
+  socket.emit("cursorPositionChanged", player.value!.position);
+}
+
+function onStateChanged(newState: any) {
+  console.log("damn! onstatechanged", newState);
+}
+
+function onToggleCellValue(value: string) {
+  if (levelIsCleared.value) return;
+
+  const [x, y] = (player.value as Player).position;
+  grid.value[y][x] = grid.value[y][x] === value ? " " : value;
+  socket.emit("gridUpdated", grid.value);
+}
 
 watch(levelIsCleared, (value) => {
+  console.log("ree");
   if (value) {
     confetti({
       zIndex: -1,

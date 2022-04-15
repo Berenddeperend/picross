@@ -9,7 +9,6 @@ const interaction = ref({
 });
 
 export function toggleCellValue(value: string) {
-  console.log("yoink");
   if (levelIsCleared.value) {
     return;
   }
