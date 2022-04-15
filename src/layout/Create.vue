@@ -1,5 +1,6 @@
 <template>
   <div class="create">
+    Dit component is af-ish!
     <button @click="showSaveGridModal = true">Save puzzle</button>
 
     <ModalSavePuzzle
@@ -7,8 +8,6 @@
       @close="showSaveGridModal = false"
       :grid="grid"
     />
-
-    <!--    <PuzzleList />-->
 
     <Grid
       :enable-controls="true"
@@ -25,47 +24,32 @@
 </template>
 
 <script setup lang="ts">
-import {
-  clampToGrid,
-  createGrid,
-  gridSize,
-  indexToXY,
-  levelIsCleared,
-} from "@/hooks/useGrid";
-
-import Grid from "@/components/TheGrid.vue";
 import { ref } from "vue";
+import { createGrid } from "@/utils";
+import useGrid from "@/hooks/useGridNew";
+import useUserStates from "@/hooks/useUserStatesNew";
+import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
-import PuzzleList from "@/components/PuzzleList.vue";
 
 const showSaveGridModal = ref<Boolean>(false);
+const grid = ref<Grid>(createGrid(10));
 
-const grid = ref<Grid>(createGrid(gridSize));
-
-//hier gaan we de userstate bijhouden, niet in het grid component.
-// Maar dat doen we via useState, welke we misschien doorgeven naar het grid?
-const player = ref<Player>({
-  id: "1",
-  position: [0, 0],
-  color: "green",
-  name: "berend",
-});
-
-const players = ref<Players>({
-  "1": player.value,
-});
+const { indexToXY, clampToGrid, levelIsCleared } = useGrid(grid.value);
+const { player } = useUserStates("singleplayer", clampToGrid, setGrid);
 
 function onStateChanged(newState: any) {
   console.log("damn! onstatechanged", newState);
 }
 
 function onToggleCellValue(value: string) {
-  if (showSaveGridModal.value) return;
-  if (levelIsCleared.value) {
-    return;
-  }
+  if (showSaveGridModal.value || levelIsCleared.value) return;
+
   const [x, y] = (player.value as Player).position;
   grid.value[y][x] = grid.value[y][x] === value ? " " : value;
+}
+
+function setGrid(newGrid: Grid) {
+  grid.value = newGrid;
 }
 
 function onCellClicked(index: number) {
@@ -77,16 +61,16 @@ function onMoveCursor(direction: Direction) {
   if (showSaveGridModal.value) return;
 
   if (direction === "left") {
-    player.value.position[0] = clampToGrid(player.value.position[0] - 1);
+    player.value!.position[0] = clampToGrid(player.value!.position[0] - 1);
   }
   if (direction === "right") {
-    player.value.position[0] = clampToGrid(player.value.position[0] + 1);
+    player.value!.position[0] = clampToGrid(player.value!.position[0] + 1);
   }
   if (direction === "up") {
-    player.value.position[1] = clampToGrid(player.value.position[1] - 1);
+    player.value!.position[1] = clampToGrid(player.value!.position[1] - 1);
   }
   if (direction === "down") {
-    player.value.position[1] = clampToGrid(player.value.position[1] + 1);
+    player.value!.position[1] = clampToGrid(player.value!.position[1] + 1);
   }
 }
 </script>

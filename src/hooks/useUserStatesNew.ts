@@ -1,16 +1,18 @@
 import { onMounted, onUnmounted, ref, computed, watch } from "vue";
 import { socket } from "@/hooks/useSocket";
-import { clampToGrid, setGrid } from "@/hooks/useGrid";
 
-export function useUserStates(mode: 'singleplayer' | 'multiplayer' = 'singleplayer') {
-  const multiplayer = mode === 'multiplayer';
-
+export function useUserStates(
+  mode: "singleplayer" | "multiplayer",
+  clampToGrid: (n: number) => number, //eigenlijk wil ik niet individuele functies meegeven, maar een Grid Class instance met data en methods. Kan dat met de composition api?
+  setGrid: (g: Grid) => void
+) {
+  const isMultiplayer = mode === "multiplayer";
 
   let playerId = ref<string | null>(null);
   let players = ref<Players>({});
 
-  if(!multiplayer) {
-    playerId.value = '1';
+  if (!isMultiplayer) {
+    playerId.value = "1";
     players.value = {
       "1": {
         id: "1",
@@ -18,7 +20,7 @@ export function useUserStates(mode: 'singleplayer' | 'multiplayer' = 'singleplay
         color: "green",
         name: "berend",
       },
-    }
+    };
   }
 
   const cursor = computed<Position>(() => player?.value?.position as Position);
@@ -54,7 +56,9 @@ export function useUserStates(mode: 'singleplayer' | 'multiplayer' = 'singleplay
       );
     }
 
-    socket.emit("cursorPositionChanged", (player.value as Player).position);
+    if (isMultiplayer) {
+      socket.emit("cursorPositionChanged", (player.value as Player).position);
+    }
   }
 
   function setPlayersState(newPlayersState: Players) {
@@ -66,16 +70,21 @@ export function useUserStates(mode: 'singleplayer' | 'multiplayer' = 'singleplay
       playerId.value = data.id;
     });
 
+    console.log("emitting startgame");
     socket.emit("startGame");
   }
 
   onMounted(() => {
-    initState();
+    if (!isMultiplayer) return;
     socket.on("gridUpdated", setGrid);
     socket.on("playersStateUpdated", setPlayersState);
+    // socket.on("solution", setSolution)
+    initState();
   });
 
   onUnmounted(() => {
+    if (!isMultiplayer) return;
+    socket.off("gridUpdated", setGrid);
     socket.off("playersStateUpdated", setPlayersState);
   });
 
@@ -83,7 +92,7 @@ export function useUserStates(mode: 'singleplayer' | 'multiplayer' = 'singleplay
     players,
     player,
     playerId,
-    cursor
+    cursor,
   };
 }
 export default useUserStates;

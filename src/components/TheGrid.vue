@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { StyleValue, computed, Ref, ref } from "vue";
+import { StyleValue, computed } from "vue";
 import { isEqual } from "lodash";
-// import { cursor, player, players } from "@/hooks/useUserStates";
 
 import useGrid from "@/hooks/useGridNew";
 
@@ -26,7 +25,7 @@ const {
 }>();
 
 const { gridSize, hitsInRow, hitsInColumn, levelIsCleared, indexToXY } =
-  useGrid(grid, solution);
+  useGrid(grid, solution); //todo: beetje gek misschien, 'use' gebruiken in component maar ook deels van parent krijgen
 
 const emit = defineEmits<{
   (e: "onCellClicked", index: number): void;
@@ -65,7 +64,7 @@ function cursorStyling(index: number): StyleValue | undefined {
   `;
 
   if (enableSocket) {
-    const friend = Object.values(players.value).find((friends) => {
+    const friend = Object.values(players).find((friends) => {
       return isEqual(indexToXY(index), friends.position);
     });
     return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : undefined;

@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import { clamp, isEqual } from "lodash";
+import { gridSize } from "@/hooks/useGrid";
 
 function getHits(arr: string[]): number[] {
   return arr.reduce((acc: number[], curr, i, arr) => {
@@ -23,6 +24,10 @@ const useGrid = (grid: Grid, solution?: Grid) => {
     return [x, y];
   }
 
+  function clampToGrid(value: number): number {
+    return clamp(value, 0, gridSize.value - 1);
+  }
+
   function hitsInColumn(colNumber: number): number[] {
     return getHits(solution!.map((x) => x[colNumber]));
   }
@@ -40,6 +45,7 @@ const useGrid = (grid: Grid, solution?: Grid) => {
     indexToXY,
     hitsInColumn,
     hitsInRow,
+    clampToGrid,
     levelIsCleared,
   };
 };

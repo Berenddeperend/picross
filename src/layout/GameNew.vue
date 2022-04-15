@@ -1,30 +1,44 @@
 <script setup lang="ts">
 import { isEqual } from "lodash";
-import { watch, computed, StyleValue, onMounted, ref } from "vue";
+import { watch, computed, StyleValue, onMounted, ref, onUnmounted } from "vue";
 import confetti from "canvas-confetti";
 import Grid from "@/components/TheGrid.vue";
 
-import SampleLevel from "@/sample-level.json";
+import { socket } from "@/hooks/useSocket";
 
-import {
-  grid,
-  gridSize,
-  // solution,
-  hitsInRow,
-  hitsInColumn,
-  syncGrid,
-  levelIsCleared,
-} from "@/hooks/useGrid";
+onMounted(() => {
+  socket.on("solution", setSolution);
+});
+
+onUnmounted(() => {
+  socket.off("solution", setSolution);
+});
+
+import { syncGrid, levelIsCleared } from "@/hooks/useGrid";
+
+import { createGrid } from "@/utils";
+
+const grid = ref<Grid>(createGrid(10));
+const solution = ref<Grid>();
 
 import useUserStates from "@/hooks/useUserStatesNew";
 import { initControls, toggleCellValue } from "@/hooks/useControls";
+import useGrid from "@/hooks/useGridNew";
 
-const { players, player } = useUserStates();
+const { clampToGrid } = useGrid(grid.value);
 
-syncGrid();
+const { players, player } = useUserStates("multiplayer", clampToGrid, setGrid);
+
+function setGrid(newGrid: Grid) {
+  //Deze is vrij lomp overgekopieerd van 'create'
+  grid.value = newGrid;
+}
+
+function setSolution(newSolution: any) {
+  solution.value = JSON.parse(newSolution[0].puzzle);
+}
+
 initControls();
-
-const solution = ref<Grid>(SampleLevel);
 
 watch(levelIsCleared, (value) => {
   if (value) {
@@ -48,6 +62,7 @@ watch(levelIsCleared, (value) => {
 
 <template>
   <Grid
+    v-if="grid && solution"
     :enable-controls="true"
     :enable-socket="true"
     :grid="grid"
@@ -61,138 +76,4 @@ watch(levelIsCleared, (value) => {
   />
 </template>
 
-<style lang="scss" scoped>
-$delay: 1s;
-$transition-time: 0.1s;
-$transition-time-slow: 1s;
-
-.horizontal-thing {
-  position: absolute;
-}
-
-.playfield-container {
-  background: gray;
-  position: relative;
-  padding: 1px;
-  //transition: background-color 0.4s;
-
-  display: inline-grid;
-  grid-template-columns: auto repeat(10, 1fr);
-  grid-template-rows: auto repeat(10, 1fr);
-
-  &.cleared {
-    background: none;
-    transition: background-color $transition-time-slow 1s;
-  }
-}
-
-.corner {
-  //width: 100px;
-  //height: 100px;
-}
-
-.legend {
-  .cell {
-    display: flex;
-    justify-content: flex-end;
-
-    &.highlighted {
-      background: lightblue;
-    }
-  }
-
-  &.horizontal {
-    grid-column: span 10;
-    display: flex;
-
-    .cell {
-      flex-direction: column;
-      height: auto;
-    }
-  }
-
-  &.vertical {
-    display: flex;
-    flex-direction: column;
-
-    .cell {
-      display: flex;
-      width: auto;
-    }
-
-    grid-row: span 10;
-  }
-}
-
-.cleared .optical-guide,
-.cleared .legend {
-  //width: 0;
-  //height: 0;
-  opacity: 0;
-  transition: $transition-time-slow $delay;
-}
-
-.optical-guide {
-  background: greenyellow;
-  position: absolute;
-
-  &.horizontal {
-    bottom: 134px;
-    height: 2px;
-    width: 100%;
-    transform: translateY(-50%);
-  }
-
-  &.vertical {
-    //right: calc(50% - 13px);
-    //right: calc(50% - 13px);
-    right: 134px;
-    width: 2px;
-    height: 100%;
-    transform: translateX(-50%);
-  }
-}
-
-.cell.cursor,
-.cell:hover {
-  font-weight: bold;
-  z-index: 2;
-  box-shadow: 0 0 0 2px lightblue;
-}
-
-.row {
-  display: flex;
-}
-
-.cleared .cell {
-  margin: 0;
-  border-radius: 0;
-  transition: background-color $transition-time,
-    margin $transition-time-slow $delay * 2,
-    border-radius $transition-time-slow $delay * 2;
-  box-shadow: none !important;
-}
-
-.cell {
-  margin: 1px;
-  border-radius: 2px;
-  width: 25px;
-  height: 25px;
-  vertical-align: center;
-  background: white;
-  transition: background-color 0.1s;
-
-  > div {
-    width: 20px;
-    text-align: center;
-  }
-
-  &.filled {
-    background-color: #444;
-  }
-
-  &.flagged {
-    background-color: red;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

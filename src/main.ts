@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 // import { createPinia } from "pinia";
 import App from "./App.vue";
+
 import Game from "./layout/GameNew.vue";
 import Create from "./layout/Create.vue";
 import MainMenu from "./layout/MainMenu.vue";
@@ -19,7 +20,7 @@ const router = createRouter({
   routes,
 });
 
-createApp(App)
+const app = createApp(App)
   .use(router)
   // .use(createPinia())
   .mount("#app");
