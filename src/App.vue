@@ -1,16 +1,7 @@
-<script setup lang="ts">
-import Game from "@/layout/Game.vue";
-import TopBar from "@/components/TopBar.vue";
-
-type GameState = "playing" | "menu";
-
-const gameState: GameState = "playing";
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <router-view></router-view>
-  <!--  <TopBar />-->
-  <!--  <Game />-->
   <div id="modal-target"></div>
 </template>
 

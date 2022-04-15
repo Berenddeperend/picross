@@ -39,7 +39,7 @@ export function movePlayerCursor(direction: "left" | "right" | "up" | "down") {
     );
   }
 
-  socket.emit("cursorPositionChanged", (player.value as Player).position);
+  socket.emit("cursorUpdated", (player.value as Player).position);
 }
 
 export function setPlayersState(newPlayersState: Players) {

@@ -1,10 +1,12 @@
 import { onMounted, onUnmounted, ref, computed, watch } from "vue";
-import { socket } from "@/hooks/useSocket";
+import { Socket } from "socket.io-client";
 
 export function useUserStates(
   mode: "singleplayer" | "multiplayer",
   clampToGrid: (n: number) => number, //eigenlijk wil ik niet individuele functies meegeven, maar een Grid Class instance met data en methods. Kan dat met de composition api?
-  setGrid: (g: Grid) => void
+  setGrid: (g: Grid) => void,
+  setSolution: (g: Grid) => void,
+  socket?: Socket
 ) {
   const isMultiplayer = mode === "multiplayer";
 
@@ -57,7 +59,7 @@ export function useUserStates(
     }
 
     if (isMultiplayer) {
-      socket.emit("cursorPositionChanged", (player.value as Player).position);
+      socket!.emit("cursorUpdated", (player.value as Player).position);
     }
   }
 
@@ -66,33 +68,31 @@ export function useUserStates(
   }
 
   function initState() {
-    socket.on("initPlayer", (data: any) => {
-      playerId.value = data.id;
+    onMounted(() => {
+      if (!isMultiplayer) return;
+      socket!.on("gridUpdated", setGrid);
+      socket!.on("playersStateUpdated", setPlayersState);
+      // socket.on("solution", setSolution)
+      socket!.on("playerCreated", (data: any) => {
+        playerId.value = data.id;
+      });
+      socket!.on("solution", setSolution);
+      socket!.emit("join");
     });
 
-    console.log("emitting startgame");
-    socket.emit("startGame");
+    onUnmounted(() => {
+      if (!isMultiplayer) return;
+      socket!.off("gridUpdated", setGrid);
+      socket!.off("playersStateUpdated", setPlayersState);
+    });
   }
-
-  onMounted(() => {
-    if (!isMultiplayer) return;
-    socket.on("gridUpdated", setGrid);
-    socket.on("playersStateUpdated", setPlayersState);
-    // socket.on("solution", setSolution)
-    initState();
-  });
-
-  onUnmounted(() => {
-    if (!isMultiplayer) return;
-    socket.off("gridUpdated", setGrid);
-    socket.off("playersStateUpdated", setPlayersState);
-  });
 
   return {
     players,
     player,
     playerId,
     cursor,
+    initState,
   };
 }
 export default useUserStates;

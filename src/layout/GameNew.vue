@@ -1,25 +1,28 @@
 <script setup lang="ts">
-import { isEqual } from "lodash";
-import { watch, computed, StyleValue, onMounted, ref, onUnmounted } from "vue";
+import { watch, onMounted, ref, onUnmounted } from "vue";
 import confetti from "canvas-confetti";
 import Grid from "@/components/TheGrid.vue";
 
-import { socket } from "@/hooks/useSocket";
+import { createGrid } from "@/utils";
+import useSocket from "@/hooks/useSocket";
+import useUserStates from "@/hooks/useUserStatesNew";
+import useGrid from "@/hooks/useGridNew";
 
 const grid = ref<Grid>(createGrid(10));
 const solution = ref<Grid>();
 
-import { createGrid } from "@/utils";
-import useUserStates from "@/hooks/useUserStatesNew";
-// import { initControls, toggleCellValue } from "@/hooks/useControls";
-// initControls();
-import useGrid from "@/hooks/useGridNew";
-
 const { clampToGrid, levelIsCleared, indexToXY } = useGrid(grid.value);
-
-const { players, player } = useUserStates("multiplayer", clampToGrid, setGrid);
+const { socket } = useSocket();
+const { players, player, initState } = useUserStates(
+  "multiplayer",
+  clampToGrid,
+  setGrid,
+  setSolution,
+  socket
+);
 
 onMounted(() => {
+  initState();
   socket.on("solution", setSolution);
 });
 
@@ -54,7 +57,7 @@ function onMoveCursor(direction: Direction) {
   if (direction === "down") {
     player.value!.position[1] = clampToGrid(player.value!.position[1] + 1);
   }
-  socket.emit("cursorPositionChanged", player.value!.position);
+  socket.emit("cursorUpdated", player.value!.position);
 }
 
 function onStateChanged(newState: any) {
