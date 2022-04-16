@@ -15,3 +15,11 @@ type Grid = string[][];
 type Position = [number, number];
 
 // type Intention = "build";
+type Puzzle = {
+  id: number;
+  name: string;
+  puzzle: string;
+  width: number | null;
+  height: number | null;
+  authorId: number;
+};

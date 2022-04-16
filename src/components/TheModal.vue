@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
 import { onKeyStroke } from "@vueuse/core";
 
 const emit = defineEmits<{ (e: "close"): void }>();

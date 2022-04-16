@@ -17,26 +17,28 @@ const { players, player, initState } = useUserStates(
   "multiplayer",
   clampToGrid,
   setGrid,
-  setSolution,
+  setPuzzle,
   socket
 );
 
-onMounted(() => {
-  initState();
-  socket.on("solution", setSolution);
-});
-
-onUnmounted(() => {
-  socket.off("solution", setSolution);
-});
+initState();
+// onMounted(() => {
+//   socket.on("solution", setSolution);
+// });
+//
+// onUnmounted(() => {
+//   socket.off("solution", setSolution);
+// });
 
 function setGrid(newGrid: Grid) {
   //Deze is vrij lomp overgekopieerd van 'create'
   grid.value = newGrid;
 }
 
-function setSolution(newSolution: any) {
-  solution.value = JSON.parse(newSolution.puzzle);
+function setPuzzle(newPuzzle: any) {
+  console.log("ja");
+  console.log(newPuzzle);
+  solution.value = JSON.parse(newPuzzle.puzzle);
 }
 
 function onCellClicked(index: number) {

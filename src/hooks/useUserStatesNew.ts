@@ -5,7 +5,7 @@ export function useUserStates(
   mode: "singleplayer" | "multiplayer",
   clampToGrid: (n: number) => number, //eigenlijk wil ik niet individuele functies meegeven, maar een Grid Class instance met data en methods. Kan dat met de composition api?
   setGrid: (g: Grid) => void,
-  setSolution: (g: Grid) => void,
+  setPuzzle: (g: Puzzle) => void,
   socket?: Socket
 ) {
   const isMultiplayer = mode === "multiplayer";
@@ -76,7 +76,8 @@ export function useUserStates(
       socket!.on("playerCreated", (data: any) => {
         playerId.value = data.id;
       });
-      socket!.on("solution", setSolution);
+      socket!.on("gameCreated", setPuzzle);
+      console.log("yee");
       socket!.emit("join");
     });
 
