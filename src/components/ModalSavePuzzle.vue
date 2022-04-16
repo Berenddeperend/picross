@@ -12,12 +12,11 @@
 import { Ref, ref } from "vue";
 import http from "@/services/http";
 import TheModal from "@/components/TheModal.vue";
-import { useStorage } from '@vueuse/core'
-
+import { useStorage } from "@vueuse/core";
 
 const emit = defineEmits<{ (e: "close"): void }>();
 const puzzleName = ref<string>("");
-const nickName = useStorage('nickName', "")
+const nickName = useStorage("nickName", "");
 
 const { grid, open } = defineProps<{
   open: Ref<boolean>;
@@ -26,14 +25,11 @@ const { grid, open } = defineProps<{
 
 function onSubmit(e: Event) {
   http
-    .post(
-      "/puzzle",
-      {
-        name: puzzleName.value,
-        puzzle: JSON.stringify(grid),
-        authorName: nickName.value,
-      }
-    )
+    .post("/puzzle", {
+      name: puzzleName.value,
+      puzzle: JSON.stringify(grid),
+      authorName: nickName.value,
+    })
     .then((res) => {
       console.log(res);
       emit("close");

@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { players, playerId } from "@/hooks/useUserStates";
+// import { players, playerId } from "@/hooks/useUserStates";
 import { createPopper } from "@popperjs/core";
 import { nextTick, onMounted, ref, watch } from "vue";
 
@@ -47,9 +47,9 @@ onMounted(() => {
 //   ],
 // });
 
-function isCurrentPlayer(player: Player) {
-  return player.id === playerId.value;
-}
+// function isCurrentPlayer(player: Player) {
+//   return player.id === playerId.value;
+// }
 </script>
 
 <style lang="scss" scoped>

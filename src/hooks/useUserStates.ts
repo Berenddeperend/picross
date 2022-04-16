@@ -1,65 +1,99 @@
 import { onMounted, onUnmounted, ref, computed, watch } from "vue";
-import { socket } from "@/hooks/useSocket";
-import { clampToGrid } from "@/hooks/useGrid";
+import { Socket } from "socket.io-client";
 
-export let playerId = ref<string | null>(null);
-export let players = ref<Players>({});
+export function useUserStates(
+  mode: "singleplayer" | "multiplayer",
+  clampToGrid: (n: number) => number, //eigenlijk wil ik niet individuele functies meegeven, maar een Grid Class instance met data en methods. Kan dat met de composition api?
+  setGrid: (g: Grid) => void,
+  setPuzzle?: (g: Puzzle) => void,
+  socket?: Socket
+) {
+  const isMultiplayer = mode === "multiplayer";
 
-export const player = computed(() => {
-  return playerId.value !== null ? players.value[playerId.value] : null;
-});
+  let playerId = ref<string | null>(null);
+  let players = ref<Players>({});
 
-export const cursor = computed<Position>(
-  () => player?.value?.position as Position
-);
-
-export function movePlayerCursor(direction: "left" | "right" | "up" | "down") {
-  if (playerId.value === null) return;
-  const oldPos = (player.value as Player).position;
-
-  if (direction === "left") {
-    players.value[playerId.value].position[0] = clampToGrid(
-      players.value[playerId.value].position[0] - 1
-    );
-  }
-  if (direction === "right") {
-    players.value[playerId.value].position[0] = clampToGrid(
-      players.value[playerId.value].position[0] + 1
-    );
+  if (!isMultiplayer) {
+    playerId.value = "1";
+    players.value = {
+      "1": {
+        id: "1",
+        position: [0, 0],
+        color: "green",
+        name: "berend",
+      },
+    };
   }
 
-  if (direction === "up") {
-    players.value[playerId.value].position[1] = clampToGrid(
-      players.value[playerId.value].position[1] - 1
-    );
-  }
-  if (direction === "down") {
-    players.value[playerId.value].position[1] = clampToGrid(
-      players.value[playerId.value].position[1] + 1
-    );
-  }
+  const cursor = computed<Position>(() => player?.value?.position as Position);
 
-  socket.emit("cursorUpdated", (player.value as Player).position);
-}
-
-export function setPlayersState(newPlayersState: Players) {
-  players.value = newPlayersState;
-}
-
-export function initState() {
-  socket.on("initPlayer", (data: any) => {
-    playerId.value = data.id;
+  const player = computed(() => {
+    return playerId.value !== null ? players.value[playerId.value] : null;
   });
 
-  socket.emit("startGame");
-}
+  //moet dit hier? Denk het wel.
+  function movePlayerCursor(direction: "left" | "right" | "up" | "down") {
+    if (playerId.value === null) return;
+    const oldPos = (player.value as Player).position;
 
-export function syncPlayersState() {
-  onMounted(() => {
-    socket.on("playersStateUpdated", setPlayersState);
-  });
+    if (direction === "left") {
+      players.value[playerId.value].position[0] = clampToGrid(
+        players.value[playerId.value].position[0] - 1
+      );
+    }
+    if (direction === "right") {
+      players.value[playerId.value].position[0] = clampToGrid(
+        players.value[playerId.value].position[0] + 1
+      );
+    }
 
-  onUnmounted(() => {
-    socket.off("playersStateUpdated", setPlayersState);
-  });
+    if (direction === "up") {
+      players.value[playerId.value].position[1] = clampToGrid(
+        players.value[playerId.value].position[1] - 1
+      );
+    }
+    if (direction === "down") {
+      players.value[playerId.value].position[1] = clampToGrid(
+        players.value[playerId.value].position[1] + 1
+      );
+    }
+
+    if (isMultiplayer) {
+      socket!.emit("cursorUpdated", (player.value as Player).position);
+    }
+  }
+
+  function setPlayersState(newPlayersState: Players) {
+    players.value = newPlayersState;
+  }
+
+  function initState() {
+    onMounted(() => {
+      if (!isMultiplayer) return;
+      socket!.on("gridUpdated", setGrid);
+      socket!.on("playersStateUpdated", setPlayersState);
+      // socket.on("solution", setSolution)
+      socket!.on("playerCreated", (data: any) => {
+        playerId.value = data.id;
+      });
+      socket!.on("gameCreated", setPuzzle!);
+      console.log("yee");
+      socket!.emit("join");
+    });
+
+    onUnmounted(() => {
+      if (!isMultiplayer) return;
+      socket!.off("gridUpdated", setGrid);
+      socket!.off("playersStateUpdated", setPlayersState);
+    });
+  }
+
+  return {
+    players,
+    player,
+    playerId,
+    cursor,
+    initState,
+  };
 }
+export default useUserStates;

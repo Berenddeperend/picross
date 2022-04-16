@@ -2,9 +2,9 @@
 import { StyleValue, computed } from "vue";
 import { isEqual } from "lodash";
 
-import useGrid from "@/hooks/useGridNew";
+import useGrid from "@/hooks/useGrid";
 
-import { initControls } from "@/hooks/useControlsNew";
+import { initControls } from "@/hooks/useControls";
 
 const {
   enableFlag = false,

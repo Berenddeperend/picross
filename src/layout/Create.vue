@@ -1,6 +1,5 @@
 <template>
   <div class="create">
-    Dit component is af-ish!
     <button @click="showSaveGridModal = true">Save puzzle</button>
 
     <ModalSavePuzzle
@@ -26,8 +25,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { createGrid } from "@/utils";
-import useGrid from "@/hooks/useGridNew";
-import useUserStates from "@/hooks/useUserStatesNew";
+import useGrid from "@/hooks/useGrid";
+import useUserStates from "@/hooks/useUserStates";
 import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 
