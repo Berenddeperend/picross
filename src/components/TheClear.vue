@@ -1,17 +1,12 @@
-<!--<template>-->
-<!--  <button @click="suggestClear">Clear</button>-->
-<!--</template>-->
+<template>
+  <button @click="suggestClear">Clear</button>
+</template>
 
-<!--<script setup lang="ts">-->
-<!--import { socket } from "@/hooks/useSocket";-->
-<!--import { players } from "@/hooks/useUserStates";-->
-<!--import { clearGrid, grid } from "@/hooks/useGrid";-->
+<script setup lang="ts">
+import { Socket } from "socket.io-client";
+const { socket } = defineProps<{ socket: Socket }>();
 
-<!--function suggestClear() {-->
-<!--  // if (Object.values(players.value).length === 1) {-->
-<!--  clearGrid();-->
-<!--  // }-->
-<!--  socket.emit("gridUpdated", grid.value);-->
-<!--  socket.emit("suggestClear");-->
-<!--}-->
-<!--</script>-->
+function suggestClear() {
+  socket.emit("suggestClear");
+}
+</script>

@@ -5,6 +5,8 @@ interface Player {
   name: string;
 }
 
+type Mode = "singleplayer" | "multiplayer";
+
 type Players = {
   [id: string]: Player;
 };

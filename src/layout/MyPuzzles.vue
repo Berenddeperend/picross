@@ -1,10 +1,19 @@
 <template>
   {{ nickName.value }}
+
+  <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
+
+  <div v-if="!nickName">Nog geen puzzels</div>
+
   <div class="my-puzzles">
     <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
       <h3>{{ puzzle.name }}</h3>
       <Grid :enable-controls="false" :grid="puzzle.puzzle" />
-      <a href="">Play</a>
+      <!--      <a :href="`/#/play/singleplayer/${puzzle.id}`">Play</a>-->
+      <router-link
+        :to="{ name: 'singleplayer', params: { puzzleId: puzzle.id } }"
+        >Play</router-link
+      >
     </div>
   </div>
 </template>
@@ -19,6 +28,9 @@ import { useStorage } from "@vueuse/core";
 const puzzles = ref();
 const nickName = useStorage("nickName", "Berend");
 onMounted(() => {
+  console.log(nickName.value);
+  if (!nickName.value) return;
+
   http.get(`/users/${nickName.value}/puzzles`).then((response) => {
     console.log("-> response.data", response.data);
     puzzles.value = response.data.map((thing: any) => {

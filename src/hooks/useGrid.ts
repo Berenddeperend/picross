@@ -35,9 +35,10 @@ const useGrid = (grid: Grid, solution?: Grid) => {
     return getHits(solution![rowNumber]);
   }
 
-  const levelIsCleared = computed(() => {
-    return isEqual(grid, solution);
-  });
+  //this doesn't work because the grid and solutions we provide arent reactive i guess
+  // const levelIsCleared = computed(() => {
+  //   return isEqual(grid, solution);
+  // });
 
   return {
     gridSize,
@@ -45,7 +46,7 @@ const useGrid = (grid: Grid, solution?: Grid) => {
     hitsInColumn,
     hitsInRow,
     clampToGrid,
-    levelIsCleared,
+    // levelIsCleared,
   };
 };
 

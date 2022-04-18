@@ -1,5 +1,9 @@
 <template>
   <h1>Picross</h1>
+  <label>
+    Nickname
+    <input type="text" placeholder="Uw naam" v-model="nickName" />
+  </label>
 
   <ul>
     <li>
@@ -14,7 +18,11 @@
   </ul>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useStorage } from "@vueuse/core";
+
+const nickName = useStorage("nickName", "");
+</script>
 
 <style lang="scss" scoped>
 ul {

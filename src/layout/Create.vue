@@ -1,5 +1,6 @@
 <template>
   <div class="create">
+    <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
     <button @click="showSaveGridModal = true">Save puzzle</button>
 
     <ModalSavePuzzle

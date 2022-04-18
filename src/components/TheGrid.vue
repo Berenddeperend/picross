@@ -110,16 +110,16 @@ function onCellClicked(index: number) {
     :class="{ cleared: levelIsCleared }"
     :style="playfieldStyling"
   >
-    <div
-      class="optical-guide horizontal"
-      v-if="solution"
-      ref="guidehorizontal"
-    ></div>
-    <div
-      class="optical-guide vertical"
-      v-if="solution"
-      ref="guidevertical"
-    ></div>
+    <!--    <div-->
+    <!--      class="optical-guide horizontal"-->
+    <!--      v-if="solution"-->
+    <!--      ref="guidehorizontal"-->
+    <!--    ></div>-->
+    <!--    <div-->
+    <!--      class="optical-guide vertical"-->
+    <!--      v-if="solution"-->
+    <!--      ref="guidevertical"-->
+    <!--    ></div>-->
 
     <div class="corner" v-if="solution"></div>
     <div class="legend horizontal" v-if="solution">

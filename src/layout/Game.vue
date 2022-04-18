@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, onMounted, ref, onUnmounted } from "vue";
+import { watch, onMounted, ref, onUnmounted, computed } from "vue";
 import confetti from "canvas-confetti";
 import Grid from "@/components/TheGrid.vue";
 
@@ -7,14 +7,27 @@ import { createGrid } from "@/utils";
 import useSocket from "@/hooks/useSocket";
 import useUserStates from "@/hooks/useUserStates";
 import useGrid from "@/hooks/useGrid";
+import { isEqual } from "lodash";
+import http from "@/services/http";
+import TopBar from "@/components/TopBar.vue";
+import TheClear from "@/components/TheClear.vue";
+
+const { puzzleId } = defineProps<{ puzzleId?: string }>();
+const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const grid = ref<Grid>(createGrid(10));
 const solution = ref<Grid>();
 
-const { clampToGrid, levelIsCleared, indexToXY } = useGrid(grid.value);
+if (mode === "singleplayer") {
+  http.get(`/puzzle/${puzzleId}`).then((response) => {
+    setPuzzle(response.data);
+  });
+}
+
+const { clampToGrid, indexToXY } = useGrid(grid.value);
 const { socket } = useSocket();
 const { players, player, initState } = useUserStates(
-  "multiplayer",
+  mode,
   clampToGrid,
   setGrid,
   setPuzzle,
@@ -22,6 +35,10 @@ const { players, player, initState } = useUserStates(
 );
 
 initState();
+
+const levelIsCleared = computed(() => {
+  return isEqual(grid.value, solution.value);
+});
 
 function setGrid(newGrid: Grid) {
   grid.value = newGrid;
@@ -34,6 +51,7 @@ function setPuzzle(newPuzzle: any) {
 function onCellClicked(index: number) {
   const [x, y] = indexToXY(index);
   grid.value[y][x] = grid.value[y][x] === " " ? "d" : " ";
+  socket.emit("gridUpdated", grid.value);
 }
 
 function onMoveCursor(direction: Direction) {
@@ -86,6 +104,15 @@ watch(levelIsCleared, (value) => {
 </script>
 
 <template>
+  <TopBar
+    v-if="players && player && mode === 'multiplayer'"
+    :player="player"
+    :players="players"
+  />
+  <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
+
+  <TheClear :socket="socket" />
+
   <Grid
     v-if="grid && solution"
     :enable-controls="true"

@@ -21,11 +21,11 @@
 </template>
 
 <script setup lang="ts">
-// import { players, playerId } from "@/hooks/useUserStates";
 import { createPopper } from "@popperjs/core";
 import { nextTick, onMounted, ref, watch } from "vue";
 
-const playersRef = ref([]);
+const { players, player } = defineProps<{ players: Players; player: Player }>();
+
 const inputRef = ref(null);
 
 const name = ref("");
@@ -47,9 +47,9 @@ onMounted(() => {
 //   ],
 // });
 
-// function isCurrentPlayer(player: Player) {
-//   return player.id === playerId.value;
-// }
+function isCurrentPlayer(somePlayer: Player) {
+  return somePlayer.id === player.id;
+}
 </script>
 
 <style lang="scss" scoped>

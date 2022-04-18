@@ -2,7 +2,7 @@ import { onMounted, onUnmounted, ref, computed, watch } from "vue";
 import { Socket } from "socket.io-client";
 
 export function useUserStates(
-  mode: "singleplayer" | "multiplayer",
+  mode: Mode,
   clampToGrid: (n: number) => number, //eigenlijk wil ik niet individuele functies meegeven, maar een Grid Class instance met data en methods. Kan dat met de composition api?
   setGrid: (g: Grid) => void,
   setPuzzle?: (g: Puzzle) => void,
