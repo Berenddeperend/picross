@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { StyleValue, computed, Ref } from "vue";
+import { StyleValue, computed, Ref, unref } from "vue";
 import { isEqual } from "lodash";
 
 import useGrid from "@/hooks/useGrid";
@@ -22,10 +22,21 @@ const {
   game: ReturnType<typeof useGrid>;
 }>();
 
-console.log(game.grid);
-
-// const { gridSize, newHitsInRows, hitsInColumn, levelIsCleared, indexToXY } =
-//   useGrid(grid, solution); //todo: beetje gek misschien, 'use' gebruiken in component maar ook deels van parent krijgen
+const {
+  gridSize,
+  indexToXY,
+  hitsInColumn,
+  hitsInRow,
+  clampToGrid,
+  newHitsInRows,
+  newHitsInColumns,
+  levelIsCleared,
+  // new stuffs below
+  setGrid,
+  setSolution,
+  grid,
+  solution,
+} = game;
 
 const emit = defineEmits<{
   (e: "onCellClicked", index: number): void;
@@ -57,7 +68,7 @@ if (enableControls) {
 function cursorStyling(index: number): StyleValue | undefined {
   if (!cursor || !player || !players) return;
 
-  const cellIsOwnCursor = isEqual(game.indexToXY(index), cursor.value);
+  const cellIsOwnCursor = isEqual(indexToXY(index), cursor);
   if (cellIsOwnCursor)
     return `
     box-shadow: 0px 0px 0px 2px ${player.color};
@@ -65,14 +76,14 @@ function cursorStyling(index: number): StyleValue | undefined {
 
   if (enableSocket) {
     const friend = Object.values(players).find((friends) => {
-      return isEqual(game.indexToXY(index), friends.position);
+      return isEqual(indexToXY(index), friends.position);
     });
     return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : undefined;
   }
 }
 
 const playfieldStyling = computed((): StyleValue => {
-  const rule = game.solution.value ? `auto repeat(10, 1fr)` : `repeat(10, 1fr)`;
+  const rule = unref(solution) ? `auto repeat(10, 1fr)` : `repeat(10, 1fr)`;
   return `
     grid-template-columns: ${rule};
     grid-template-rows: ${rule};
@@ -80,8 +91,8 @@ const playfieldStyling = computed((): StyleValue => {
 });
 
 function cellIndexIs(index: number, value: string): boolean {
-  const [x, y] = game.indexToXY(index);
-  return game.grid.value[y][x] === value;
+  const [x, y] = indexToXY(index);
+  return unref(grid)[y][x] === value;
 }
 
 function columnLegendActive(index: number) {
@@ -107,20 +118,20 @@ function onCellClicked(index: number) {
 <template>
   <div
     class="playfield-container"
-    :class="{ cleared: game.levelIsCleared }"
+    :class="{ cleared: levelIsCleared }"
     :style="playfieldStyling"
   >
-    <div class="corner" v-if="game.solution.value"></div>
+    <div class="corner" v-if="solution"></div>
 
-    <div class="legend horizontal" v-if="game.solution.value">
+    <div class="legend horizontal" v-if="solution">
       <div
         class="cell"
         :class="{ highlighted: columnLegendActive(index) }"
-        v-for="(cell, index) in game.gridSize"
+        v-for="(cell, index) in gridSize"
         :key="index"
       >
         <div
-          v-for="(hit, hitIndex) in game.hitsInColumn(index)"
+          v-for="(hit, hitIndex) in hitsInColumn(index)"
           :key="hitIndex"
           class="hit"
         >
@@ -128,17 +139,14 @@ function onCellClicked(index: number) {
         </div>
       </div>
     </div>
-    <div class="legend vertical" v-if="game.solution.value">
+    <div class="legend vertical" v-if="solution">
       <div
         class="cell"
         :class="{ highlighted: rowLegendActive(index) }"
-        v-for="(cell, index) in game.gridSize"
+        v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div
-          v-for="(hit, hitIndex) in game.newHitsInRows[index]"
-          :key="hitIndex"
-        >
+        <div v-for="(hit, hitIndex) in newHitsInRows[index]" :key="hitIndex">
           {{ hit }}
         </div>
       </div>
@@ -146,13 +154,13 @@ function onCellClicked(index: number) {
 
     <div
       class="cell"
-      v-for="(cell, index) in game.gridSize.value * game.gridSize.value"
+      v-for="(cell, index) in gridSize * gridSize"
       :key="index"
       :style="cursorStyling(index)"
       @click="onCellClicked(index)"
       :i="index"
       :class="{
-        cursor: isEqual(player?.position, game.indexToXY(index)),
+        cursor: isEqual(player?.position, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
         flagged: cellIndexIs(index, 'x'),
       }"

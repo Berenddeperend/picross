@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, unref } from "vue";
 import { createGrid } from "@/utils";
 import useGrid from "@/hooks/useGrid";
 import useUserStates from "@/hooks/useUserStates";
@@ -36,6 +36,7 @@ const showSaveGridModal = ref<Boolean>(false);
 const grid = ref<Grid>(createGrid(10));
 
 const game = useGrid(grid.value);
+console.log("g", game);
 
 const { player } = useUserStates("singleplayer", game);
 

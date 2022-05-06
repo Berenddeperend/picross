@@ -5,7 +5,7 @@
 
   <div v-if="!nickName">Nog geen puzzels</div>
 
-  <div class="my-puzzles">
+  <div class="my-puzzles" v-if="puzzles">
     <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
       <h3>{{ puzzle.name }}</h3>
       <Grid :enable-controls="false" :game="puzzle.game" />
@@ -39,6 +39,11 @@ onMounted(() => {
     });
   });
 });
+
+const getGame = (obj: any) => {
+  const { puzzle } = obj;
+  return puzzle;
+};
 </script>
 
 <style lang="scss" scoped>
