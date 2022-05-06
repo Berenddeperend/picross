@@ -1,5 +1,6 @@
-import { computed } from "vue";
+import { computed, watch, ref, Ref, toRefs } from "vue";
 import { clamp, isEqual } from "lodash";
+import { createGrid } from "@/utils";
 
 function getHits(arr: string[]): number[] {
   return arr.reduce((acc: number[], curr, i, arr) => {
@@ -14,30 +15,83 @@ function getHits(arr: string[]): number[] {
   }, []);
 }
 
-const useGrid = (grid: Grid, solution?: Grid) => {
-  const gridSize = computed(() => grid[0].length);
+//de meeste van deze dingen waarschijnlijk gewoon in TheGrid plaatsen, omdat ik die grid niet lekker als Ref krijg hier.
+// dat is wel kill your darlings, meh.
+// Even denken, gaat het dan goed?
 
-  function indexToXY(index: number): Position {
+const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
+  const grid = ref(gridSource || createGrid(10));
+  const solution = ref(solutionSource || null);
+
+  // const { perPage = ref(10), total = ref(null), startPage = 1 } = toRefs(
+  //   options
+  // )
+
+  const setGrid = (newGrid: Grid) => {
+    grid.value = newGrid;
+  };
+
+  const setSolution = (newSolution: Grid) => {
+    console.log("setting solution", newSolution);
+    solution.value = newSolution;
+  };
+
+  const gridSize = computed(() => grid.value[0].length);
+
+  const indexToXY = (index: number): Position => {
     const x = index % gridSize.value;
     const y = Math.floor(index / gridSize.value);
     return [x, y];
-  }
+  };
 
-  function clampToGrid(value: number): number {
+  const clampToGrid = (value: number): number => {
     return clamp(value, 0, gridSize.value - 1);
-  }
+  };
 
-  function hitsInColumn(colNumber: number): number[] {
-    return getHits(solution!.map((x) => x[colNumber]));
-  }
+  const levelIsCleared = computed(() => {
+    return isEqual(grid.value, solution?.value);
+  });
 
-  function hitsInRow(rowNumber: number): number[] {
-    return getHits(solution![rowNumber]);
-  }
+  const hitsInColumn = (colNumber: number): number[] => {
+    if (!solution.value) return [];
+    return getHits(solution.value.map((x) => x[colNumber]));
+  };
 
-  //this doesn't work because the grid and solutions we provide arent reactive i guess
-  // const levelIsCleared = computed(() => {
-  //   return isEqual(grid, solution);
+  // in plaats van deze functie moeten we alleen het resultaat returnen. Met een 'watch' in dit bestand kunnen we die uptdaten.
+  const hitsInRow = (rowNumber: number): number[] => {
+    if (!solution.value) return [];
+    return getHits(solution.value[rowNumber]);
+  };
+
+  const newHitsInRows = ref(
+    solution.value?.map((row) => {
+      return getHits(row);
+    })
+  );
+
+  //kijken of ik de reactivity break misschien
+  const newHitsInColumns = computed(() =>
+    solution.value?.map((row, rowIndex) => {
+      return row.map((cell, columnIndex) => {
+        // return getHits(row[columnIndex]);
+      });
+    })
+  );
+
+  // const newHitsInColumns = ref(
+  //   solution.value?.map((row, rowIndex) => {
+  //     return row.map((cell, columnIndex) => {
+  //       // return getHits(row[columnIndex]);
+  //     });
+  //   })
+  // );
+
+  //hier zit nog een bugje
+  // watch(solution, (newSolution) => {
+  //   console.log("newSolution", newSolution);
+  //   newHitsInRows.value = newSolution?.puzzle?.map((row) => {
+  //     return getHits(row);
+  //   });
   // });
 
   return {
@@ -46,7 +100,14 @@ const useGrid = (grid: Grid, solution?: Grid) => {
     hitsInColumn,
     hitsInRow,
     clampToGrid,
-    // levelIsCleared,
+    newHitsInRows,
+    newHitsInColumns,
+    levelIsCleared,
+    // new stuffs below
+    setGrid,
+    setSolution,
+    grid,
+    solution,
   };
 };
 

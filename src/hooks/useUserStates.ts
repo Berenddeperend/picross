@@ -1,11 +1,10 @@
 import { onMounted, onUnmounted, ref, computed, watch } from "vue";
 import { Socket } from "socket.io-client";
+import useGrid from "@/hooks/useGrid";
 
 export function useUserStates(
   mode: Mode,
-  clampToGrid: (n: number) => number, //eigenlijk wil ik niet individuele functies meegeven, maar een Grid Class instance met data en methods. Kan dat met de composition api?
-  setGrid: (g: Grid) => void,
-  setPuzzle?: (g: Puzzle) => void,
+  game: ReturnType<typeof useGrid>,
   socket?: Socket
 ) {
   const isMultiplayer = mode === "multiplayer";
@@ -37,23 +36,23 @@ export function useUserStates(
     const oldPos = (player.value as Player).position;
 
     if (direction === "left") {
-      players.value[playerId.value].position[0] = clampToGrid(
+      players.value[playerId.value].position[0] = game.clampToGrid(
         players.value[playerId.value].position[0] - 1
       );
     }
     if (direction === "right") {
-      players.value[playerId.value].position[0] = clampToGrid(
+      players.value[playerId.value].position[0] = game.clampToGrid(
         players.value[playerId.value].position[0] + 1
       );
     }
 
     if (direction === "up") {
-      players.value[playerId.value].position[1] = clampToGrid(
+      players.value[playerId.value].position[1] = game.clampToGrid(
         players.value[playerId.value].position[1] - 1
       );
     }
     if (direction === "down") {
-      players.value[playerId.value].position[1] = clampToGrid(
+      players.value[playerId.value].position[1] = game.clampToGrid(
         players.value[playerId.value].position[1] + 1
       );
     }
@@ -70,20 +69,21 @@ export function useUserStates(
   function initState() {
     onMounted(() => {
       if (!isMultiplayer) return;
-      socket!.on("gridUpdated", setGrid);
+      socket!.on("gridUpdated", game.setGrid);
       socket!.on("playersStateUpdated", setPlayersState);
       // socket.on("solution", setSolution)
       socket!.on("playerCreated", (data: any) => {
         playerId.value = data.id;
       });
-      socket!.on("gameCreated", setPuzzle!);
-      console.log("yee");
+      socket!.on("gameCreated", (puzzle) =>
+        game.setSolution(JSON.parse(puzzle.puzzle))
+      );
       socket!.emit("join");
     });
 
     onUnmounted(() => {
       if (!isMultiplayer) return;
-      socket!.off("gridUpdated", setGrid);
+      socket!.off("gridUpdated", (grid) => game.setGrid(grid));
       socket!.off("playersStateUpdated", setPlayersState);
     });
   }

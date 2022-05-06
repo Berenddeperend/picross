@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, onMounted, ref, onUnmounted, computed } from "vue";
+import { watch, ref, computed } from "vue";
 import confetti from "canvas-confetti";
 import Grid from "@/components/TheGrid.vue";
 
@@ -18,54 +18,53 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 const grid = ref<Grid>(createGrid(10));
 const solution = ref<Grid>();
 
+const game = useGrid(grid.value, solution.value);
+
 if (mode === "singleplayer") {
   http.get(`/puzzle/${puzzleId}`).then((response) => {
-    setPuzzle(response.data);
+    // setPuzzle(response.data);
+    console.log(response);
+    game.setSolution(JSON.parse(response.data.puzzle));
   });
 }
 
-const { clampToGrid, indexToXY } = useGrid(grid.value);
+// const { clampToGrid, indexToXY, levelIsCleared } = useGrid(grid);
 const { socket } = useSocket();
-const { players, player, initState } = useUserStates(
-  mode,
-  clampToGrid,
-  setGrid,
-  setPuzzle,
-  socket
-);
+const { players, player, initState } = useUserStates(mode, game, socket);
 
 initState();
 
-const levelIsCleared = computed(() => {
-  return isEqual(grid.value, solution.value);
-});
+// const levelIsCleared = computed(() => {
+//   return isEqual(grid.value, solution.value);
+// });
 
 function setGrid(newGrid: Grid) {
   grid.value = newGrid;
 }
 
-function setPuzzle(newPuzzle: any) {
-  solution.value = JSON.parse(newPuzzle.puzzle);
-}
+// function setPuzzle(newPuzzle: any) {
+//   solution.value = JSON.parse(newPuzzle.puzzle);
+// }
 
 function onCellClicked(index: number) {
-  const [x, y] = indexToXY(index);
+  const [x, y] = game.indexToXY(index);
   grid.value[y][x] = grid.value[y][x] === " " ? "d" : " ";
+  setGrid(grid.value);
   socket.emit("gridUpdated", grid.value);
 }
 
 function onMoveCursor(direction: Direction) {
   if (direction === "left") {
-    player.value!.position[0] = clampToGrid(player.value!.position[0] - 1);
+    player.value!.position[0] = game.clampToGrid(player.value!.position[0] - 1);
   }
   if (direction === "right") {
-    player.value!.position[0] = clampToGrid(player.value!.position[0] + 1);
+    player.value!.position[0] = game.clampToGrid(player.value!.position[0] + 1);
   }
   if (direction === "up") {
-    player.value!.position[1] = clampToGrid(player.value!.position[1] - 1);
+    player.value!.position[1] = game.clampToGrid(player.value!.position[1] - 1);
   }
   if (direction === "down") {
-    player.value!.position[1] = clampToGrid(player.value!.position[1] + 1);
+    player.value!.position[1] = game.clampToGrid(player.value!.position[1] + 1);
   }
   socket.emit("cursorUpdated", player.value!.position);
 }
@@ -75,15 +74,15 @@ function onStateChanged(newState: any) {
 }
 
 function onToggleCellValue(value: string) {
-  if (levelIsCleared.value) return;
+  if (game.levelIsCleared.value) return;
 
   const [x, y] = (player.value as Player).position;
   grid.value[y][x] = grid.value[y][x] === value ? " " : value;
+  setGrid(grid.value);
   socket.emit("gridUpdated", grid.value);
 }
 
-watch(levelIsCleared, (value) => {
-  console.log("ree");
+watch(game.levelIsCleared, (value) => {
   if (value) {
     confetti({
       zIndex: -1,
@@ -117,8 +116,7 @@ watch(levelIsCleared, (value) => {
     v-if="grid && solution"
     :enable-controls="true"
     :enable-socket="true"
-    :grid="grid"
-    :solution="solution"
+    :game="game"
     :player="player"
     :players="players"
     @onCellClicked="onCellClicked"

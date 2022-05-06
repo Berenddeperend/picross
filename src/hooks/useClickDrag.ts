@@ -37,8 +37,6 @@ function dragListener(clickEvent: MouseEvent) {
       }
     }
 
-    console.log(dir);
-
     // const dir =
     //   clickOrigin.x - dragPosition.x > clickOrigin.y - dragPosition.y
     //     ? "vertical"

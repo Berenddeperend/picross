@@ -31,7 +31,6 @@ const inputRef = ref(null);
 const name = ref("");
 
 onMounted(() => {
-  console.log("-> inputRef", inputRef);
   //   console.log("-> playersRef", playersRef.value);
 });
 

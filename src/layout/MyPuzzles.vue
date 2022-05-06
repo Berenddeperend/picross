@@ -8,8 +8,7 @@
   <div class="my-puzzles">
     <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
       <h3>{{ puzzle.name }}</h3>
-      <Grid :enable-controls="false" :grid="puzzle.puzzle" />
-      <!--      <a :href="`/#/play/singleplayer/${puzzle.id}`">Play</a>-->
+      <Grid :enable-controls="false" :game="puzzle.game" />
       <router-link
         :to="{ name: 'singleplayer', params: { puzzleId: puzzle.id } }"
         >Play</router-link
@@ -24,18 +23,19 @@ import Grid from "@/components/TheGrid.vue";
 import { onMounted, ref } from "@vue/runtime-core";
 import http from "@/services/http";
 import { useStorage } from "@vueuse/core";
+import useGrid from "@/hooks/useGrid";
 
 const puzzles = ref();
 const nickName = useStorage("nickName", "Berend");
 onMounted(() => {
-  console.log(nickName.value);
   if (!nickName.value) return;
 
   http.get(`/users/${nickName.value}/puzzles`).then((response) => {
-    console.log("-> response.data", response.data);
-    puzzles.value = response.data.map((thing: any) => {
-      thing.puzzle = JSON.parse(thing.puzzle);
-      return thing;
+    puzzles.value = response.data.map((puzzle: Puzzle) => {
+      return {
+        ...puzzle,
+        game: useGrid(JSON.parse(puzzle.solution)),
+      };
     });
   });
 });

@@ -1,3 +1,4 @@
+COMPONTENTS
 app
     game
         grid
@@ -8,14 +9,28 @@ app
           socket
 
 
-moet socket boven grid/controls staan en de boel controlleren?
-Misschien een controller erboven met optie tot local/socket,
+
+Terms:
+
+
+BE model
+Puzzle:
+    - solution
+    - name
+    - author
 
 
 
 
+State multiplayer
+Game (usegame)
+    - grid
+    - Puzzle
+        - solution
 
-create.vue heeft de state van de player
-Iedere hook returnt een nieuwe instance ipv singleton
 
-Dat idee van die gedupliceerde api/interface is wel goed.
+
+state singelplayer
+Game  (usegame)
+    - grid
+    - Puzzle (empty)

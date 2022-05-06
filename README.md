@@ -1,34 +1,40 @@
-Main menu:
+# mvp
+- Nicknames
+- Is puzzle solvable?
+- Send new puzzle after clearing
+- Basic touchscreen controls
+- Setting X'es (touschreen and mouse)
+- Vote to clear
+- Vote to skip
 
-- Play
-  - premade levels
-  - 
-- Create
-  - Save
+# nice to haves
+- sudoku.com line clear effect
+- Muis ook socket syncen
+- Report puzzle
+- optical guides
+
+# todo
+- repareer game.vue
+  - usegrid.vue -> werkt niet zonder solution? Nee dat is het niet
+
+# doing
+- repareer 'my puzzles'
+
+
+# done
+- Repair create puzzle
 
 
 
-sudoku.com line clear effect
+## How to fix the refs issue:
+
+- useGrid accepts dumb grid and solution arrays -> do they? They can init as empty
+- Exports one 'grid' object, with methods like 'set' (with own internal clamptogrid), 'levelIsClear', 'hitsinrow'
+- 'game.vue' and 'create.vue' recieve this object, and pass it to TheGrid
+- This is sort of a store, actually. It doesn't feel too dirty if you think about it like that.
 
 
-
-controls: 
-space: yes
-f: no
-
-ideas:
-- highscore per persoon per sessie
-
-
-Reactivity bug:
-
-const a = reactive({})
-...toRefs(a)
-
+##Some composition references: 
 https://wildermuth.com/2020/08/30/Vue-3-To-Vuex-or-Not-to-Vuex
 https://andrejgaluf.com/blog/vue-composition-api-store/
-
-https://dev.to/thomasferro/composition-api-v-renderless-components-let-s-use-vue-3-s-features-to-clean-our-components-n25 <--
-
-
-Of state: Piniajs
+https://dev.to/thomasferro/composition-api-v-renderless-components-let-s-use-vue-3-s-features-to-clean-our-components-n25

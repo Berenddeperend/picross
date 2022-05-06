@@ -27,7 +27,7 @@ function onSubmit(e: Event) {
   http
     .post("/puzzle", {
       name: puzzleName.value,
-      puzzle: JSON.stringify(grid),
+      solution: JSON.stringify(grid),
       authorName: nickName.value,
     })
     .then((res) => {
