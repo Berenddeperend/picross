@@ -27,13 +27,8 @@ const {
   indexToXY,
   hitsInColumn,
   hitsInRow,
-  clampToGrid,
-  newHitsInRows,
-  newHitsInColumns,
+  newHitsInRow,
   levelIsCleared,
-  // new stuffs below
-  setGrid,
-  setSolution,
   grid,
   solution,
 } = game;
@@ -146,7 +141,7 @@ function onCellClicked(index: number) {
         v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div v-for="(hit, hitIndex) in newHitsInRows[index]" :key="hitIndex">
+        <div v-for="(hit, hitIndex) in newHitsInRow[index]" :key="hitIndex">
           {{ hit }}
         </div>
       </div>

@@ -23,7 +23,7 @@ const game = useGrid(grid.value, solution.value);
 if (mode === "singleplayer") {
   http.get(`/puzzle/${puzzleId}`).then((response) => {
     // setPuzzle(response.data);
-    console.log(response);
+    console.log("yeehaw", response);
     game.setSolution(JSON.parse(response.data.puzzle));
   });
 }
@@ -39,7 +39,8 @@ initState();
 // });
 
 function setGrid(newGrid: Grid) {
-  grid.value = newGrid;
+  // grid.value = newGrid;
+  game.setGrid(newGrid);
 }
 
 // function setPuzzle(newPuzzle: any) {
@@ -113,7 +114,7 @@ watch(game.levelIsCleared, (value) => {
   <TheClear :socket="socket" />
 
   <Grid
-    v-if="grid && solution"
+    v-if="game.grid && game.solution"
     :enable-controls="true"
     :enable-socket="true"
     :game="game"

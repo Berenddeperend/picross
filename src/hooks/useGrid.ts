@@ -32,7 +32,6 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   };
 
   const setSolution = (newSolution: Grid) => {
-    console.log("setting solution", newSolution);
     solution.value = newSolution;
   };
 
@@ -60,17 +59,18 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   // in plaats van deze functie moeten we alleen het resultaat returnen. Met een 'watch' in dit bestand kunnen we die uptdaten.
   const hitsInRow = (rowNumber: number): number[] => {
     if (!solution.value) return [];
+    console.log(solution.value[rowNumber]);
     return getHits(solution.value[rowNumber]);
   };
 
-  const newHitsInRows = ref(
-    solution.value?.map((row) => {
+  const newHitsInRow = computed(() =>
+    solution.value!.map((row) => {
       return getHits(row);
     })
   );
 
   //kijken of ik de reactivity break misschien
-  const newHitsInColumns = computed(() =>
+  const newHitsInColumn = computed(() =>
     solution.value?.map((row, rowIndex) => {
       return row.map((cell, columnIndex) => {
         // return getHits(row[columnIndex]);
@@ -100,8 +100,8 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     hitsInColumn,
     hitsInRow,
     clampToGrid,
-    newHitsInRows,
-    newHitsInColumns,
+    newHitsInRow,
+    newHitsInColumn,
     levelIsCleared,
     // new stuffs below
     setGrid,
