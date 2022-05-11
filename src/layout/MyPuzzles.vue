@@ -1,6 +1,4 @@
 <template>
-  {{ nickName.value }}
-
   <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
 
   <div v-if="!nickName">Nog geen puzzels</div>
@@ -27,6 +25,7 @@ import useGrid from "@/hooks/useGrid";
 
 const puzzles = ref();
 const nickName = useStorage("nickName", "Berend");
+
 onMounted(() => {
   if (!nickName.value) return;
 
@@ -39,11 +38,6 @@ onMounted(() => {
     });
   });
 });
-
-const getGame = (obj: any) => {
-  const { puzzle } = obj;
-  return puzzle;
-};
 </script>
 
 <style lang="scss" scoped>
@@ -53,7 +47,6 @@ const getGame = (obj: any) => {
   gap: 20px;
 
   :deep(.playfield-container) {
-    //border: 1px solid red;
     .cell {
       $size: 10px;
       border: none;

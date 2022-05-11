@@ -8,9 +8,6 @@
       @close="showSaveGridModal = false"
       :grid="grid"
     />
-
-    {{ game.gridSize }}
-
     <Grid
       :enable-controls="true"
       :game="game"
@@ -33,26 +30,17 @@ import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 
 const showSaveGridModal = ref<Boolean>(false);
-const grid = ref<Grid>(createGrid(10));
 
-const game = useGrid(grid.value);
-console.log("g", game);
+const game = useGrid(createGrid(10));
+const { grid } = game;
 
 const { player } = useUserStates("singleplayer", game);
-
-function onStateChanged(newState: any) {
-  console.log("damn! onstatechanged", newState);
-}
 
 function onToggleCellValue(value: string) {
   if (showSaveGridModal.value || game.levelIsCleared.value) return;
 
   const [x, y] = (player.value as Player).position;
   grid.value[y][x] = grid.value[y][x] === value ? " " : value;
-}
-
-function setGrid(newGrid: Grid) {
-  grid.value = newGrid;
 }
 
 function onCellClicked(index: number) {

@@ -7,14 +7,12 @@ import useGrid from "@/hooks/useGrid";
 import { initControls } from "@/hooks/useControls";
 
 const {
-  enableFlag = false,
   enableControls = false,
   enableSocket = false,
   players,
   player,
   game,
 } = defineProps<{
-  enableFlag?: boolean;
   enableControls?: boolean;
   enableSocket?: boolean;
   players?: Players;
@@ -25,9 +23,8 @@ const {
 const {
   gridSize,
   indexToXY,
-  hitsInColumn,
-  hitsInRow,
-  newHitsInRow,
+  hitsInColumns,
+  hitsInRows,
   levelIsCleared,
   grid,
   solution,
@@ -36,7 +33,6 @@ const {
 const emit = defineEmits<{
   (e: "onCellClicked", index: number): void;
   (e: "gridChanged", grid: Grid): void;
-  (e: "stateChanged", grid: Grid): void;
   (e: "moveCursor", dir: Direction): void;
   (e: "toggleCellValue", value: string): void;
 }>();
@@ -92,21 +88,17 @@ function cellIndexIs(index: number, value: string): boolean {
 
 function columnLegendActive(index: number) {
   if (!player) return;
-  // return cursorPosition.value[0] === index;
   return player.position[0] === index;
 }
 
 function rowLegendActive(index: number) {
   if (!player) return;
-  // return cursorPosition.value[1] === index;
   return player.position[1] === index;
 }
 
 function onCellClicked(index: number) {
-  // const [x, y] = indexToXY(index);
   if (!enableControls) return;
   emit("onCellClicked", index);
-  // grid.value[y][x] = "d";
 }
 </script>
 
@@ -126,7 +118,7 @@ function onCellClicked(index: number) {
         :key="index"
       >
         <div
-          v-for="(hit, hitIndex) in hitsInColumn(index)"
+          v-for="(hit, hitIndex) in hitsInColumns[index]"
           :key="hitIndex"
           class="hit"
         >
@@ -141,7 +133,7 @@ function onCellClicked(index: number) {
         v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div v-for="(hit, hitIndex) in newHitsInRow[index]" :key="hitIndex">
+        <div v-for="(hit, hitIndex) in hitsInRows[index]" :key="hitIndex">
           {{ hit }}
         </div>
       </div>

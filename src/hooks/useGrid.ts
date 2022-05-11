@@ -51,57 +51,26 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     return isEqual(grid.value, solution?.value);
   });
 
-  const hitsInColumn = (colNumber: number): number[] => {
-    if (!solution.value) return [];
-    return getHits(solution.value.map((x) => x[colNumber]));
-  };
-
-  // in plaats van deze functie moeten we alleen het resultaat returnen. Met een 'watch' in dit bestand kunnen we die uptdaten.
-  const hitsInRow = (rowNumber: number): number[] => {
-    if (!solution.value) return [];
-    console.log(solution.value[rowNumber]);
-    return getHits(solution.value[rowNumber]);
-  };
-
-  const newHitsInRow = computed(() =>
-    solution.value!.map((row) => {
+  const hitsInRows = computed(() =>
+    solution.value?.map((row) => {
       return getHits(row);
     })
   );
 
-  //kijken of ik de reactivity break misschien
-  const newHitsInColumn = computed(() =>
-    solution.value?.map((row, rowIndex) => {
-      return row.map((cell, columnIndex) => {
-        // return getHits(row[columnIndex]);
-      });
-    })
-  );
+  const hitsInColumns = computed(() => {
+    const columns = solution.value?.map((row, rowIndex, src) => {
+      return src.map((d) => d[rowIndex]);
+    });
 
-  // const newHitsInColumns = ref(
-  //   solution.value?.map((row, rowIndex) => {
-  //     return row.map((cell, columnIndex) => {
-  //       // return getHits(row[columnIndex]);
-  //     });
-  //   })
-  // );
-
-  //hier zit nog een bugje
-  // watch(solution, (newSolution) => {
-  //   console.log("newSolution", newSolution);
-  //   newHitsInRows.value = newSolution?.puzzle?.map((row) => {
-  //     return getHits(row);
-  //   });
-  // });
+    return columns?.map((column) => getHits(column));
+  });
 
   return {
     gridSize,
     indexToXY,
-    hitsInColumn,
-    hitsInRow,
     clampToGrid,
-    newHitsInRow,
-    newHitsInColumn,
+    hitsInRows,
+    hitsInColumns,
     levelIsCleared,
     // new stuffs below
     setGrid,

@@ -13,15 +13,18 @@
 - Report puzzle
 - optical guides
 
+# cleanup
+- Better unrefs
+
 # todo
-- repareer game.vue
-  - usegrid.vue -> werkt niet zonder solution? Nee dat is het niet
+'new puzzle' knop
 
 # doing
-- repareer 'my puzzles'
 
 
 # done
+- repareer 'my puzzles'
+- repareer game.vue
 - Repair create puzzle
 
 

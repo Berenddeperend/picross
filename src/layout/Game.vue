@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, ref, computed } from "vue";
+import { watch, ref } from "vue";
 import confetti from "canvas-confetti";
 import Grid from "@/components/TheGrid.vue";
 
@@ -7,7 +7,6 @@ import { createGrid } from "@/utils";
 import useSocket from "@/hooks/useSocket";
 import useUserStates from "@/hooks/useUserStates";
 import useGrid from "@/hooks/useGrid";
-import { isEqual } from "lodash";
 import http from "@/services/http";
 import TopBar from "@/components/TopBar.vue";
 import TheClear from "@/components/TheClear.vue";
@@ -15,37 +14,24 @@ import TheClear from "@/components/TheClear.vue";
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
-const grid = ref<Grid>(createGrid(10));
-const solution = ref<Grid>();
+const game = useGrid(createGrid(10));
 
-const game = useGrid(grid.value, solution.value);
+const { grid } = game;
 
 if (mode === "singleplayer") {
   http.get(`/puzzle/${puzzleId}`).then((response) => {
-    // setPuzzle(response.data);
-    console.log("yeehaw", response);
     game.setSolution(JSON.parse(response.data.puzzle));
   });
 }
 
-// const { clampToGrid, indexToXY, levelIsCleared } = useGrid(grid);
 const { socket } = useSocket();
 const { players, player, initState } = useUserStates(mode, game, socket);
 
 initState();
 
-// const levelIsCleared = computed(() => {
-//   return isEqual(grid.value, solution.value);
-// });
-
 function setGrid(newGrid: Grid) {
-  // grid.value = newGrid;
   game.setGrid(newGrid);
 }
-
-// function setPuzzle(newPuzzle: any) {
-//   solution.value = JSON.parse(newPuzzle.puzzle);
-// }
 
 function onCellClicked(index: number) {
   const [x, y] = game.indexToXY(index);
@@ -70,10 +56,6 @@ function onMoveCursor(direction: Direction) {
   socket.emit("cursorUpdated", player.value!.position);
 }
 
-function onStateChanged(newState: any) {
-  console.log("damn! onstatechanged", newState);
-}
-
 function onToggleCellValue(value: string) {
   if (game.levelIsCleared.value) return;
 
@@ -81,6 +63,10 @@ function onToggleCellValue(value: string) {
   grid.value[y][x] = grid.value[y][x] === value ? " " : value;
   setGrid(grid.value);
   socket.emit("gridUpdated", grid.value);
+}
+
+function newPuzzle() {
+  socket.emit("newRandomPuzzle");
 }
 
 watch(game.levelIsCleared, (value) => {
@@ -113,6 +99,8 @@ watch(game.levelIsCleared, (value) => {
 
   <TheClear :socket="socket" />
 
+  <button @click="newPuzzle">New puzzle</button>
+
   <Grid
     v-if="game.grid && game.solution"
     :enable-controls="true"
@@ -123,7 +111,6 @@ watch(game.levelIsCleared, (value) => {
     @onCellClicked="onCellClicked"
     @moveCursor="onMoveCursor"
     @toggleCellValue="onToggleCellValue"
-    @stateChanged="onStateChanged"
   />
 </template>
 

@@ -71,7 +71,6 @@ export function useUserStates(
       if (!isMultiplayer) return;
       socket!.on("gridUpdated", game.setGrid);
       socket!.on("playersStateUpdated", setPlayersState);
-      // socket.on("solution", setSolution)
       socket!.on("playerCreated", (data: any) => {
         playerId.value = data.id;
       });
