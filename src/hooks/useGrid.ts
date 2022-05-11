@@ -1,4 +1,4 @@
-import { computed, watch, ref, Ref, toRefs } from "vue";
+import { computed, ref } from "vue";
 import { clamp, isEqual } from "lodash";
 import { createGrid } from "@/utils";
 
@@ -15,17 +15,9 @@ function getHits(arr: string[]): number[] {
   }, []);
 }
 
-//de meeste van deze dingen waarschijnlijk gewoon in TheGrid plaatsen, omdat ik die grid niet lekker als Ref krijg hier.
-// dat is wel kill your darlings, meh.
-// Even denken, gaat het dan goed?
-
 const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   const grid = ref(gridSource || createGrid(10));
   const solution = ref(solutionSource || null);
-
-  // const { perPage = ref(10), total = ref(null), startPage = 1 } = toRefs(
-  //   options
-  // )
 
   const setGrid = (newGrid: Grid) => {
     grid.value = newGrid;
@@ -66,17 +58,16 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   });
 
   return {
+    grid,
+    solution,
     gridSize,
-    indexToXY,
-    clampToGrid,
     hitsInRows,
     hitsInColumns,
     levelIsCleared,
-    // new stuffs below
+    indexToXY,
+    clampToGrid,
     setGrid,
     setSolution,
-    grid,
-    solution,
   };
 };
 

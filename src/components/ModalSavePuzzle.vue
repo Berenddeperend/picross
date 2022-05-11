@@ -31,7 +31,6 @@ function onSubmit(e: Event) {
       authorName: nickName.value,
     })
     .then((res) => {
-      console.log(res);
       emit("close");
     })
     .catch((err) => {

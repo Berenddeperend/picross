@@ -17,12 +17,11 @@
 - Better unrefs
 
 # todo
-'new puzzle' knop
 
 # doing
 
-
 # done
+- 'new puzzle' knop
 - repareer 'my puzzles'
 - repareer game.vue
 - Repair create puzzle

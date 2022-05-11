@@ -29,14 +29,9 @@ const { players, player, initState } = useUserStates(mode, game, socket);
 
 initState();
 
-function setGrid(newGrid: Grid) {
-  game.setGrid(newGrid);
-}
-
 function onCellClicked(index: number) {
   const [x, y] = game.indexToXY(index);
   grid.value[y][x] = grid.value[y][x] === " " ? "d" : " ";
-  setGrid(grid.value);
   socket.emit("gridUpdated", grid.value);
 }
 
@@ -61,7 +56,6 @@ function onToggleCellValue(value: string) {
 
   const [x, y] = (player.value as Player).position;
   grid.value[y][x] = grid.value[y][x] === value ? " " : value;
-  setGrid(grid.value);
   socket.emit("gridUpdated", grid.value);
 }
 
