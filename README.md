@@ -1,17 +1,17 @@
 # mvp
-- Nicknames
 - Is puzzle solvable?
-- Send new puzzle after clearing
-- Basic touchscreen controls
-- Setting X'es (touschreen and mouse)
-- Vote to clear
-- Vote to skip
+- cursor sync is broken
 
 # nice to haves
+- Setting X'es touchscreen
+- Basic touchscreen controls
 - sudoku.com line clear effect
+- auto-x'es indien line goed is
 - Muis ook socket syncen
 - Report puzzle
 - optical guides
+- mouse and keyboard should share same cursor
+- click and hold
 
 # cleanup
 - Better unrefs
@@ -22,9 +22,22 @@
 
 # done
 - 'new puzzle' knop
+- Send new puzzle after clearing
 - repareer 'my puzzles'
 - repareer game.vue
 - Repair create puzzle
+- Vote to clear
+- Vote to skip
+- Nicknames
+
+
+# About puzzle difficulty
+https://liacs.leidenuniv.nl/~kosterswa/nonodec2012.pdf
+- Only allow unambiguous, 'simple' puzzles that can be solved without branching, just with sweeps.
+- Count the amount of sweeps needed to define a difficulty.
+- Think about what kind of solver I need. Do I need to write one?
+- 
+
 
 
 

@@ -1,5 +1,7 @@
 <template>
   <header>
+    <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
+    <br />
     Now playing: ({{ Object.values(players).length }}):
     <ul>
       <li
@@ -8,43 +10,28 @@
         ref="playersRef"
       >
         {{ player.name }}
-
-        <!--        <input-->
-        <!--          ref="inputRef"-->
-        <!--          v-if="isCurrentPlayer(player)"-->
-        <!--          v-model="player.name"-->
-        <!--          type="text"-->
-        <!--        />-->
       </li>
     </ul>
+
+    <VoteClear v-if="socket" :socket="socket" />
+    <VoteNext v-if="socket" :socket="socket" />
   </header>
 </template>
 
 <script setup lang="ts">
-import { createPopper } from "@popperjs/core";
-import { nextTick, onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
+import VoteClear from "@/components/VoteClear.vue";
+import VoteNext from "@/components/VoteNext.vue";
+import { Socket } from "socket.io-client";
 
-const { players, player } = defineProps<{ players: Players; player: Player }>();
+const { players, player, socket } =
+  defineProps<{ players: Players; player: Player; socket?: Socket }>();
 
 const inputRef = ref(null);
 
 const name = ref("");
 
-onMounted(() => {
-  //   console.log("-> playersRef", playersRef.value);
-});
-
-// createPopper(player as HTMLElement, $refs["input"] as HTMLDivElement, {
-//   placement: "right",
-//   modifiers: [
-//     {
-//       name: "arrow",
-//       options: {
-//         padding: 5,
-//       },
-//     },
-//   ],
-// });
+onMounted(() => {});
 
 function isCurrentPlayer(somePlayer: Player) {
   return somePlayer.id === player.id;
@@ -53,11 +40,14 @@ function isCurrentPlayer(somePlayer: Player) {
 
 <style lang="scss" scoped>
 header {
-  display: flex;
+  //display: flex;
   position: absolute;
+
   top: 0;
   left: 0;
-  width: 100%;
+  //width: 100%;
+  width: 200px;
+  height: 100%;
   background: #f7f7f7;
   justify-content: center;
   align-items: center;

@@ -3,6 +3,8 @@
     <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
     <button @click="showSaveGridModal = true">Save puzzle</button>
 
+    <button @click="validatePuzzle">validate</button>
+
     <ModalSavePuzzle
       :open="showSaveGridModal"
       @close="showSaveGridModal = false"
@@ -15,7 +17,6 @@
       @onCellClicked="onCellClicked"
       @moveCursor="onMoveCursor"
       @toggleCellValue="onToggleCellValue"
-      @stateChanged="onStateChanged"
     />
   </div>
   <!--    dit niet emitten maar exposen als functie! dan kan ik {useMoveCurosr} from grid doen -->
@@ -28,13 +29,35 @@ import useGrid from "@/hooks/useGrid";
 import useUserStates from "@/hooks/useUserStates";
 import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
+import http from "@/services/http";
 
 const showSaveGridModal = ref<Boolean>(false);
 
 const game = useGrid(createGrid(10));
-const { grid } = game;
+const { grid, computeHitsInRows, computeHitsInColumns } = game;
 
 const { player } = useUserStates("singleplayer", game);
+
+function validatePuzzle() {
+  const addZeroIfEmpty = (arr: number[]): number[] => (arr.length ? arr : [0]);
+  const columns = computeHitsInColumns(grid.value).map(addZeroIfEmpty);
+  const rows = computeHitsInRows(grid.value).map(addZeroIfEmpty);
+
+  http
+    .post("/validate-puzzle", {
+      legendData: {
+        rows,
+        columns,
+      },
+      // legendData: {
+      //   columns: [[1], [0], [1], [0], [1], [0], [1], [0], [1], [0], [1]],
+      //   rows: [[1, 1, 1], [0], [1, 1, 1]],
+      // },
+    })
+    .then((response) => {
+      console.log(response.data);
+    });
+}
 
 function onToggleCellValue(value: string) {
   if (showSaveGridModal.value || game.levelIsCleared.value) return;

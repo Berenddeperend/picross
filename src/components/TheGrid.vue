@@ -32,9 +32,11 @@ const {
 
 const emit = defineEmits<{
   (e: "onCellClicked", index: number): void;
+  (e: "onCellRightClicked", index: number): void;
   (e: "gridChanged", grid: Grid): void;
   (e: "moveCursor", dir: Direction): void;
   (e: "toggleCellValue", value: string): void;
+  (e: "onCellHover", position: Position): void;
 }>();
 
 const cursor = player
@@ -60,6 +62,7 @@ function cursorStyling(index: number): StyleValue | undefined {
   if (!cursor || !player || !players) return;
 
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor);
+  console.log("-> cellIsOwnCursor", cellIsOwnCursor);
   if (cellIsOwnCursor)
     return `
     box-shadow: 0px 0px 0px 2px ${player.color};
@@ -100,6 +103,17 @@ function onCellClicked(index: number) {
   if (!enableControls) return;
   emit("onCellClicked", index);
 }
+
+function onCellRightClicked(index: number) {
+  if (!enableControls) return;
+  emit("onCellRightClicked", index);
+}
+
+function onCellHover(position: Position) {
+  if (!enableControls) return;
+  console.log("yeh");
+  emit("onCellHover", position);
+}
 </script>
 
 <template>
@@ -133,7 +147,11 @@ function onCellClicked(index: number) {
         v-for="(cell, index) in gridSize"
         :key="index"
       >
-        <div v-for="(hit, hitIndex) in hitsInRows[index]" :key="hitIndex">
+        <div
+          v-for="(hit, hitIndex) in hitsInRows[index]"
+          :key="hitIndex"
+          class="hit"
+        >
           {{ hit }}
         </div>
       </div>
@@ -144,7 +162,9 @@ function onCellClicked(index: number) {
       v-for="(cell, index) in gridSize * gridSize"
       :key="index"
       :style="cursorStyling(index)"
+      @mouseover="onCellHover(index)"
       @click="onCellClicked(index)"
+      @click.right.prevent="onCellRightClicked(index)"
       :i="index"
       :class="{
         cursor: isEqual(player?.position, indexToXY(index)),
@@ -159,6 +179,8 @@ function onCellClicked(index: number) {
 $delay: 1s;
 $transition-time: 0.1s;
 $transition-time-slow: 1s;
+
+$cellSize: 27px;
 
 .horizontal-thing {
   position: absolute;
@@ -189,10 +211,23 @@ $transition-time-slow: 1s;
   .cell {
     display: flex;
     justify-content: flex-end;
+    background: #d2d6dc;
+    //min-width: 10px;
+    &:hover {
+      box-shadow: none;
+    }
 
     &.highlighted {
       background: lightblue;
     }
+
+    .hit {
+      //flex: 1 1 100%;
+    }
+
+    //.hit {
+    //  color: red;
+    //}
   }
 
   &.horizontal {
@@ -247,11 +282,10 @@ $transition-time-slow: 1s;
   }
 }
 
-.cell.cursor,
-.cell:hover {
-  font-weight: bold;
+//.cell:hover,
+.cell.cursor {
   z-index: 2;
-  box-shadow: 0 0 0 2px lightblue;
+  box-shadow: 0 0 0 4px lightblue;
 }
 
 .row {
@@ -268,18 +302,21 @@ $transition-time-slow: 1s;
 }
 
 .cell {
-  $size: 27px;
   //margin: 1px;
   border: 1px solid gray;
   border-radius: 3px;
-  width: $size;
-  height: $size;
+  width: $cellSize;
+  height: $cellSize;
+  //min-width: $cellSize;
+  //min-height: $cellSize;
   vertical-align: center;
   background: white;
   transition: background-color 0.1s;
 
   > div {
-    width: 20px;
+    //width: 20px;
+    width: calc(#{$cellSize} - 2px);
+    height: calc(#{$cellSize} - 2px);
     text-align: center;
   }
 
@@ -288,7 +325,10 @@ $transition-time-slow: 1s;
   }
 
   &.flagged {
-    background-color: red;
+    //background-color: transparent;
+    &:before {
+      content: "×";
+    }
   }
 }
 </style>

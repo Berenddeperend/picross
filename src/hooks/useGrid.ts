@@ -15,6 +15,20 @@ function getHits(arr: string[]): number[] {
   }, []);
 }
 
+function computeHitsInRows(grid: Grid) {
+  return grid.map((row) => {
+    return getHits(row);
+  });
+}
+
+function computeHitsInColumns(grid: Grid) {
+  const columns = grid.map((row, rowIndex, src) => {
+    return src.map((d) => d[rowIndex]);
+  });
+
+  return columns?.map((column) => getHits(column));
+}
+
 const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   const grid = ref(gridSource || createGrid(10));
   const solution = ref(solutionSource || null);
@@ -43,19 +57,16 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     return isEqual(grid.value, solution?.value);
   });
 
-  const hitsInRows = computed(() =>
-    solution.value?.map((row) => {
-      return getHits(row);
-    })
-  );
+  const hitsInRows = computed(() => computeHitsInRows(solution.value));
+  const hitsInColumns = computed(() => computeHitsInColumns(solution.value));
 
-  const hitsInColumns = computed(() => {
-    const columns = solution.value?.map((row, rowIndex, src) => {
-      return src.map((d) => d[rowIndex]);
-    });
-
-    return columns?.map((column) => getHits(column));
-  });
+  // const hitsInColumns = computed(() => {
+  //   const columns = grid.value?.map((row, rowIndex, src) => {
+  //     return src.map((d) => d[rowIndex]);
+  //   });
+  //
+  //   return columns?.map((column) => getHits(column));
+  // });
 
   return {
     grid,
@@ -63,6 +74,8 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     gridSize,
     hitsInRows,
     hitsInColumns,
+    computeHitsInRows,
+    computeHitsInColumns,
     levelIsCleared,
     indexToXY,
     clampToGrid,

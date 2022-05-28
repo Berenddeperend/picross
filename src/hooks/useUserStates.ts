@@ -77,7 +77,7 @@ export function useUserStates(
       socket!.on("gameCreated", (puzzle) =>
         game.setSolution(JSON.parse(puzzle.solution))
       );
-      socket!.emit("join");
+      socket!.emit("join", localStorage.getItem("nickName"));
     });
 
     onUnmounted(() => {

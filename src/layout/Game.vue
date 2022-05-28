@@ -8,8 +8,7 @@ import useSocket from "@/hooks/useSocket";
 import useUserStates from "@/hooks/useUserStates";
 import useGrid from "@/hooks/useGrid";
 import http from "@/services/http";
-import TopBar from "@/components/TopBar.vue";
-import TheClear from "@/components/TheClear.vue";
+import SideBar from "@/components/SideBar.vue";
 
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
@@ -35,6 +34,12 @@ function onCellClicked(index: number) {
   socket.emit("gridUpdated", grid.value);
 }
 
+function onCellRightClicked(index: number) {
+  const [x, y] = game.indexToXY(index);
+  grid.value[y][x] = grid.value[y][x] === " " ? "x" : " ";
+  socket.emit("gridUpdated", grid.value);
+}
+
 function onMoveCursor(direction: Direction) {
   if (direction === "left") {
     player.value!.position[0] = game.clampToGrid(player.value!.position[0] - 1);
@@ -51,16 +56,16 @@ function onMoveCursor(direction: Direction) {
   socket.emit("cursorUpdated", player.value!.position);
 }
 
+function onCellHover(position: Position) {
+  player.value!.position = game.indexToXY(position);
+}
+
 function onToggleCellValue(value: string) {
   if (game.levelIsCleared.value) return;
 
   const [x, y] = (player.value as Player).position;
   grid.value[y][x] = grid.value[y][x] === value ? " " : value;
   socket.emit("gridUpdated", grid.value);
-}
-
-function newPuzzle() {
-  socket.emit("newRandomPuzzle");
 }
 
 watch(game.levelIsCleared, (value) => {
@@ -84,18 +89,17 @@ watch(game.levelIsCleared, (value) => {
 </script>
 
 <template>
-  <TopBar
+  <SideBar
     v-if="players && player && mode === 'multiplayer'"
     :player="player"
     :players="players"
+    :socket="socket"
   />
-  <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
 
-  <TheClear :socket="socket" />
-
-  <button @click="newPuzzle">New puzzle</button>
+  {{ player?.position }}
 
   <Grid
+    class="grid"
     v-if="game.grid && game.solution"
     :enable-controls="true"
     :enable-socket="true"
@@ -103,9 +107,15 @@ watch(game.levelIsCleared, (value) => {
     :player="player"
     :players="players"
     @onCellClicked="onCellClicked"
+    @onCellRightClicked="onCellRightClicked"
+    @onCellHover="onCellHover"
     @moveCursor="onMoveCursor"
     @toggleCellValue="onToggleCellValue"
   />
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.grid {
+  margin-left: 200px;
+}
+</style>
