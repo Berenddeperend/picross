@@ -56,8 +56,9 @@ function onMoveCursor(direction: Direction) {
   socket.emit("cursorUpdated", player.value!.position);
 }
 
-function onCellHover(position: Position) {
-  player.value!.position = game.indexToXY(position);
+function onCellHover(cellIndex: number) {
+  player.value!.position = game.indexToXY(cellIndex);
+  socket.emit("cursorUpdated", player.value!.position);
 }
 
 function onToggleCellValue(value: string) {

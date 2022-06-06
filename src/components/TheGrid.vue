@@ -39,9 +39,7 @@ const emit = defineEmits<{
   (e: "onCellHover", position: Position): void;
 }>();
 
-const cursor = player
-  ? computed<Position>(() => player.position as Position)
-  : null;
+const cursor = computed<Position>(() => player?.position as Position);
 
 if (enableControls) {
   initControls({
@@ -62,17 +60,16 @@ function cursorStyling(index: number): StyleValue | undefined {
   if (!cursor || !player || !players) return;
 
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor);
-  console.log("-> cellIsOwnCursor", cellIsOwnCursor);
-  if (cellIsOwnCursor)
-    return `
-    box-shadow: 0px 0px 0px 2px ${player.color};
-  `;
+  if (cellIsOwnCursor) return;
 
   if (enableSocket) {
     const friend = Object.values(players).find((friends) => {
       return isEqual(indexToXY(index), friends.position);
     });
-    return !!friend ? `box-shadow: 0px 0px 0px 2px ${friend.color}` : undefined;
+
+    return !!friend
+      ? `box-shadow: 0px 0px 0px 2px ${friend.color}; z-index: 2;`
+      : undefined;
   }
 }
 
@@ -111,7 +108,6 @@ function onCellRightClicked(index: number) {
 
 function onCellHover(position: Position) {
   if (!enableControls) return;
-  console.log("yeh");
   emit("onCellHover", position);
 }
 </script>

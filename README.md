@@ -1,6 +1,5 @@
 # mvp
 - Is puzzle solvable?
-- cursor sync is broken
 
 # nice to haves
 - Setting X'es touchscreen
@@ -21,6 +20,7 @@
 # doing
 
 # done
+- cursor sync is broken
 - 'new puzzle' knop
 - Send new puzzle after clearing
 - repareer 'my puzzles'
@@ -33,11 +33,12 @@
 
 # About puzzle difficulty
 https://liacs.leidenuniv.nl/~kosterswa/nonodec2012.pdf
+
 - Only allow unambiguous, 'simple' puzzles that can be solved without branching, just with sweeps.
 - Count the amount of sweeps needed to define a difficulty.
 - Think about what kind of solver I need. Do I need to write one?
-- 
-
+ -	I think I need to use a 'push solver'. This npm package has one (https://github.com/thomasr/nonogram-solver/blob/HEAD/doc/internals.md), I could wrap it so that it doesn't hang but returns false if unsuccesfull. Or write my own push solver, could be fun.
+ - Looks like this guy already did it: https://github.com/ThomasR/nonogram-solver/compare/develop...SmashHighlights:develop
 
 
 
