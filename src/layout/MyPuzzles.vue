@@ -31,9 +31,12 @@ onMounted(() => {
 
   http.get(`/users/${nickName.value}/puzzles`).then((response) => {
     puzzles.value = response.data.map((puzzle: Puzzle) => {
+      //set both working state and solution to be the same.
+      const solution = JSON.parse(puzzle.solution);
+
       return {
         ...puzzle,
-        game: useGrid(JSON.parse(puzzle.solution)),
+        game: useGrid(solution, solution),
       };
     });
   });

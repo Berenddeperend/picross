@@ -57,16 +57,10 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     return isEqual(grid.value, solution?.value);
   });
 
-  const hitsInRows = computed(() => computeHitsInRows(solution.value));
-  const hitsInColumns = computed(() => computeHitsInColumns(solution.value));
-
-  // const hitsInColumns = computed(() => {
-  //   const columns = grid.value?.map((row, rowIndex, src) => {
-  //     return src.map((d) => d[rowIndex]);
-  //   });
-  //
-  //   return columns?.map((column) => getHits(column));
-  // });
+  const hitsInRows = computed(() => computeHitsInRows(solution.value as Grid));
+  const hitsInColumns = computed(() =>
+    computeHitsInColumns(solution.value as Grid)
+  );
 
   return {
     grid,

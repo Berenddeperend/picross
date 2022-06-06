@@ -20,6 +20,7 @@
 # doing
 
 # done
+- bug: 'hitsincolumns' could point to playfield or solution
 - cursor sync is broken
 - 'new puzzle' knop
 - Send new puzzle after clearing
