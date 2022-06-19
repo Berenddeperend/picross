@@ -15,13 +15,13 @@ function getHits(arr: string[]): number[] {
   }, []);
 }
 
-function computeHitsInRows(grid: Grid) {
+export function computeHitsInRows(grid: Grid) {
   return grid.map((row) => {
     return getHits(row);
   });
 }
 
-function computeHitsInColumns(grid: Grid) {
+export function computeHitsInColumns(grid: Grid) {
   const columns = grid.map((row, rowIndex, src) => {
     return src.map((d) => d[rowIndex]);
   });

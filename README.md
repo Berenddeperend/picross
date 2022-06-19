@@ -1,5 +1,4 @@
 # mvp
-- Is puzzle solvable?
 
 # nice to haves
 - Setting X'es touchscreen
@@ -18,6 +17,7 @@
 # todo
 
 # doing
+- Is puzzle solvable?
 
 # done
 - bug: 'hitsincolumns' could point to playfield or solution
@@ -39,7 +39,7 @@ https://liacs.leidenuniv.nl/~kosterswa/nonodec2012.pdf
 - Count the amount of sweeps needed to define a difficulty.
 - Think about what kind of solver I need. Do I need to write one?
  -	I think I need to use a 'push solver'. This npm package has one (https://github.com/thomasr/nonogram-solver/blob/HEAD/doc/internals.md), I could wrap it so that it doesn't hang but returns false if unsuccesfull. Or write my own push solver, could be fun.
- - Looks like this guy already did it: https://github.com/ThomasR/nonogram-solver/compare/develop...SmashHighlights:develop
+ - Looks like this guy already did it: https://github.com/SmashHighlights/nonogram-solver
 
 
 

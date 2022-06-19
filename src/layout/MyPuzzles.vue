@@ -31,7 +31,7 @@ onMounted(() => {
 
   http.get(`/users/${nickName.value}/puzzles`).then((response) => {
     puzzles.value = response.data.map((puzzle: Puzzle) => {
-      //set both working state and solution to be the same.
+      //set both working state and solution to be the same. Not ideal but it works.
       const solution = JSON.parse(puzzle.solution);
 
       return {

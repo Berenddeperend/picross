@@ -4,6 +4,7 @@
     <button @click="showSaveGridModal = true">Save puzzle</button>
 
     <button @click="validatePuzzle">validate</button>
+    puzzleIsValid: {{ puzzleIsValid }}
 
     <ModalSavePuzzle
       :open="showSaveGridModal"
@@ -23,7 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, unref } from "vue";
+import { ref, watch } from "vue";
+import { debounce } from "lodash";
 import { createGrid } from "@/utils";
 import useGrid from "@/hooks/useGrid";
 import useUserStates from "@/hooks/useUserStates";
@@ -35,8 +37,10 @@ const showSaveGridModal = ref<Boolean>(false);
 
 const game = useGrid(createGrid(10));
 const { grid, computeHitsInRows, computeHitsInColumns } = game;
-
+console.log("-> grid", grid);
 const { player } = useUserStates("singleplayer", game);
+
+const puzzleIsValid = ref(false);
 
 function validatePuzzle() {
   const addZeroIfEmpty = (arr: number[]): number[] => (arr.length ? arr : [0]);
@@ -49,13 +53,9 @@ function validatePuzzle() {
         rows,
         columns,
       },
-      // legendData: {
-      //   columns: [[1], [0], [1], [0], [1], [0], [1], [0], [1], [0], [1]],
-      //   rows: [[1, 1, 1], [0], [1, 1, 1]],
-      // },
     })
     .then((response) => {
-      console.log(response.data);
+      puzzleIsValid.value = response.data;
     });
 }
 
@@ -87,6 +87,14 @@ function onMoveCursor(direction: Direction) {
     player.value!.position[1] = game.clampToGrid(player.value!.position[1] + 1);
   }
 }
+
+watch(
+  grid,
+  debounce(() => {
+    validatePuzzle();
+  }, 400),
+  { deep: true }
+);
 </script>
 
 <style lang="scss" scoped>
