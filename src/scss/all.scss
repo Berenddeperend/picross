@@ -16,6 +16,7 @@ input {
   $btn-secondary-bg: gray;
 
   border: none;
+  text-decoration: none;
   background: $btn-primary-bg;
   color: white;
   padding: 10px;
@@ -48,5 +49,21 @@ input {
     &:hover:not(.disabled)   {
       background: darken($btn-secondary-bg, 10%);
     }
+  }
+}
+
+.input-with-button {
+  display: flex;
+
+  input {
+    border-right: none;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+  }
+
+  .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    z-index: 2;
   }
 }

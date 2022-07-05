@@ -69,6 +69,10 @@ function onToggleCellValue(value: string) {
   socket.emit("gridUpdated", grid.value);
 }
 
+function isCurrentPlayer(somePlayer: Player) {
+  return somePlayer.id === player.value?.id;
+}
+
 watch(game.levelIsCleared, (value) => {
   if (value) {
     confetti({
@@ -96,31 +100,101 @@ watch(game.levelIsCleared, (value) => {
   <!--    :players="players"-->
   <!--    :socket="socket"-->
   <!--  />-->
-  <SideBarGame
-    v-if="players && player && mode === 'multiplayer'"
-    :player="player"
-    :players="players"
-    :socket="socket"
-  />
+  <!--  <SideBarGame-->
+  <!--    v-if="players && player && mode === 'multiplayer'"-->
+  <!--    :player="player"-->
+  <!--    :players="players"-->
+  <!--    :socket="socket"-->
+  <!--  />-->
+  <header>
+    <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
+  </header>
 
-  <Grid
-    class="grid"
-    v-if="game.grid && game.solution"
-    :enable-controls="true"
-    :enable-socket="true"
-    :game="game"
-    :player="player"
-    :players="players"
-    @onCellClicked="onCellClicked"
-    @onCellRightClicked="onCellRightClicked"
-    @onCellHover="onCellHover"
-    @moveCursor="onMoveCursor"
-    @toggleCellValue="onToggleCellValue"
-  />
+  <div class="container">
+    <Grid
+      class="grid"
+      v-if="game.grid && game.solution"
+      :enable-controls="true"
+      :enable-socket="true"
+      :game="game"
+      :player="player"
+      :players="players"
+      @onCellClicked="onCellClicked"
+      @onCellRightClicked="onCellRightClicked"
+      @onCellHover="onCellHover"
+      @moveCursor="onMoveCursor"
+      @toggleCellValue="onToggleCellValue"
+    />
+
+    <aside>
+      <br />
+      <span class="now-playing"
+        >Now playing ({{ Object.values(players).length }})</span
+      >
+      <ul>
+        <li
+          v-for="player in players"
+          :class="[{ 'current-player': isCurrentPlayer(player) }, player.id]"
+          ref="playersRef"
+        >
+          <span class="online-indicator"></span>
+          {{ player.name }}
+        </li>
+      </ul>
+    </aside>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+header {
+  display: flex;
+  margin-bottom: 10px;
+  margin-left: 120px;
+  justify-content: space-between;
+}
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+.now-playing {
+  color: gray;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 10px 0;
+  text-align: left;
+
+  li {
+    //margin: 5px;
+    list-style-type: none;
+    //padding: 4px 10px;
+    border-radius: 3px;
+  }
+}
+
+.online-indicator {
+  $size: 7px;
+  margin-right: 5px;
+  position: relative;
+  top: -1px;
+  display: inline-block;
+  width: $size;
+  height: $size;
+  border-radius: $size;
+  background: limegreen;
+
+  border: 1px solid darken(limegreen, 5%);
+}
+
+.link {
+  text-decoration: none;
+}
+
 .grid {
-  margin-left: 200px;
+  margin-left: 120px;
 }
 </style>

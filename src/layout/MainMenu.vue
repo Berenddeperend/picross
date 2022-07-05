@@ -2,7 +2,11 @@
   <h1>Picross</h1>
   <label>
     Nickname
-    <input type="text" placeholder="Uw naam" v-model="nickName" />
+
+    <div class="input-with-button">
+      <input type="text" autofocus v-model="nickName" />
+      <router-link class="btn" to="/play">Play</router-link>
+    </div>
   </label>
 
   <ul>

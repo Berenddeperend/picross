@@ -38,8 +38,3 @@ function onSubmit(e: Event) {
     });
 }
 </script>
-
-<div>
-
-
-</div>

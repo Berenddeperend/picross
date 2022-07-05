@@ -1,25 +1,34 @@
 <template>
   <div class="create">
-    <side-bar>
-      <template #default>
-        hier een avatar enzo
+    <!--    <side-bar>-->
+    <!--      <template #default>-->
+    <!--        hier een avatar enzo-->
 
-        <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
-      </template>
+    <!--        <router-link :to="{ name: 'mainMenu' }">Terug</router-link>-->
+    <!--      </template>-->
 
-      <template #footer>
-        <button class="btn btn-link">Clear</button>
+    <!--      <template #footer>-->
+    <!--        <button class="btn btn-link">Clear</button>-->
 
-        <button
-          class="btn"
-          :class="{ disabled: !puzzleIsValid }"
-          :disabled="!puzzleIsValid"
-          @click="showSaveGridModal = true"
-        >
-          Save puzzle
-        </button>
-      </template>
-    </side-bar>
+    <!--        <button-->
+    <!--          class="btn"-->
+    <!--          :class="{ disabled: !puzzleIsValid }"-->
+    <!--          :disabled="!puzzleIsValid"-->
+    <!--          @click="showSaveGridModal = true"-->
+    <!--        >-->
+    <!--          Save puzzle-->
+    <!--        </button>-->
+    <!--      </template>-->
+    <!--    </side-bar>-->
+
+    <header>
+      <router-link class="link" :to="{ name: 'mainMenu' }">← Terug</router-link>
+    </header>
+
+    <ModalPuzzleInvalid
+      :open="showPuzzleInvalidModal"
+      @close="showPuzzleInvalidModal = false"
+    />
 
     <ModalSavePuzzle
       :open="showSaveGridModal"
@@ -34,6 +43,18 @@
       @moveCursor="onMoveCursor"
       @toggleCellValue="onToggleCellValue"
     />
+
+    <div class="btns-container">
+      <button class="btn btn-link">Clear</button>
+
+      <button
+        class="btn"
+        :class="{ disabled: !puzzleIsValid }"
+        @click="onSaveClick"
+      >
+        Save puzzle
+      </button>
+    </div>
   </div>
   <!--    dit niet emitten maar exposen als functie! dan kan ik {useMoveCurosr} from grid doen -->
 </template>
@@ -46,10 +67,12 @@ import useGrid from "@/hooks/useGrid";
 import useUserStates from "@/hooks/useUserStates";
 import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
+import ModalPuzzleInvalid from "@/components/ModalPuzzleInvalid.vue";
 import http from "@/services/http";
 import SideBar from "@/components/SideBar.vue";
 
 const showSaveGridModal = ref<Boolean>(false);
+const showPuzzleInvalidModal = ref<Boolean>(false);
 
 const game = useGrid(createGrid(10));
 const { grid, computeHitsInRows, computeHitsInColumns } = game;
@@ -107,6 +130,14 @@ function onMoveCursor(direction: Direction) {
   }
 }
 
+function onSaveClick() {
+  if (puzzleIsValid.value) {
+    showSaveGridModal.value = true;
+  } else {
+    showPuzzleInvalidModal.value = true;
+  }
+}
+
 watch(
   grid,
   () => {
@@ -123,5 +154,18 @@ watch(
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+header {
+  display: flex;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.btns-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 </style>
