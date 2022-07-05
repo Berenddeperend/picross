@@ -8,7 +8,7 @@ import useSocket from "@/hooks/useSocket";
 import useUserStates from "@/hooks/useUserStates";
 import useGrid from "@/hooks/useGrid";
 import http from "@/services/http";
-import SideBar from "@/components/SideBar.vue";
+import SideBarGame from "@/layout/partials/SideBarGame.vue";
 
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
@@ -90,14 +90,18 @@ watch(game.levelIsCleared, (value) => {
 </script>
 
 <template>
-  <SideBar
+  <!--  <SideBar-->
+  <!--    v-if="players && player && mode === 'multiplayer'"-->
+  <!--    :player="player"-->
+  <!--    :players="players"-->
+  <!--    :socket="socket"-->
+  <!--  />-->
+  <SideBarGame
     v-if="players && player && mode === 'multiplayer'"
     :player="player"
     :players="players"
     :socket="socket"
   />
-
-  {{ player?.position }}
 
   <Grid
     class="grid"

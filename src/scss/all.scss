@@ -10,3 +10,43 @@ input {
   padding: 10px;
   text-align: center;
 }
+
+.btn {
+  $btn-primary-bg: darkorange;
+  $btn-secondary-bg: gray;
+
+  border: none;
+  background: $btn-primary-bg;
+  color: white;
+  padding: 10px;
+  border-radius: 2px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover:not(.disabled) {
+    background: darken($btn-primary-bg, 10%);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+  }
+
+  &.btn-link {
+    color: black;
+    background: none;
+    &:hover:not(.disabled)   {
+      background: none;
+    }
+  }
+
+  &.secondary {
+    background: $btn-secondary-bg;
+
+    &:hover:not(.disabled)   {
+      background: darken($btn-secondary-bg, 10%);
+    }
+  }
+}

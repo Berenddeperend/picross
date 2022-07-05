@@ -1,10 +1,25 @@
 <template>
   <div class="create">
-    <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
-    <button @click="showSaveGridModal = true">Save puzzle</button>
+    <side-bar>
+      <template #default>
+        hier een avatar enzo
 
-    <button @click="validatePuzzle">validate</button>
-    puzzleIsValid: {{ puzzleIsValid }}
+        <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
+      </template>
+
+      <template #footer>
+        <button class="btn btn-link">Clear</button>
+
+        <button
+          class="btn"
+          :class="{ disabled: !puzzleIsValid }"
+          :disabled="!puzzleIsValid"
+          @click="showSaveGridModal = true"
+        >
+          Save puzzle
+        </button>
+      </template>
+    </side-bar>
 
     <ModalSavePuzzle
       :open="showSaveGridModal"
@@ -32,6 +47,7 @@ import useUserStates from "@/hooks/useUserStates";
 import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 import http from "@/services/http";
+import SideBar from "@/components/SideBar.vue";
 
 const showSaveGridModal = ref<Boolean>(false);
 
@@ -40,6 +56,7 @@ const { grid, computeHitsInRows, computeHitsInColumns } = game;
 console.log("-> grid", grid);
 const { player } = useUserStates("singleplayer", game);
 
+const puzzleIsValidated = ref(false);
 const puzzleIsValid = ref(false);
 
 function validatePuzzle() {
@@ -55,9 +72,11 @@ function validatePuzzle() {
       },
     })
     .then((response) => {
+      puzzleIsValidated.value = true;
       puzzleIsValid.value = response.data;
     });
 }
+const debouncedValidate = debounce(validatePuzzle, 400);
 
 function onToggleCellValue(value: string) {
   if (showSaveGridModal.value || game.levelIsCleared.value) return;
@@ -90,9 +109,10 @@ function onMoveCursor(direction: Direction) {
 
 watch(
   grid,
-  debounce(() => {
-    validatePuzzle();
-  }, 400),
+  () => {
+    puzzleIsValidated.value = false;
+    debouncedValidate();
+  },
   { deep: true }
 );
 </script>

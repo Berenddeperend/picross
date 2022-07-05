@@ -1,58 +1,40 @@
 <template>
-  <header>
-    <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
-    <br />
-    Now playing: ({{ Object.values(players).length }}):
-    <ul>
-      <li
-        v-for="player in players"
-        :class="[{ 'current-player': isCurrentPlayer(player) }, player.id]"
-        ref="playersRef"
-      >
-        {{ player.name }}
-      </li>
-    </ul>
+  <aside class="sidebar">
+    <slot name="default"></slot>
 
-    <VoteClear v-if="socket" :socket="socket" />
-    <VoteNext v-if="socket" :socket="socket" />
-  </header>
+    <div class="sidebar-footer">
+      <slot name="footer"></slot>
+    </div>
+  </aside>
 </template>
 
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
-import VoteClear from "@/components/VoteClear.vue";
-import VoteNext from "@/components/VoteNext.vue";
-import { Socket } from "socket.io-client";
-
-const { players, player, socket } =
-  defineProps<{ players: Players; player: Player; socket?: Socket }>();
-
-const inputRef = ref(null);
-
-const name = ref("");
-
-onMounted(() => {});
-
-function isCurrentPlayer(somePlayer: Player) {
-  return somePlayer.id === player.id;
-}
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss" scoped>
-header {
-  //display: flex;
+.sidebar {
   position: absolute;
-
   top: 0;
   left: 0;
-  //width: 100%;
-  width: 200px;
+  width: 250px;
   height: 100%;
   background: #f7f7f7;
   justify-content: center;
   align-items: center;
   padding: 5px;
   border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  border-top: 1px solid gray;
 }
 
 input {
