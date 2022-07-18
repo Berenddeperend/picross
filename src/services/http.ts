@@ -4,7 +4,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 const http = axios.create({
   baseURL: isProd
-    ? "https://berendswennenhuis.nl/nonogram/api"
+    ? process.env.VUE_API_URL
     : "http://localhost:7200",
 });
 

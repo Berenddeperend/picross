@@ -6,8 +6,8 @@ const useSocket = () => {
   const settings = { transports: ["websocket"], upgrade: false };
 
   const socket = io(
-    isProd ? "wss://berendswennenhuis.nl" : "localhost:7100",
-    isProd ? { path: "/path/", ...settings } : { ...settings }
+    isProd ? process.env.VUE_SOCKET_BASE_URL : "localhost:7100",
+    isProd ? { path: process.env.VUE_SOCKET_PATH, ...settings } : { ...settings }
   );
 
   onUnmounted(() => {
