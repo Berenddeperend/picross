@@ -5,6 +5,8 @@ const useSocket = () => {
   const isProd = process.env.NODE_ENV === "production";
   const settings = { transports: ["websocket"], upgrade: false };
 
+  console.log('isProd', isProd);
+
   const socket = io(
     isProd ? process.env.VUE_SOCKET_BASE_URL : "localhost:7100",
     isProd ? { path: process.env.VUE_SOCKET_PATH, ...settings } : { ...settings }

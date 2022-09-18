@@ -4,7 +4,7 @@
     <!--      <template #default>-->
     <!--        hier een avatar enzo-->
 
-    <!--        <router-link :to="{ name: 'mainMenu' }">Terug</router-link>-->
+    <!--        <router-link :to="{ name: 'mainMenu' }">Back</router-link>-->
     <!--      </template>-->
 
     <!--      <template #footer>-->
@@ -22,7 +22,7 @@
     <!--    </side-bar>-->
 
     <header>
-      <router-link class="link" :to="{ name: 'mainMenu' }">← Terug</router-link>
+      <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
     </header>
 
     <ModalPuzzleInvalid

@@ -1,6 +1,6 @@
 <template>
   <side-bar>
-    <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
+    <router-link :to="{ name: 'mainMenu' }">Back</router-link>
     <br />
     Now playing: ({{ Object.values(players).length }}):
     <ul>

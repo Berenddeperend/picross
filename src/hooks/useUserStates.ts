@@ -75,7 +75,8 @@ export function useUserStates(
         playerId.value = data.id;
       });
       socket!.on("gameCreated", (puzzle) =>
-        game.setSolution(JSON.parse(puzzle.solution))
+        // game.setSolution(JSON.parse(puzzle.solution))
+        game.setSolution(puzzle.solution)
       );
       socket!.emit("join", localStorage.getItem("nickName"));
     });

@@ -1,7 +1,7 @@
 <template>
-  <router-link :to="{ name: 'mainMenu' }">Terug</router-link>
+  <router-link :to="{ name: 'mainMenu' }">Back</router-link>
 
-  <div v-if="!nickName">Nog geen puzzels</div>
+  <div v-if="!nickName">No puzzles yet.</div>
 
   <div class="my-puzzles" v-if="puzzles">
     <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
