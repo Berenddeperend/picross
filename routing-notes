@@ -1,0 +1,12 @@
+routing-notes
+
+
+lokaal doe ik ook een frontend npm run publish en komt de root dus op localhost
+
+Werkt het om altijd relatieve paden te gebruiken?
+localhost -> localhost
+berend.nl -> berend.nl
+
+
+REST werkt(!!), nu nog de sockets
+

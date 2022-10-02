@@ -1,10 +1,14 @@
 import axios from "axios";
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = import.meta.env.PROD;
 
+console.log('isProd:', isProd);
+
+//deze conditional is prima, laten staan.
+console.log(location)
 const http = axios.create({
   baseURL: isProd
-    ? process.env.VUE_API_URL
+    ? import.meta.env.VITE_API_URL
     : "http://localhost:7200",
 });
 
