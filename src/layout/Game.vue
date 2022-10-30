@@ -134,6 +134,7 @@ watch(game.levelIsCleared, (value) => {
       <ul>
         <li
           v-for="player in players"
+          :key="player.id"
           :class="[{ 'current-player': isCurrentPlayer(player) }, player.id]"
           ref="playersRef"
         >

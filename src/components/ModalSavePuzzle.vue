@@ -1,7 +1,6 @@
 <template>
   <the-modal :visible="open" @close="emit('close')">
     <form @submit.prevent="onSubmit" v-if="!response">
-      {{ nickName }}
       <input type="text" placeholder="Uw naam" v-model="nickName" />
       <input type="text" placeholder="Puzzel naam" v-model="puzzleName" />
       <button :disabled="puzzleName === '' || nickName === ''">Save</button>

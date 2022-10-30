@@ -24,6 +24,12 @@
 
 <script setup lang="ts">
 import { useStorage } from "@vueuse/core";
+import http from "@/services/http";
+import { onMounted } from "@vue/runtime-core";
+
+onMounted(()=> {
+  http.get('/ping');
+})
 
 const nickName = useStorage("nickName", "");
 </script>
