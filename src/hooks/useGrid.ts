@@ -54,7 +54,10 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   };
 
   const levelIsCleared = computed(() => {
-    return isEqual(grid.value, solution?.value);
+    if(!solution.value) return false;
+
+    const stringify = (grid: Grid) => grid.flat().map(cell => cell === 'x' ? ' ' : cell).join('');
+    return stringify(grid.value) === stringify(solution?.value);
   });
 
   const hitsInRows = computed(() => computeHitsInRows(solution.value as Grid));

@@ -1,8 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import {ref} from 'vue'
+
+const theme = ref('light');
+
+</script>
 
 <template>
-  <router-view></router-view>
-  <div id="modal-target"></div>
+  <div>
+    <router-view></router-view>
+    <div id="modal-target"></div>
+  </div>
 </template>
 
 <style>
