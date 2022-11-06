@@ -76,7 +76,6 @@ const showPuzzleInvalidModal = ref<Boolean>(false);
 
 const game = useGrid(createGrid(10));
 const { grid, computeHitsInRows, computeHitsInColumns } = game;
-console.log("-> grid", grid);
 const { player } = useUserStates("singleplayer", game);
 
 const puzzleIsValidated = ref(false);
