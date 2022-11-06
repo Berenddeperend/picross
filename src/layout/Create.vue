@@ -41,6 +41,7 @@
       :player="player"
       @onCellClicked="onCellClicked"
       @moveCursor="onMoveCursor"
+      @onCellHover="onCellHover"
       @toggleCellValue="onToggleCellValue"
     />
 
@@ -110,6 +111,11 @@ function onToggleCellValue(value: string) {
 function onCellClicked(index: number) {
   const [x, y] = game.indexToXY(index);
   grid.value[y][x] = grid.value[y][x] === " " ? "d" : " ";
+}
+
+function onCellHover(index: number) {
+  console.log('hovered')
+  player.value!.position = game.indexToXY(index);
 }
 
 function onMoveCursor(direction: Direction) {

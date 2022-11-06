@@ -111,6 +111,7 @@ watch(game.levelIsCleared, (value) => {
   </header>
 
   <div class="container">
+
     <Grid
       class="grid"
       v-if="game.grid && game.solution"

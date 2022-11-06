@@ -57,18 +57,27 @@ if (enableControls) {
 }
 
 function cursorStyling(index: number): StyleValue | undefined {
+  if (cursor && player && !players) { //build mode, i hate these ifs :(
+    if(isEqual(indexToXY(index), player!.position)) {
+      return `outline: 5px solid hotpink; z-index: 2;`
+    }
+  }
+
   if (!cursor || !player || !players) return;
 
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor);
   if (cellIsOwnCursor) return;
 
   if (enableSocket) {
+    if(levelIsCleared.value) return '';
+
     const friend = Object.values(players).find((friends) => {
       return isEqual(indexToXY(index), friends.position);
     });
 
     return !!friend
-      ? `box-shadow: 0px 0px 0px 2px ${friend.color}; z-index: 2;`
+      // ? `box-shadow: 1px 1px 0px 2px ${friend.color}; z-index: 2;`
+      ? `outline: 5px solid ${friend.color}; z-index: 2;`
       : undefined;
   }
 }
@@ -118,6 +127,7 @@ function onCellHover(position: Position) {
     :class="{ cleared: levelIsCleared }"
     :style="playfieldStyling"
   >
+
     <div class="corner" v-if="solution"></div>
 
     <div class="legend horizontal" v-if="solution">
@@ -281,7 +291,8 @@ $cellSize: 27px;
 //.cell:hover,
 .cell.cursor {
   z-index: 2;
-  box-shadow: 0 0 0 4px lightblue;
+  // box-shadow: 0 0 0 4px lightblue;
+  // outline: 4px solid hotpink;
 }
 
 .row {
@@ -298,9 +309,9 @@ $cellSize: 27px;
 }
 
 .cell {
-  //margin: 1px;
-  border: 1px solid gray;
-  border-radius: 3px;
+  margin: 1px;
+  // border: 1px solid gray;
+  border-radius: 2px;
   width: $cellSize;
   height: $cellSize;
   //min-width: $cellSize;
