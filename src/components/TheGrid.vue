@@ -107,6 +107,7 @@ function rowLegendActive(index: number) {
 
 function onCellClicked(index: number) {
   if (!enableControls) return;
+  if (levelIsCleared.value) return;
   emit("onCellClicked", index);
 }
 
@@ -175,9 +176,10 @@ function onCellHover(position: Position) {
       :class="{
         cursor: isEqual(player?.position, indexToXY(index)),
         filled: cellIndexIs(index, 'd'),
-        flagged: cellIndexIs(index, 'x'),
       }"
-    ></div>
+    >
+      <span class="cell-x" v-if="cellIndexIs(index, 'x')">×</span>
+  </div>
   </div>
 </template>
 
@@ -303,9 +305,14 @@ $cellSize: 27px;
   margin: 0;
   border-radius: 0;
   transition: background-color $transition-time,
-    margin $transition-time-slow $delay * 2,
-    border-radius $transition-time-slow $delay * 2;
+    margin $transition-time-slow $delay,
+    border-radius $transition-time-slow $delay;
   box-shadow: none !important;
+
+  .cell-x {
+    transition-delay: $delay;
+    opacity: 0; 
+  }
 }
 
 .cell {
@@ -320,6 +327,10 @@ $cellSize: 27px;
   background: white;
   transition: background-color 0.1s;
 
+  .cell-x {
+    transition: opacity 0.5s;
+  }
+
   > div {
     //width: 20px;
     width: calc(#{$cellSize} - 2px);
@@ -333,9 +344,6 @@ $cellSize: 27px;
 
   &.flagged {
     //background-color: transparent;
-    &:before {
-      content: "×";
-    }
   }
 }
 </style>
