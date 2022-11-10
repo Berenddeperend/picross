@@ -17,7 +17,8 @@ const game = useGrid(createGrid(10));
 
 const { grid, puzzle } = game;
 
-if (mode === "singleplayer") { // ?????
+if (mode === "singleplayer") {
+  // ?????
   http.get(`/puzzle/${puzzleId}`).then((response) => {
     game.setSolution(JSON.parse(response.data.puzzle));
   });
@@ -111,7 +112,6 @@ watch(game.levelIsCleared, (value) => {
   </header>
 
   <div class="container">
-
     <Grid
       class="grid"
       v-if="game.grid && game.solution"
@@ -146,11 +146,16 @@ watch(game.levelIsCleared, (value) => {
     </aside>
   </div>
 
-  <div class="puzzle-title" :style="{
-    opacity: game.levelIsCleared.value ? 1 : 0
+  <div
+    class="puzzle-title"
+    :style="{
+      opacity: game.levelIsCleared.value ? 1 : 0,
+      transitionDelay: game.levelIsCleared.value ? '2s' : '0s',
+    }"
+  >
+    {{ puzzle?.name }}
+  </div>
 
-  }">{{puzzle?.name}}</div>
-  
   <!-- <div class="puzzle-title">{{puzzle?.name}}</div> -->
 </template>
 
@@ -208,7 +213,6 @@ ul {
 
 .puzzle-title {
   margin-top: 10px;
-  transition: opacity 0.4s 2s;
+  transition: opacity 0.4s;
 }
-
 </style>
