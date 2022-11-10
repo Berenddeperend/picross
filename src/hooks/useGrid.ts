@@ -32,6 +32,12 @@ export function computeHitsInColumns(grid: Grid) {
 const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   const grid = ref(gridSource || createGrid(10));
   const solution = ref(solutionSource || null);
+  const puzzle = ref<Puzzle>();
+  
+  const setPuzzle = (newPuzzle: Puzzle) => {
+    puzzle.value = newPuzzle;
+    setSolution(newPuzzle.solution);
+  }
 
   const setGrid = (newGrid: Grid) => {
     grid.value = newGrid;
@@ -66,6 +72,7 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   );
 
   return {
+    puzzle,
     grid,
     solution,
     gridSize,
@@ -78,6 +85,7 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     clampToGrid,
     setGrid,
     setSolution,
+    setPuzzle
   };
 };
 

@@ -15,9 +15,9 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid(createGrid(10));
 
-const { grid } = game;
+const { grid, puzzle } = game;
 
-if (mode === "singleplayer") {
+if (mode === "singleplayer") { // ?????
   http.get(`/puzzle/${puzzleId}`).then((response) => {
     game.setSolution(JSON.parse(response.data.puzzle));
   });
@@ -145,6 +145,13 @@ watch(game.levelIsCleared, (value) => {
       </ul>
     </aside>
   </div>
+
+  <div class="puzzle-title" :style="{
+    opacity: game.levelIsCleared.value ? 1 : 0
+
+  }">{{puzzle?.name}}</div>
+  
+  <!-- <div class="puzzle-title">{{puzzle?.name}}</div> -->
 </template>
 
 <style lang="scss" scoped>
@@ -152,7 +159,6 @@ header {
   display: flex;
   margin-bottom: 10px;
   margin-left: 120px;
-  justify-content: space-between;
 }
 .container {
   display: flex;
@@ -199,4 +205,10 @@ ul {
 .grid {
   margin-left: 120px;
 }
+
+.puzzle-title {
+  margin-top: 10px;
+  transition: opacity 0.4s 2s;
+}
+
 </style>
