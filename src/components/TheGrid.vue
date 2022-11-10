@@ -36,7 +36,7 @@ const emit = defineEmits<{
   (e: "gridChanged", grid: Grid): void;
   (e: "moveCursor", dir: Direction): void;
   (e: "toggleCellValue", value: string): void;
-  (e: "onCellHover", position: Position): void;
+  (e: "onCellHover", index: number): void;
 }>();
 
 const cursor = computed<Position>(() => player?.position as Position);
@@ -116,9 +116,9 @@ function onCellRightClicked(index: number) {
   emit("onCellRightClicked", index);
 }
 
-function onCellHover(position: Position) {
+function onCellHover(positionIndex: number) {
   if (!enableControls) return;
-  emit("onCellHover", position);
+  emit("onCellHover", positionIndex);
 }
 </script>
 
