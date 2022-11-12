@@ -32,6 +32,12 @@ export function computeHitsInColumns(grid: Grid) {
 const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   const grid = ref(gridSource || createGrid(10));
   const solution = ref(solutionSource || null);
+  const puzzle = ref<Puzzle>();
+
+  const setPuzzle = (newPuzzle: Puzzle) => {
+    puzzle.value = newPuzzle;
+    setSolution(newPuzzle.solution);
+  };
 
   const setGrid = (newGrid: Grid) => {
     grid.value = newGrid;
@@ -54,9 +60,13 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   };
 
   const levelIsCleared = computed(() => {
-    if(!solution.value) return false;
+    if (!solution.value) return false;
 
-    const stringify = (grid: Grid) => grid.flat().map(cell => cell === 'x' ? ' ' : cell).join('');
+    const stringify = (grid: Grid) =>
+      grid
+        .flat()
+        .map((cell) => (cell === "x" ? " " : cell))
+        .join("");
     return stringify(grid.value) === stringify(solution?.value);
   });
 
@@ -65,7 +75,19 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     computeHitsInColumns(solution.value as Grid)
   );
 
+  const gridWithAutoX = computed(() => {
+    return grid.value;
+    // console.log('recalc')
+    // return [...grid.value].map((row, index) => {
+    //   if(index === 0) {
+    //     return row.map(cell => 'x')
+    //   }
+    //   return row
+    // });
+  });
+
   return {
+    puzzle,
     grid,
     solution,
     gridSize,
@@ -78,6 +100,8 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     clampToGrid,
     setGrid,
     setSolution,
+    setPuzzle,
+    gridWithAutoX,
   };
 };
 

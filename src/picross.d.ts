@@ -20,7 +20,7 @@ type Position = [number, number];
 type Puzzle = {
   id: number;
   name: string;
-  solution: string;
+  solution: Grid;
   width: number | null;
   height: number | null;
   authorId: number;

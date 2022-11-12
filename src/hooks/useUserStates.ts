@@ -74,10 +74,11 @@ export function useUserStates(
       socket!.on("playerCreated", (data: any) => {
         playerId.value = data.id;
       });
-      socket!.on("gameCreated", (puzzle) =>
-        // game.setSolution(JSON.parse(puzzle.solution))
+      socket!.on("gameCreated", (puzzle) => {
         game.setSolution(puzzle.solution)
-      );
+        game.setPuzzle(puzzle);
+      });
+      
       socket!.emit("join", localStorage.getItem("nickName"));
     });
 

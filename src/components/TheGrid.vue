@@ -28,6 +28,7 @@ const {
   levelIsCleared,
   grid,
   solution,
+  puzzle
 } = game;
 
 const emit = defineEmits<{
@@ -163,7 +164,7 @@ function onCellHover(positionIndex: number) {
         </div>
       </div>
     </div>
-
+    
     <div
       class="cell"
       v-for="(cell, index) in gridSize * gridSize"

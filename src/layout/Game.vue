@@ -15,7 +15,7 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid(createGrid(10));
 
-const { grid } = game;
+const { gridWithAutoX: grid, puzzle } = game;
 
 if (mode === "singleplayer") {
   http.get(`/puzzle/${puzzleId}`).then((response) => {
@@ -111,7 +111,6 @@ watch(game.levelIsCleared, (value) => {
   </header>
 
   <div class="container">
-
     <Grid
       class="grid"
       v-if="game.grid && game.solution"
@@ -145,6 +144,18 @@ watch(game.levelIsCleared, (value) => {
       </ul>
     </aside>
   </div>
+
+  <div
+    class="puzzle-title"
+    :style="{
+      opacity: game.levelIsCleared.value ? 1 : 0,
+      transitionDelay: game.levelIsCleared.value ? '2s' : '0s',
+    }"
+  >
+    {{ puzzle?.name }}
+  </div>
+
+  <!-- <div class="puzzle-title">{{puzzle?.name}}</div> -->
 </template>
 
 <style lang="scss" scoped>
@@ -198,5 +209,10 @@ ul {
 
 .grid {
   margin-left: 120px;
+}
+
+.puzzle-title {
+  margin-top: 10px;
+  transition: opacity 0.4s;
 }
 </style>
