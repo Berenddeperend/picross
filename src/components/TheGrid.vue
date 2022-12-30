@@ -92,8 +92,8 @@ const playfieldStyling = computed((): StyleValue => {
 });
 
 function cellIndexIs(index: number, value: string): boolean {
-  const [x, y] = indexToXY(index);
-  return unref(grid)[y][x] === value;
+  const [x, y] = indexToXY(index); //maybe memoize this
+  return grid.value[y][x] === value;
 }
 
 function columnLegendActive(index: number) {
@@ -167,8 +167,8 @@ function onCellHover(positionIndex: number) {
     
     <div
       class="cell"
-      v-for="(cell, index) in gridSize * gridSize"
-      :key="index"
+      v-for="(cell, index) in (grid.length * grid.length)"
+      :key="cell"
       :style="cursorStyling(index)"
       @mouseover="onCellHover(index)"
       @click="onCellClicked(index)"
@@ -199,21 +199,13 @@ $cellSize: 27px;
   background: gray;
   position: relative;
   padding: 1px;
-  //transition: background-color 0.4s;
 
   display: inline-grid;
-  //grid-template-columns: auto repeat(10, 1fr);
-  //grid-template-rows: auto repeat(10, 1fr);
 
   &.cleared {
     background: none;
     transition: background-color $transition-time-slow 1s;
   }
-}
-
-.corner {
-  //width: 100px;
-  //height: 100px;
 }
 
 .legend {

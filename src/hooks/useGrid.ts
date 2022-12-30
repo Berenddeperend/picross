@@ -75,16 +75,6 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     computeHitsInColumns(solution.value as Grid)
   );
 
-  const gridWithAutoX = computed(() => {
-    return grid.value;
-    // console.log('recalc')
-    // return [...grid.value].map((row, index) => {
-    //   if(index === 0) {
-    //     return row.map(cell => 'x')
-    //   }
-    //   return row
-    // });
-  });
 
   return {
     puzzle,
@@ -101,7 +91,6 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     setGrid,
     setSolution,
     setPuzzle,
-    gridWithAutoX,
   };
 };
 

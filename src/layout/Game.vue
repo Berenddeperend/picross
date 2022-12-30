@@ -15,13 +15,7 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid(createGrid(10));
 
-const { gridWithAutoX: grid, puzzle } = game;
-
-if (mode === "singleplayer") {
-  http.get(`/puzzle/${puzzleId}`).then((response) => {
-    game.setSolution(JSON.parse(response.data.puzzle));
-  });
-}
+const { grid, puzzle } = game;
 
 const { socket } = useSocket();
 const { players, player, initState } = useUserStates(mode, game, socket);

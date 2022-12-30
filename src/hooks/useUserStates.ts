@@ -75,7 +75,6 @@ export function useUserStates(
         playerId.value = data.id;
       });
       socket!.on("gameCreated", (puzzle) => {
-        game.setSolution(puzzle.solution)
         game.setPuzzle(puzzle);
       });
       
@@ -84,7 +83,7 @@ export function useUserStates(
 
     onUnmounted(() => {
       if (!isMultiplayer) return;
-      socket!.off("gridUpdated", (grid) => game.setGrid(grid));
+      socket!.off("gridUpdated", game.setGrid);
       socket!.off("playersStateUpdated", setPlayersState);
     });
   }

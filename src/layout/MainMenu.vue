@@ -1,5 +1,5 @@
 <template>
-  <h1>Picross</h1>
+  <h1>Nonogram</h1>
   <label>
     Nickname
 
