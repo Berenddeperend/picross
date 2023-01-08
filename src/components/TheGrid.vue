@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { StyleValue, computed, Ref, unref } from "vue";
 import { isEqual } from "lodash";
-
-import useGrid from "@/hooks/useGrid";
-
 import { initControls } from "@/hooks/useControls";
+import useGrid from "@/hooks/useGrid";
 
 const {
   enableControls = false,
@@ -28,7 +26,7 @@ const {
   levelIsCleared,
   grid,
   solution,
-  puzzle
+  puzzle,
 } = game;
 
 const emit = defineEmits<{
@@ -41,6 +39,10 @@ const emit = defineEmits<{
 }>();
 
 const cursor = computed<Position>(() => player?.position as Position);
+
+const shouldShowLegend = computed(() => {
+  return unref(solution) && enableControls;
+});
 
 if (enableControls) {
   initControls({
@@ -58,9 +60,10 @@ if (enableControls) {
 }
 
 function cursorStyling(index: number): StyleValue | undefined {
-  if (cursor && player && !players) { //build mode, i hate these ifs :(
-    if(isEqual(indexToXY(index), player!.position)) {
-      return `outline: 5px solid hotpink; z-index: 2;`
+  if (cursor && player && !players) {
+    //build mode, i hate these ifs :(
+    if (isEqual(indexToXY(index), player!.position)) {
+      return `outline: 5px solid hotpink; z-index: 2;`;
     }
   }
 
@@ -70,21 +73,22 @@ function cursorStyling(index: number): StyleValue | undefined {
   if (cellIsOwnCursor) return;
 
   if (enableSocket) {
-    if(levelIsCleared.value) return '';
+    if (levelIsCleared.value) return "";
 
     const friend = Object.values(players).find((friends) => {
       return isEqual(indexToXY(index), friends.position);
     });
 
     return !!friend
-      // ? `box-shadow: 1px 1px 0px 2px ${friend.color}; z-index: 2;`
       ? `outline: 5px solid ${friend.color}; z-index: 2;`
       : undefined;
   }
 }
 
 const playfieldStyling = computed((): StyleValue => {
-  const rule = unref(solution) ? `auto repeat(10, 1fr)` : `repeat(10, 1fr)`;
+  const rule = shouldShowLegend.value
+    ? `auto repeat(10, 1fr)`
+    : `repeat(10, 1fr)`;
   return `
     grid-template-columns: ${rule};
     grid-template-rows: ${rule};
@@ -93,7 +97,7 @@ const playfieldStyling = computed((): StyleValue => {
 
 function cellIndexIs(index: number, value: string): boolean {
   const [x, y] = indexToXY(index); //maybe memoize this
-  return grid.value[y][x] === value;
+  return unref(grid)[y][x] === value; // keep this unref, not sure why tho.
 }
 
 function columnLegendActive(index: number) {
@@ -129,10 +133,9 @@ function onCellHover(positionIndex: number) {
     :class="{ cleared: levelIsCleared }"
     :style="playfieldStyling"
   >
+    <div class="corner" v-if="shouldShowLegend"></div>
 
-    <div class="corner" v-if="solution"></div>
-
-    <div class="legend horizontal" v-if="solution">
+    <div class="legend horizontal" v-if="shouldShowLegend">
       <div
         class="cell"
         :class="{ highlighted: columnLegendActive(index) }"
@@ -148,7 +151,7 @@ function onCellHover(positionIndex: number) {
         </div>
       </div>
     </div>
-    <div class="legend vertical" v-if="solution">
+    <div class="legend vertical" v-if="shouldShowLegend">
       <div
         class="cell"
         :class="{ highlighted: rowLegendActive(index) }"
@@ -164,10 +167,10 @@ function onCellHover(positionIndex: number) {
         </div>
       </div>
     </div>
-    
+
     <div
       class="cell"
-      v-for="(cell, index) in (grid.length * grid.length)"
+      v-for="(cell, index) in grid.length * grid.length"
       :key="cell"
       :style="cursorStyling(index)"
       @mouseover="onCellHover(index)"
@@ -180,7 +183,7 @@ function onCellHover(positionIndex: number) {
       }"
     >
       <span class="cell-x" v-if="cellIndexIs(index, 'x')">×</span>
-  </div>
+    </div>
   </div>
 </template>
 
@@ -188,17 +191,24 @@ function onCellHover(positionIndex: number) {
 $delay: 1s;
 $transition-time: 0.1s;
 $transition-time-slow: 1s;
-
 $cellSize: 27px;
+
+$bg: #c0c8cc;
+$cell-filled: linear-gradient(0deg, #555, #666);
+$cell-cleared-filled: black;
+$legend-bg: hsl(200deg 19% 94%);
+$legend-bg-active: #d8f7ff;
+$bg-corner: $bg;
 
 .horizontal-thing {
   position: absolute;
 }
 
 .playfield-container {
-  background: gray;
+  background: $bg;
   position: relative;
-  padding: 1px;
+  padding: 2px;
+  border-radius: 2px;
 
   display: inline-grid;
 
@@ -212,23 +222,14 @@ $cellSize: 27px;
   .cell {
     display: flex;
     justify-content: flex-end;
-    background: #d2d6dc;
-    //min-width: 10px;
+    background: $legend-bg;
     &:hover {
       box-shadow: none;
     }
 
     &.highlighted {
-      background: lightblue;
+      background: $legend-bg-active;
     }
-
-    .hit {
-      //flex: 1 1 100%;
-    }
-
-    //.hit {
-    //  color: red;
-    //}
   }
 
   &.horizontal {
@@ -254,10 +255,15 @@ $cellSize: 27px;
   }
 }
 
+.corner {
+  background: $bg-corner;
+  border-radius: 2px;
+  margin: 1px;
+}
+
 .cleared .optical-guide,
+.cleared .corner,
 .cleared .legend {
-  //width: 0;
-  //height: 0;
   opacity: 0;
   transition: $transition-time-slow $delay;
 }
@@ -274,8 +280,6 @@ $cellSize: 27px;
   }
 
   &.vertical {
-    //right: calc(50% - 13px);
-    //right: calc(50% - 13px);
     right: 134px;
     width: 2px;
     height: 100%;
@@ -283,11 +287,8 @@ $cellSize: 27px;
   }
 }
 
-//.cell:hover,
 .cell.cursor {
   z-index: 2;
-  // box-shadow: 0 0 0 4px lightblue;
-  // outline: 4px solid hotpink;
 }
 
 .row {
@@ -302,37 +303,57 @@ $cellSize: 27px;
     border-radius $transition-time-slow $delay;
   box-shadow: none !important;
 
+  &.filled {
+    position: relative;
+
+    &:before {
+      transition: opacity $transition-time-slow $delay;
+      opacity: 1;
+    }
+  }
+
   .cell-x {
     transition-delay: $delay;
-    opacity: 0; 
+    opacity: 0;
   }
 }
 
 .cell {
-  margin: 1px;
-  // border: 1px solid gray;
-  border-radius: 2px;
   width: $cellSize;
   height: $cellSize;
-  //min-width: $cellSize;
-  //min-height: $cellSize;
   vertical-align: center;
   background: white;
   transition: background-color 0.1s;
+  color: black;
+
+  margin: 0.5px;
+  border-radius: 0px;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+
+  &:before {
+    opacity: 0;
+    background: $cell-cleared-filled;
+    z-index: 2;
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
 
   .cell-x {
     transition: opacity 0.5s;
   }
 
   > div {
-    //width: 20px;
     width: calc(#{$cellSize} - 2px);
     height: calc(#{$cellSize} - 2px);
     text-align: center;
   }
 
   &.filled {
-    background-color: #444;
+    background: $cell-filled;
   }
 
   &.flagged {

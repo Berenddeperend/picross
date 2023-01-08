@@ -5,7 +5,7 @@ import App from "./App.vue";
 import Game from "./layout/Game.vue";
 import Create from "./layout/Create.vue";
 import MainMenu from "./layout/MainMenu.vue";
-import MyPuzzles from "./layout/MyPuzzles.vue";
+import AllPuzzles from "./layout/AllPuzzles.vue";
 import {
   createMemoryHistory,
   createRouter,
@@ -24,7 +24,7 @@ const routes = [
     props: true,
   },
   { name: "create", path: "/create", component: Create },
-  { name: "myPuzzles", path: "/my-puzzles", component: MyPuzzles },
+  { name: "allPuzzles", path: "/all-puzzles", component: AllPuzzles },
 ];
 
 const router = createRouter({
@@ -35,5 +35,4 @@ const router = createRouter({
 
 const app = createApp(App)
   .use(router)
-  // .use(createPinia())
   .mount("#app");

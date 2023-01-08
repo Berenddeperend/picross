@@ -15,11 +15,15 @@
 - Better unrefs
 
 # todo
+- Better concurrency
+- Fix puzzle name spoiler
+- Better layout for usernames
+- 'no clue really' renamen naar helikoptervogel
 
 # doing
-- Is puzzle solvable?
 
 # done
+- Is puzzle solvable?
 - bug: 'hitsincolumns' could point to playfield or solution
 - cursor sync is broken
 - 'new puzzle' knop

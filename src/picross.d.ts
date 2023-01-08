@@ -25,3 +25,12 @@ type Puzzle = {
   height: number | null;
   authorId: number;
 };
+
+type BackendPuzzle = {
+  id: number;
+  name: string;
+  solution: string;
+  width: number | null;
+  height: number | null;
+  authorId: number;
+}

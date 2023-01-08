@@ -75,7 +75,6 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
     computeHitsInColumns(solution.value as Grid)
   );
 
-
   return {
     puzzle,
     grid,

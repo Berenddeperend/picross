@@ -143,13 +143,12 @@ watch(game.levelIsCleared, (value) => {
     class="puzzle-title"
     :style="{
       opacity: game.levelIsCleared.value ? 1 : 0,
+      transition: game.levelIsCleared.value ? '0.4s' : '0s',
       transitionDelay: game.levelIsCleared.value ? '2s' : '0s',
     }"
   >
     {{ puzzle?.name }}
   </div>
-
-  <!-- <div class="puzzle-title">{{puzzle?.name}}</div> -->
 </template>
 
 <style lang="scss" scoped>
@@ -176,9 +175,7 @@ ul {
   text-align: left;
 
   li {
-    //margin: 5px;
     list-style-type: none;
-    //padding: 4px 10px;
     border-radius: 3px;
   }
 }
@@ -207,6 +204,5 @@ ul {
 
 .puzzle-title {
   margin-top: 10px;
-  transition: opacity 0.4s;
 }
 </style>
