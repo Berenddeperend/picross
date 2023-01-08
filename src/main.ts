@@ -6,11 +6,7 @@ import Game from "./layout/Game.vue";
 import Create from "./layout/Create.vue";
 import MainMenu from "./layout/MainMenu.vue";
 import AllPuzzles from "./layout/AllPuzzles.vue";
-import {
-  createMemoryHistory,
-  createRouter,
-  createWebHashHistory,
-} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
 import "@/scss/all.scss";
 
@@ -28,11 +24,8 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  // history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 });
 
-const app = createApp(App)
-  .use(router)
-  .mount("#app");
+const app = createApp(App).use(router).mount("#app");
