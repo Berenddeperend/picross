@@ -195,7 +195,7 @@ $cellSize: 27px;
 
 $bg: #c0c8cc;
 $cell-filled: linear-gradient(0deg, #555, #666);
-$cell-cleared-filled: black;
+$cell-cleared-filled: #444;
 $legend-bg: hsl(200deg 19% 94%);
 $legend-bg-active: #d8f7ff;
 $bg-corner: $bg;

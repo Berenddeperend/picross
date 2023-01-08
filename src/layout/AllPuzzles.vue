@@ -7,8 +7,7 @@
     <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
       <!-- <h3>{{ puzzle.name }}</h3> -->
       <Grid :enable-controls="false" :game="puzzle.game" />
-    </div>  
-
+    </div>
   </div>
 </template>
 
@@ -24,53 +23,31 @@ const puzzles = ref();
 const nickName = useStorage("nickName", "Berend");
 
 onMounted(() => {
-  http.get('/puzzles').then(response => {
-      puzzles.value = response.data.map((puzzle: BackendPuzzle) => {
-        //set both working state and solution to be the same. Not ideal but it works.
-        const solution: Grid = JSON.parse(puzzle.solution);
-
+  http.get("/puzzles").then((response) => {
+    puzzles.value = response.data.map((puzzle: BackendPuzzle) => {
+      //set both working state and solution to be the same. Not ideal but it works.
+      const solution: Grid = JSON.parse(puzzle.solution);
 
       return {
         ...puzzle,
         game: useGrid(solution, solution),
       };
     });
-
-    
-  })
-
-  // http.get(`/users/${nickName.value}/puzzles`).then((response) => {
-  //   puzzles.value = response.data.map((puzzle: Puzzle) => {
-  //     //set both working state and solution to be the same. Not ideal but it works.
-  //     const solution = JSON.parse(puzzle.solution);
-
-  //     return {
-  //       ...puzzle,
-  //       game: useGrid(solution, solution),
-  //     };
-  //   });
-  // });
+  });
 });
 </script>
 
 <style lang="scss" scoped>
 .all-puzzles {
-  // display: grid;
-  // grid-template-columns: repeat( auto-fit, 100px );
-
-// grid-rows: 
-  
   width: 100%;
-  // max-width: 700px;
+  max-width: 700px;
   margin: 0 auto;
-
-  display: grid;
-
-  grid-template-columns: repeat(auto-fill, 120px);
-
+  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
 
   .puzzle {
-    display:inline-block;
+    display: inline-block;
   }
 
   :deep(.playfield-container) {
@@ -79,8 +56,6 @@ onMounted(() => {
     background: white;
 
     .cell {
-      
-      // $size: 10px;
       $size: 8px;
       border: none;
       border-radius: 0;
