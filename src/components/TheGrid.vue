@@ -329,6 +329,7 @@ $bg-corner: $bg;
   margin: 0.5px;
   border-radius: 0px;
   box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+  position: relative;
 
   &:before {
     opacity: 0;

@@ -33,4 +33,4 @@ type BackendPuzzle = {
   width: number | null;
   height: number | null;
   authorId: number;
-}
+};
