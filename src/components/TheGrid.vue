@@ -184,7 +184,7 @@ function onCellHover(positionIndex: number) {
     >
       <span class="cell-x" v-if="cellIndexIs(index, 'x')">×</span>
     </div>
-    
+
     <div class="optical-guide horizontal"></div>
     <div class="optical-guide vertical"></div>
   </div>
@@ -276,7 +276,8 @@ $bg-corner: $bg;
 }
 
 .optical-guide {
-  background: #004748;
+  background: black;
+  // background: #32e4ff;
   position: absolute;
 
   &.horizontal {
@@ -284,14 +285,14 @@ $bg-corner: $bg;
     height: 1px;
     transform: translateY(-50%);
     width: 279px;
-    right: 2px;
+    right: 2.5px;
   }
 
   &.vertical {
     right: 141px;
     width: 1px;
     height: 279px;
-    bottom: 2px;
+    bottom: 2.5px;
     transform: translateX(-50%);
   }
 }

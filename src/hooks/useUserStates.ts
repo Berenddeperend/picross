@@ -63,7 +63,16 @@ export function useUserStates(
   }
 
   function setPlayersState(newPlayersState: Players) {
-    players.value = newPlayersState;
+    if (playerId.value !== null && player.value?.position) {
+      //merge player data with server data to handle overwrites when laggy
+      const currentPlayerData = players.value[playerId.value as string];
+      players.value = {
+        ...newPlayersState,
+        [playerId.value]: currentPlayerData
+      }
+    } else {
+      players.value = newPlayersState;
+    }
   }
 
   function initState() {
