@@ -15,26 +15,49 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid(createGrid(10));
 
-const { grid, puzzle } = game;
+const { grid, puzzle, setCell } = game;
 
 const { socket } = useSocket();
 const { players, player, initState } = useUserStates(mode, game, socket);
 
 initState();
 
+function onCellHover(cellIndex: number) {
+  if (game.levelIsCleared.value) return;
+  player.value!.position = game.indexToXY(cellIndex);
+  socket.emit("cursorUpdated", player.value!.position);
+} 
+
 function onCellClicked(index: number) {
+  if (game.levelIsCleared.value) return;
   const [x, y] = game.indexToXY(index);
-  grid.value[y][x] = grid.value[y][x] === " " ? "d" : " ";
-  socket.emit("gridUpdated", grid.value);
+
+  // here were overwriting a computed value. Aint it.
+  const newValue = grid.value[y][x] === "d" ? " " : "d";
+  setCell({position: [x,y], value: newValue})
+  socket.emit("cellUpdated", { position: [x,y], value: newValue });
+}
+
+function onToggleCellValue(value: string) {
+  if (game.levelIsCleared.value) return;
+
+  const [x, y] = (player.value as Player).position;
+  const newValue = grid.value[y][x] === value ? " " : value;
+
+  setCell({position: [x,y], value: newValue})
+  socket.emit("cellUpdated", { position: [x,y], value: newValue });
 }
 
 function onCellRightClicked(index: number) {
-  const [x, y] = game.indexToXY(index);
-  grid.value[y][x] = grid.value[y][x] === " " ? "x" : " ";
-  socket.emit("gridUpdated", grid.value);
+  if (game.levelIsCleared.value) return;
+  const [x, y] = game.indexToXY(index);  
+  const newValue = grid.value[y][x] === "x" ? " " : "x";
+  setCell({position: [x,y], value: newValue})
+  socket.emit("cellUpdated", { position: [x,y], value: newValue });
 }
 
 function onMoveCursor(direction: Direction) {
+  if (game.levelIsCleared.value) return;
   if (direction === "left") {
     player.value!.position[0] = game.clampToGrid(player.value!.position[0] - 1);
   }
@@ -47,20 +70,8 @@ function onMoveCursor(direction: Direction) {
   if (direction === "down") {
     player.value!.position[1] = game.clampToGrid(player.value!.position[1] + 1);
   }
+
   socket.emit("cursorUpdated", player.value!.position);
-}
-
-function onCellHover(cellIndex: number) {
-  player.value!.position = game.indexToXY(cellIndex);
-  socket.emit("cursorUpdated", player.value!.position);
-}
-
-function onToggleCellValue(value: string) {
-  if (game.levelIsCleared.value) return;
-
-  const [x, y] = (player.value as Player).position;
-  grid.value[y][x] = grid.value[y][x] === value ? " " : value;
-  socket.emit("gridUpdated", grid.value);
 }
 
 function isCurrentPlayer(somePlayer: Player) {
@@ -88,18 +99,18 @@ watch(game.levelIsCleared, (value) => {
 </script>
 
 <template>
-  <!--  <SideBar-->
-  <!--    v-if="players && player && mode === 'multiplayer'"-->
-  <!--    :player="player"-->
-  <!--    :players="players"-->
-  <!--    :socket="socket"-->
-  <!--  />-->
-  <!--  <SideBarGame-->
-  <!--    v-if="players && player && mode === 'multiplayer'"-->
-  <!--    :player="player"-->
-  <!--    :players="players"-->
-  <!--    :socket="socket"-->
-  <!--  />-->
+   <SideBar
+     v-if="players && player && mode === 'multiplayer'"
+     :player="player"
+     :players="players"
+     :socket="socket"
+   />
+   <SideBarGame
+     v-if="players && player && mode === 'multiplayer'"
+     :player="player"
+     :players="players"
+     :socket="socket"
+   />
   <header>
     <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
   </header>

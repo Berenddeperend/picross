@@ -63,22 +63,14 @@ export function useUserStates(
   }
 
   function setPlayersState(newPlayersState: Players) {
-    if (playerId.value !== null && player.value?.position) {
-      //merge player data with server data to handle overwrites when laggy
-      const currentPlayerData = players.value[playerId.value as string];
-      players.value = {
-        ...newPlayersState,
-        [playerId.value]: currentPlayerData
-      }
-    } else {
-      players.value = newPlayersState;
-    }
+    players.value = newPlayersState;
   }
 
   function initState() {
     onMounted(() => {
       if (!isMultiplayer) return;
       socket!.on("gridUpdated", game.setGrid);
+      socket!.on("cellUpdated", game.setCell)
       socket!.on("playersStateUpdated", setPlayersState);
       socket!.on("playerCreated", (data: any) => {
         playerId.value = data.id;
