@@ -114,7 +114,6 @@ function onCellClicked(index: number) {
 }
 
 function onCellHover(index: number) {
-  console.log('hovered')
   player.value!.position = game.indexToXY(index);
 }
 

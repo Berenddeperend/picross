@@ -1,7 +1,7 @@
 <template>
   <side-bar>
     <router-link :to="{ name: 'mainMenu' }">Back</router-link>
-    <br />
+    <!-- <br />
     Now playing: ({{ Object.values(players).length }}):
     <ul>
       <li
@@ -15,7 +15,7 @@
     </ul>
 
     <VoteClear v-if="socket" :socket="socket" />
-    <VoteNext v-if="socket" :socket="socket" />
+    <VoteNext v-if="socket" :socket="socket" /> -->
   </side-bar>
 </template>
 
@@ -45,6 +45,7 @@ ul {
   display: flex;
   padding: 0;
   margin: 0 10px;
+
 
   li {
     margin: 5px;

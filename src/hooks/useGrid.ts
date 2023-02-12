@@ -47,7 +47,6 @@ function autoXSequence(userSequence: string[], solutionSequence: string[]): stri
 
 function autoXGrid(grid: Grid, solution: Grid | null): Grid {
   if (!solution) return grid;
-  console.log(grid, solution)
   const gridWithAutoXedRows = [...grid].map((gridRow, rowIndex) => autoXSequence(gridRow, [...solution][rowIndex]) );
 
 
@@ -82,14 +81,8 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   };
 
   const setCell = (args: {position: Position, value: string}) => {
-    console.log('ey set die selletje')
-    console.log(args)
     const {position, value} = args;
-
-    
-    // console.log('setting cell', args, position)
     const [x,y] = position;
-    console.log(x,y)
     grid.value[y][x] = value;
   }
 

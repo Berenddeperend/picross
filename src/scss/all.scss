@@ -1,7 +1,6 @@
 html,
 body {
   min-height: 100vh;
-  margin: 0;
   width: 100%;
 }
 
@@ -10,6 +9,7 @@ body {
   justify-content: center;
   align-items: center;
   padding: 8px;
+  margin: 0;
 }
 
 * {

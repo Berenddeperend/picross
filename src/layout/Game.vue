@@ -8,7 +8,8 @@ import useSocket from "@/hooks/useSocket";
 import useUserStates from "@/hooks/useUserStates";
 import useGrid from "@/hooks/useGrid";
 import http from "@/services/http";
-import SideBarGame from "@/layout/partials/SideBarGame.vue";
+// import SideBarGame from "@/layout/partials/SideBarGame.vue";
+import SideBar from "@/components/SideBar.vue";
 
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
@@ -105,15 +106,15 @@ watch(game.levelIsCleared, (value) => {
      :players="players"
      :socket="socket"
    />
-   <SideBarGame
+   <!-- <SideBarGame
      v-if="players && player && mode === 'multiplayer'"
      :player="player"
      :players="players"
      :socket="socket"
-   />
-  <header>
+   /> -->
+  <!-- <header>
     <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
-  </header>
+  </header> -->
 
   <div class="container">
     <Grid
@@ -131,7 +132,7 @@ watch(game.levelIsCleared, (value) => {
       @toggleCellValue="onToggleCellValue"
     />
 
-    <aside>
+    <!-- <aside>
       <br />
       <span class="now-playing"
         >Now playing ({{ Object.values(players).length }})</span
@@ -147,7 +148,7 @@ watch(game.levelIsCleared, (value) => {
           {{ player.name }}
         </li>
       </ul>
-    </aside>
+    </aside> -->
   </div>
 
   <div
@@ -166,7 +167,7 @@ watch(game.levelIsCleared, (value) => {
 header {
   display: flex;
   margin-bottom: 10px;
-  margin-left: 120px;
+  // margin-left: 120px;
   justify-content: space-between;
 }
 .container {
@@ -210,7 +211,7 @@ ul {
 }
 
 .grid {
-  margin-left: 120px;
+  // margin-left: 120px;
 }
 
 .puzzle-title {

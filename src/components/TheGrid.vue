@@ -63,7 +63,7 @@ function cursorStyling(index: number): StyleValue | undefined {
   if (cursor && player && !players) {
     //build mode, i hate these ifs :(
     if (isEqual(indexToXY(index), player!.position)) {
-      return `outline: 5px solid hotpink; z-index: 2;`;
+      return `outline: 5px solid hotpink; z-index: 3;`;
     }
   }
 
@@ -80,7 +80,7 @@ function cursorStyling(index: number): StyleValue | undefined {
     });
 
     return !!friend
-      ? `outline: 5px solid ${friend.color}; z-index: 2;`
+      ? `outline: 5px solid ${friend.color}; z-index: 3;`
       : undefined;
   }
 }
@@ -182,7 +182,9 @@ function onCellHover(positionIndex: number) {
         filled: cellIndexIs(index, 'd'),
       }"
     >
-      <span class="cell-x" v-if="cellIndexIs(index, 'x')">×</span>
+      <transition name="x">
+        <span class="cell-x" v-if="!levelIsCleared && cellIndexIs(index, 'x')">×</span>
+      </transition>
     </div>
 
     <div class="optical-guide horizontal"></div>
@@ -196,11 +198,12 @@ $transition-time: 0.1s;
 $transition-time-slow: 1s;
 $cellSize: 27px;
 
-$bg: #c0c8cc;
+$bg: $bg-gray-100;
 $cell-filled: linear-gradient(0deg, #555, #666);
 $cell-cleared-filled: #444;
-$legend-bg: hsl(200deg 19% 94%);
-$legend-bg-active: #d8f7ff;
+// $legend-bg: hsl(200deg 19% 94%);
+$legend-bg: $bg-gray-50;
+$legend-bg-active: $bg-blue-50;
 $bg-corner: $bg;
 
 .horizontal-thing {
@@ -271,6 +274,7 @@ $bg-corner: $bg;
   transition: $transition-time-slow $delay;
 }
 
+
 .cleared .optical-guide {
   transition-delay: 0s;
 }
@@ -314,24 +318,39 @@ $bg-corner: $bg;
   box-shadow: none !important;
 
   &.filled {
+    background: $cell-cleared-filled;
     position: relative;
 
     &:before {
       transition: opacity $transition-time-slow $delay;
-      opacity: 1;
+      opacity: 0;
     }
   }
 
   .cell-x {
+    transition: opacity $transition-time-slow $delay !important;
     transition-delay: $delay;
     opacity: 0;
   }
 }
 
+.x-enter-active,
+.x-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s;
+}
+
+.x-enter-from,
+.x-leave-to {
+  opacity: 0;
+  transform: rotate(90deg);
+}
+
+
+
 .cell {
   width: $cellSize;
   height: $cellSize;
-  vertical-align: center;
+  line-height: $cellSize;
   background: white;
   transition: background-color 0.1s;
   color: black;
@@ -343,7 +362,7 @@ $bg-corner: $bg;
 
   &:before {
     opacity: 0;
-    background: $cell-cleared-filled;
+    background: white;
     z-index: 2;
     content: "";
     position: absolute;
@@ -354,7 +373,7 @@ $bg-corner: $bg;
   }
 
   .cell-x {
-    transition: opacity 0.5s;
+    display: block;
   }
 
   > div {
@@ -364,11 +383,27 @@ $bg-corner: $bg;
   }
 
   &.filled {
-    background: $cell-filled;
-  }
+    
+    &:before {
+      background: $cell-filled;
+      animation: pop 0.2s;
+      opacity: 1;
+    }
 
-  &.flagged {
-    //background-color: transparent;
+    .cell-x {
+      transition: none;
+    }
   }
 }
+@keyframes pop {
+    0% {
+      transform: scale(0.8);
+    }
+    30% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 </style>
