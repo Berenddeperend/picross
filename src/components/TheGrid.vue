@@ -302,7 +302,7 @@ $bg-corner: $bg;
 }
 
 .cell.cursor {
-  z-index: 2;
+  z-index: 5 !important;
 }
 
 .row {
