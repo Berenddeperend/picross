@@ -63,7 +63,7 @@ function cursorStyling(index: number): StyleValue | undefined {
   if (cursor && player && !players) {
     //build mode, i hate these ifs :(
     if (isEqual(indexToXY(index), player!.position)) {
-      return `outline: 5px solid hotpink; z-index: 3;`;
+      return `outline: 5px solid hotpink; z-index: 4;`;
     }
   }
 
@@ -383,7 +383,6 @@ $bg-corner: $bg;
   }
 
   &.filled {
-    
     &:before {
       background: $cell-filled;
       animation: pop 0.2s;
