@@ -1,27 +1,38 @@
 html,
 body {
   min-height: 100vh;
-  width: 100%;
+  // width: 100%;
 }
 
 body {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px;
+  // justify-content: center;
+  // align-items: center;
+  // padding: 8px;
   margin: 0;
+
+  // font-weight: 600;
 }
 
 * {
   box-sizing: border-box;
 }
 
+// a {
+//   text-decoration: none;
+// }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
+  // font-family: Rajdhani, Helvetica, Arial, sans-serif;
+  // font-family: 'Poppins', Helvetica, Arial, sans-serif;
+  // font-family: 'bebas neue';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  margin: auto;
+  // flex: 1 0 100%;
 }
 
 label {

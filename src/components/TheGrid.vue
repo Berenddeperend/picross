@@ -229,6 +229,9 @@ $bg-corner: $bg;
     display: flex;
     justify-content: flex-end;
     background: $legend-bg;
+    font-weight: bold;
+    font-size: 13px;
+
     &:hover {
       box-shadow: none;
     }
@@ -245,6 +248,7 @@ $bg-corner: $bg;
     .cell {
       flex-direction: column;
       height: auto;
+      align-items: center;
     }
   }
 
@@ -255,6 +259,7 @@ $bg-corner: $bg;
     .cell {
       display: flex;
       width: auto;
+      align-items: center;
     }
 
     grid-row: span 10;
@@ -373,12 +378,18 @@ $bg-corner: $bg;
   }
 
   .cell-x {
+    // font-weight: 400;
+    // font-size: 20px;
+    // color: black;
     display: block;
   }
 
   > div {
-    width: calc(#{$cellSize} - 2px);
-    height: calc(#{$cellSize} - 2px);
+    // width: calc(#{$cellSize} - 2px);
+    // height: calc(#{$cellSize} - 2px);
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
     text-align: center;
   }
 

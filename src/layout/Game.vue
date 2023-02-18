@@ -155,8 +155,10 @@ watch(game.levelIsCleared, (value) => {
     class="puzzle-title"
     :style="{
       opacity: game.levelIsCleared.value ? 1 : 0,
-      transition: game.levelIsCleared.value ? '0.4s' : '0s',
+      transition: game.levelIsCleared.value ? 'opacity 0.4s, letter-spacing 1s cubic-bezier(0, 0.42, 0.25, 1), text-shadow 0.5s' : 'all 0s',
       transitionDelay: game.levelIsCleared.value ? '2s' : '0s',
+      letterSpacing: game.levelIsCleared.value ? '1px' : '-2px',
+      // textShadow: game.levelIsCleared.value ? '2px 2px red, -4px -4px orange' :'0px 0px red, 0px 0px orange'
     }"
   >
     {{ puzzle?.name }}
@@ -167,12 +169,12 @@ watch(game.levelIsCleared, (value) => {
 header {
   display: flex;
   margin-bottom: 10px;
-  // margin-left: 120px;
   justify-content: space-between;
 }
 .container {
   display: flex;
   gap: 20px;
+  margin: 60px 10px 10px 10px;
 }
 
 .now-playing {
@@ -216,5 +218,14 @@ ul {
 
 .puzzle-title {
   margin-top: 10px;
+
+
+  // font-family: 'bebas neue';
+
+  font-size: 20px;
+  // color: white;
+  font-weight: bold;
+  letter-spacing: 0px;
+  // text-shadow: 2px 2px red, 4px 4px orange;
 }
 </style>

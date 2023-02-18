@@ -1,6 +1,6 @@
 <template>
   <teleport to="#modal-target">
-    <transition>
+    <transition name="fade">
       <div class="backdrop" v-if="visible" @click.self="$emit('close')">
         <div class="modal">
           <slot></slot>
@@ -25,8 +25,10 @@ onKeyStroke("Escape", () => {
 <style lang="scss" scoped>
 .modal {
   background: white;
-  width: 200px;
-  height: 200px;
+  width: 230px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  // height: 200px;
   padding: 20px;
 }
 
@@ -42,4 +44,15 @@ onKeyStroke("Escape", () => {
   background: rgba(0, 0, 0, 0.3);
   z-index: 100;
 }
+
+
+// .fade-enter-active,
+// .fade-leave-active {
+//   transition: opacity 0.5s ease;
+// }
+
+// .fade-enter-from,
+// .fade-leave-to {
+//   opacity: 0;
+// }
 </style>

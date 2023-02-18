@@ -46,7 +46,7 @@
     />
 
     <div class="btns-container">
-      <button class="btn btn-link">Clear</button>
+      <button class="btn btn-link" @click="onClearClicked">Clear</button>
 
       <button
         class="btn"
@@ -106,6 +106,10 @@ function onToggleCellValue(value: string) {
 
   const [x, y] = (player.value as Player).position;
   grid.value[y][x] = grid.value[y][x] === value ? " " : value;
+}
+
+function onClearClicked() {
+  game.setGrid(createGrid())
 }
 
 function onCellClicked(index: number) {

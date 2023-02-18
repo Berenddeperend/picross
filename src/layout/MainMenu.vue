@@ -36,6 +36,10 @@ h1 {
   line-height: 1;
 }
 
+li {
+  // text-align: left;
+}
+
 small {
   font-size: 0.6em;
   font-weight: normal;

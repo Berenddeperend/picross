@@ -61,7 +61,7 @@ $sidebar-bg: $bg-gray-50;
 
 .sidebar {
   display: flex;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -85,7 +85,6 @@ $sidebar-bg: $bg-gray-50;
   }
 }
 
-/* we will explain what these classes do next! */
 .v-enter-active,
 .v-leave-active {
 
@@ -107,6 +106,7 @@ $sidebar-bg: $bg-gray-50;
   padding: 15px;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+  z-index: 20;
 }
 
 .online-toggle {
