@@ -359,6 +359,7 @@ $bg-corner: $bg;
   background: white;
   transition: background-color 0.1s;
   color: black;
+  user-select: none;
 
   margin: 0.5px;
   border-radius: 0px;

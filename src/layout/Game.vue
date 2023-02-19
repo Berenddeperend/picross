@@ -16,6 +16,8 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid(createGrid(10));
 
+const xMode = ref(false)
+
 const { grid, puzzle, setCell } = game;
 
 const { socket } = useSocket();
@@ -31,10 +33,22 @@ function onCellHover(cellIndex: number) {
 
 function onCellClicked(index: number) {
   if (game.levelIsCleared.value) return;
+  if(xMode.value) {
+    return onCellRightClicked(index)
+  };
+
   const [x, y] = game.indexToXY(index);
 
   // here were overwriting a computed value. Aint it.
   const newValue = grid.value[y][x] === "d" ? " " : "d";
+  setCell({position: [x,y], value: newValue})
+  socket.emit("cellUpdated", { position: [x,y], value: newValue });
+}
+
+function onCellRightClicked(index: number) {
+  if (game.levelIsCleared.value) return;
+  const [x, y] = game.indexToXY(index);  
+  const newValue = grid.value[y][x] === "x" ? " " : "x";
   setCell({position: [x,y], value: newValue})
   socket.emit("cellUpdated", { position: [x,y], value: newValue });
 }
@@ -49,13 +63,6 @@ function onToggleCellValue(value: string) {
   socket.emit("cellUpdated", { position: [x,y], value: newValue });
 }
 
-function onCellRightClicked(index: number) {
-  if (game.levelIsCleared.value) return;
-  const [x, y] = game.indexToXY(index);  
-  const newValue = grid.value[y][x] === "x" ? " " : "x";
-  setCell({position: [x,y], value: newValue})
-  socket.emit("cellUpdated", { position: [x,y], value: newValue });
-}
 
 function onMoveCursor(direction: Direction) {
   if (game.levelIsCleared.value) return;
@@ -163,9 +170,27 @@ watch(game.levelIsCleared, (value) => {
   >
     {{ puzzle?.name }}
   </div>
+
+
+    <label class="toggle nolabel" :style="{
+      opacity: game.levelIsCleared.value ? 0 : 1,
+      transition: game.levelIsCleared.value ? 'opacity 1s' : 'all 0s',
+      transitionDelay: game.levelIsCleared.value ? '1s' : '0s',
+      userSelect: game.levelIsCleared.value ? 'none' : 'all'
+    }">
+      <input type="checkbox" v-model="xMode" />
+      <a></a>
+      <span>
+        <span class="left-span"><div class="cell"></div></span>
+        <span class="right-span">×</span>
+      </span>											
+    </label>
+
+    
 </template>
 
 <style lang="scss" scoped>
+
 header {
   display: flex;
   margin-bottom: 10px;

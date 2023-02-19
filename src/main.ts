@@ -13,6 +13,7 @@ import {
 } from "vue-router";
 
 import "@/scss/all.scss";
+import "@/scss/toggle.scss";
 
 const routes = [
   { name: "mainMenu", path: "/", component: MainMenu },
