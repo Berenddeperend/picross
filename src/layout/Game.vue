@@ -172,11 +172,10 @@ watch(game.levelIsCleared, (value) => {
   </div>
 
 
-    <label class="toggle nolabel" :style="{
+    <label class="toggle" :style="{
       opacity: game.levelIsCleared.value ? 0 : 1,
       transition: game.levelIsCleared.value ? 'opacity 1s' : 'all 0s',
       transitionDelay: game.levelIsCleared.value ? '1s' : '0s',
-      userSelect: game.levelIsCleared.value ? 'none' : 'all'
     }">
       <input type="checkbox" v-model="xMode" />
       <a></a>
@@ -200,6 +199,7 @@ header {
   display: flex;
   gap: 20px;
   margin: 60px 10px 10px 10px;
+  user-select: none;
 }
 
 .now-playing {
@@ -245,6 +245,7 @@ ul {
   margin-top: 10px;
 
 
+  user-select: none;
   // font-family: 'bebas neue';
 
   font-size: 20px;
