@@ -67,22 +67,23 @@ export function useUserStates(
   }
 
   function setCursor(newPlayerState: [id: string, position: Position]) {
-    const [id, position] = newPlayerState
-    players.value[id].position = position
+    const [id, position] = newPlayerState;
+    players.value[id].position = position;
   }
 
   function onVisibilityChange(e: Event) {
-    if(document.visibilityState === 'visible') {
-      socket!.emit('syncAll');
+    if (document.visibilityState === "visible") {
+      socket!.emit("syncAll");
     }
   }
 
   function initState() {
     onMounted(() => {
       if (!isMultiplayer) return;
+      socket!.on("error", (e) => alert(e));
       socket!.on("gridUpdated", game.setGrid);
-      socket!.on("cellUpdated", game.setCell)
-      socket!.on('cursorUpdated', setCursor)
+      socket!.on("cellUpdated", game.setCell);
+      socket!.on("cursorUpdated", setCursor);
       socket!.on("playersStateUpdated", setPlayersState);
       socket!.on("playerCreated", (data: any) => {
         playerId.value = data.id;
@@ -90,17 +91,17 @@ export function useUserStates(
       socket!.on("gameCreated", (puzzle) => {
         game.setPuzzle(puzzle);
       });
-      
+
       socket!.emit("join", localStorage.getItem("nickName"));
 
-      window.addEventListener('visibilitychange', onVisibilityChange)
+      window.addEventListener("visibilitychange", onVisibilityChange);
     });
 
     onUnmounted(() => {
       if (!isMultiplayer) return;
       socket!.off("gridUpdated", game.setGrid);
       socket!.off("playersStateUpdated", setPlayersState);
-      window.removeEventListener('visibilitychange', onVisibilityChange)
+      window.removeEventListener("visibilitychange", onVisibilityChange);
     });
   }
 
