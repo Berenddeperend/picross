@@ -1,14 +1,8 @@
 # mvp
 
 # nice to haves
-- Setting X'es touchscreen
-- Basic touchscreen controls
 - sudoku.com line clear effect
-- auto-x'es indien line goed is
-- Muis ook socket syncen
 - Report puzzle
-- optical guides
-- mouse and keyboard should share same cursor
 - click and hold
 
 # cleanup
@@ -34,7 +28,12 @@
 - Vote to clear
 - Vote to skip
 - Nicknames
-
+- Setting X'es touchscreen
+- Basic touchscreen controls
+- auto-x'es indien line goed is
+- Muis ook socket syncen
+- optical guides
+- mouse and keyboard should share same cursor
 
 # About puzzle difficulty
 https://liacs.leidenuniv.nl/~kosterswa/nonodec2012.pdf
