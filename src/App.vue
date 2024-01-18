@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import { ref } from "vue";
 
-const theme = ref('light');
-
+const theme = ref("light");
 </script>
 
 <template>

@@ -12,9 +12,8 @@ import { useStorage } from "@vueuse/core";
 const puzzles = ref();
 const nickName = useStorage("nickName", "");
 onMounted(() => {
-  http.get(`/users/${nickName.value}/puzzles`).then(response => {
-        puzzles.value = response.data
-    })
-    
+  http.get(`/users/${nickName.value}/puzzles`).then((response) => {
+    puzzles.value = response.data;
+  });
 });
 </script>

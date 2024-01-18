@@ -27,7 +27,7 @@ onKeyStroke("Escape", () => {
   background: white;
   width: 230px;
   border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   // height: 200px;
   padding: 20px;
 }
@@ -44,7 +44,6 @@ onKeyStroke("Escape", () => {
   background: rgba(0, 0, 0, 0.3);
   z-index: 100;
 }
-
 
 // .fade-enter-active,
 // .fade-leave-active {

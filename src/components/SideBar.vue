@@ -1,34 +1,40 @@
 <template>
   <aside class="sidebar">
     <div class="split">
-
       <router-link class="link" :to="{ name: 'mainMenu' }">← Menu</router-link>
 
       <div ref="clickTrap">
-        <div class="online-toggle" :class="{open: dropdownOpen}"  @click="dropdownOpen = !dropdownOpen">
+        <div
+          class="online-toggle"
+          :class="{ open: dropdownOpen }"
+          @click="dropdownOpen = !dropdownOpen"
+        >
           <div class="dot"></div>
-            {{Object.entries(players).length}} Online
+          {{ Object.entries(players).length }} Online
         </div>
         <transition>
           <div class="dropdown" v-if="dropdownOpen">
             <ul>
-              <li v-for="player in players" :class="{'current-player': isCurrentPlayer(player)}">
-                <div class="dot" :style="{backgroundColor: player.color}"></div>
-                  {{ player.name }}
+              <li
+                v-for="player in players"
+                :class="{ 'current-player': isCurrentPlayer(player) }"
+              >
+                <div
+                  class="dot"
+                  :style="{ backgroundColor: player.color }"
+                ></div>
+                {{ player.name }}
               </li>
             </ul>
           </div>
-
         </transition>
       </div>
     </div>
-
   </aside>
-    
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 import type { Socket } from "socket.io-client";
 const { players, player, socket } =
   defineProps<{ players: Players; player: Player; socket?: Socket }>();
@@ -37,26 +43,24 @@ function isCurrentPlayer(somePlayer: Player) {
   return somePlayer.id === player.id;
 }
 
-const dropdownOpen = ref(false)
-const clickTrap = ref()
+const dropdownOpen = ref(false);
+const clickTrap = ref();
 
-const clickOutsideHandler = function(e: any) {
-  if(!clickTrap.value.contains(e.target)) {
-    window.removeEventListener('click', clickOutsideHandler)
+const clickOutsideHandler = function (e: any) {
+  if (!clickTrap.value.contains(e.target)) {
+    window.removeEventListener("click", clickOutsideHandler);
     dropdownOpen.value = false;
   }
-}
+};
 
-watch(dropdownOpen, (isOpen)=> {
-  isOpen 
-    ? window.addEventListener('click', clickOutsideHandler) 
-    : window.removeEventListener('click', clickOutsideHandler)  
-})
-
+watch(dropdownOpen, (isOpen) => {
+  isOpen
+    ? window.addEventListener("click", clickOutsideHandler)
+    : window.removeEventListener("click", clickOutsideHandler);
+});
 </script>
 
 <style lang="scss" scoped>
-
 $sidebar-bg: $bg-gray-50;
 
 .sidebar {
@@ -75,20 +79,18 @@ $sidebar-bg: $bg-gray-50;
   border-bottom: 2px solid darken($sidebar-bg, 5%);
 }
 
-
 .link {
   padding: 10px;
   text-decoration: none;
   color: black;
   border-radius: 4px;
   &:hover {
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.05);
   }
 }
 
 .v-enter-active,
 .v-leave-active {
-
   transition: opacity 0.2s, transform 0.2s;
 }
 
@@ -118,10 +120,11 @@ $sidebar-bg: $bg-gray-50;
   padding: 10px;
   border-radius: 4px;
   transition: background 0.1s;
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
 
-  &.open, &:hover {
-    background: rgba(0,0,0,0.1);
+  &.open,
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
   }
 
   .dot {

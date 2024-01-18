@@ -109,7 +109,7 @@ function onToggleCellValue(value: string) {
 }
 
 function onClearClicked() {
-  game.setGrid(createGrid())
+  game.setGrid(createGrid());
 }
 
 function onCellClicked(index: number) {

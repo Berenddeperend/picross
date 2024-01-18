@@ -16,7 +16,7 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid(createGrid(10));
 
-const xMode = ref(false)
+const xMode = ref(false);
 
 const { grid, puzzle, setCell } = game;
 
@@ -29,28 +29,28 @@ function onCellHover(cellIndex: number) {
   if (game.levelIsCleared.value) return;
   player.value!.position = game.indexToXY(cellIndex);
   socket.emit("cursorUpdated", player.value!.position);
-} 
+}
 
 function onCellClicked(index: number) {
   if (game.levelIsCleared.value) return;
-  if(xMode.value) {
-    return onCellRightClicked(index)
-  };
+  if (xMode.value) {
+    return onCellRightClicked(index);
+  }
 
   const [x, y] = game.indexToXY(index);
 
   // here were overwriting a computed value. Aint it.
   const newValue = grid.value[y][x] === "d" ? " " : "d";
-  setCell({position: [x,y], value: newValue})
-  socket.emit("cellUpdated", { position: [x,y], value: newValue });
+  setCell({ position: [x, y], value: newValue });
+  socket.emit("cellUpdated", { position: [x, y], value: newValue });
 }
 
 function onCellRightClicked(index: number) {
   if (game.levelIsCleared.value) return;
-  const [x, y] = game.indexToXY(index);  
+  const [x, y] = game.indexToXY(index);
   const newValue = grid.value[y][x] === "x" ? " " : "x";
-  setCell({position: [x,y], value: newValue})
-  socket.emit("cellUpdated", { position: [x,y], value: newValue });
+  setCell({ position: [x, y], value: newValue });
+  socket.emit("cellUpdated", { position: [x, y], value: newValue });
 }
 
 function onToggleCellValue(value: string) {
@@ -59,10 +59,9 @@ function onToggleCellValue(value: string) {
   const [x, y] = (player.value as Player).position;
   const newValue = grid.value[y][x] === value ? " " : value;
 
-  setCell({position: [x,y], value: newValue})
-  socket.emit("cellUpdated", { position: [x,y], value: newValue });
+  setCell({ position: [x, y], value: newValue });
+  socket.emit("cellUpdated", { position: [x, y], value: newValue });
 }
-
 
 function onMoveCursor(direction: Direction) {
   if (game.levelIsCleared.value) return;
@@ -107,13 +106,13 @@ watch(game.levelIsCleared, (value) => {
 </script>
 
 <template>
-   <SideBar
-     v-if="players && player && mode === 'multiplayer'"
-     :player="player"
-     :players="players"
-     :socket="socket"
-   />
-   <!-- <SideBarGame
+  <SideBar
+    v-if="players && player && mode === 'multiplayer'"
+    :player="player"
+    :players="players"
+    :socket="socket"
+  />
+  <!-- <SideBarGame
      v-if="players && player && mode === 'multiplayer'"
      :player="player"
      :players="players"
@@ -162,7 +161,9 @@ watch(game.levelIsCleared, (value) => {
     class="puzzle-title"
     :style="{
       opacity: game.levelIsCleared.value ? 1 : 0,
-      transition: game.levelIsCleared.value ? 'opacity 0.4s, letter-spacing 1s cubic-bezier(0, 0.42, 0.25, 1), text-shadow 0.5s' : 'all 0s',
+      transition: game.levelIsCleared.value
+        ? 'opacity 0.4s, letter-spacing 1s cubic-bezier(0, 0.42, 0.25, 1), text-shadow 0.5s'
+        : 'all 0s',
       transitionDelay: game.levelIsCleared.value ? '2s' : '0s',
       letterSpacing: game.levelIsCleared.value ? '1px' : '-2px',
       // textShadow: game.levelIsCleared.value ? '2px 2px red, -4px -4px orange' :'0px 0px red, 0px 0px orange'
@@ -171,25 +172,24 @@ watch(game.levelIsCleared, (value) => {
     {{ puzzle?.name }}
   </div>
 
-
-    <label class="toggle" :style="{
+  <label
+    class="toggle"
+    :style="{
       opacity: game.levelIsCleared.value ? 0 : 1,
       transition: game.levelIsCleared.value ? 'opacity 1s' : 'all 0s',
       transitionDelay: game.levelIsCleared.value ? '1s' : '0s',
-    }">
-      <input type="checkbox" v-model="xMode" />
-      <a></a>
-      <span>
-        <span class="left-span"><div class="cell"></div></span>
-        <span class="right-span">×</span>
-      </span>											
-    </label>
-
-    
+    }"
+  >
+    <input type="checkbox" v-model="xMode" />
+    <a></a>
+    <span>
+      <span class="left-span"><div class="cell"></div></span>
+      <span class="right-span">×</span>
+    </span>
+  </label>
 </template>
 
 <style lang="scss" scoped>
-
 header {
   display: flex;
   margin-bottom: 10px;
@@ -243,7 +243,6 @@ ul {
 
 .puzzle-title {
   margin-top: 10px;
-
 
   user-select: none;
   // font-family: 'bebas neue';

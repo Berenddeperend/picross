@@ -183,7 +183,9 @@ function onCellHover(positionIndex: number) {
       }"
     >
       <transition name="x">
-        <span class="cell-x" v-if="!levelIsCleared && cellIndexIs(index, 'x')">×</span>
+        <span class="cell-x" v-if="!levelIsCleared && cellIndexIs(index, 'x')"
+          >×</span
+        >
       </transition>
     </div>
 
@@ -279,7 +281,6 @@ $bg-corner: $bg;
   transition: $transition-time-slow $delay;
 }
 
-
 .cleared .optical-guide {
   transition-delay: 0s;
 }
@@ -350,8 +351,6 @@ $bg-corner: $bg;
   transform: rotate(90deg);
 }
 
-
-
 .cell {
   width: $cellSize;
   height: $cellSize;
@@ -407,14 +406,14 @@ $bg-corner: $bg;
   }
 }
 @keyframes pop {
-    0% {
-      transform: scale(0.8);
-    }
-    30% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-    }
+  0% {
+    transform: scale(0.8);
   }
+  30% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 </style>
