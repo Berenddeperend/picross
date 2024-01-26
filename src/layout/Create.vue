@@ -1,65 +1,3 @@
-<template>
-  <div class="create">
-    <!--    <side-bar>-->
-    <!--      <template #default>-->
-    <!--        hier een avatar enzo-->
-
-    <!--        <router-link :to="{ name: 'mainMenu' }">Back</router-link>-->
-    <!--      </template>-->
-
-    <!--      <template #footer>-->
-    <!--        <button class="btn btn-link">Clear</button>-->
-
-    <!--        <button-->
-    <!--          class="btn"-->
-    <!--          :class="{ disabled: !puzzleIsValid }"-->
-    <!--          :disabled="!puzzleIsValid"-->
-    <!--          @click="showSaveGridModal = true"-->
-    <!--        >-->
-    <!--          Save puzzle-->
-    <!--        </button>-->
-    <!--      </template>-->
-    <!--    </side-bar>-->
-
-    <header>
-      <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
-    </header>
-
-    <ModalPuzzleInvalid
-      :open="showPuzzleInvalidModal"
-      @close="showPuzzleInvalidModal = false"
-    />
-
-    <ModalSavePuzzle
-      :open="showSaveGridModal"
-      @close="showSaveGridModal = false"
-      :grid="grid"
-    />
-    <Grid
-      :enable-controls="true"
-      :game="game"
-      :player="player"
-      @onCellClicked="onCellClicked"
-      @moveCursor="onMoveCursor"
-      @onCellHover="onCellHover"
-      @toggleCellValue="onToggleCellValue"
-    />
-
-    <div class="btns-container">
-      <button class="btn btn-link" @click="onClearClicked">Clear</button>
-
-      <button
-        class="btn"
-        :class="{ disabled: !puzzleIsValid }"
-        @click="onSaveClick"
-      >
-        Save puzzle
-      </button>
-    </div>
-  </div>
-  <!--    dit niet emitten maar exposen als functie! dan kan ik {useMoveCurosr} from grid doen -->
-</template>
-
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { debounce } from "lodash";
@@ -75,7 +13,7 @@ import SideBar from "@/components/SideBar.vue";
 const showSaveGridModal = ref<Boolean>(false);
 const showPuzzleInvalidModal = ref<Boolean>(false);
 
-const game = useGrid(createGrid(10));
+const game = useGrid(createGrid(15));
 const { grid, computeHitsInRows, computeHitsInColumns } = game;
 const { player } = useUserStates("singleplayer", game);
 
@@ -155,6 +93,68 @@ watch(
   { deep: true }
 );
 </script>
+
+<template>
+  <div class="create">
+    <!--    <side-bar>-->
+    <!--      <template #default>-->
+    <!--        hier een avatar enzo-->
+
+    <!--        <router-link :to="{ name: 'mainMenu' }">Back</router-link>-->
+    <!--      </template>-->
+
+    <!--      <template #footer>-->
+    <!--        <button class="btn btn-link">Clear</button>-->
+
+    <!--        <button-->
+    <!--          class="btn"-->
+    <!--          :class="{ disabled: !puzzleIsValid }"-->
+    <!--          :disabled="!puzzleIsValid"-->
+    <!--          @click="showSaveGridModal = true"-->
+    <!--        >-->
+    <!--          Save puzzle-->
+    <!--        </button>-->
+    <!--      </template>-->
+    <!--    </side-bar>-->
+
+    <header>
+      <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
+    </header>
+
+    <ModalPuzzleInvalid
+      :open="showPuzzleInvalidModal"
+      @close="showPuzzleInvalidModal = false"
+    />
+
+    <ModalSavePuzzle
+      :open="showSaveGridModal"
+      @close="showSaveGridModal = false"
+      :grid="grid"
+    />
+    <Grid
+      :enable-controls="true"
+      :game="game"
+      :player="player"
+      @onCellClicked="onCellClicked"
+      @moveCursor="onMoveCursor"
+      @onCellHover="onCellHover"
+      @toggleCellValue="onToggleCellValue"
+    />
+
+    <div class="btns-container">
+      <button class="btn btn-link" @click="onClearClicked">Clear</button>
+
+      <button
+        class="btn"
+        :class="{ disabled: !puzzleIsValid }"
+        @click="onSaveClick"
+      >
+        Save puzzle
+      </button>
+    </div>
+  </div>
+  <!--    dit niet emitten maar exposen als functie! dan kan ik {useMoveCurosr} from grid doen -->
+</template>
 
 <style lang="scss" scoped>
 .create {

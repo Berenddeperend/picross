@@ -14,7 +14,7 @@ import SideBar from "@/components/SideBar.vue";
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
-const game = useGrid(createGrid(10));
+const game = useGrid();
 
 const xMode = ref(false);
 

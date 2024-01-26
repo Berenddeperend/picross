@@ -29,64 +29,75 @@ export function computeHitsInColumns(grid: Grid) {
   return columns?.map((column) => getHits(column));
 }
 
-
-
-function autoXSequence(userSequence: string[], solutionSequence: string[]): string[] {  
+function autoXSequence(
+  userSequence: string[],
+  solutionSequence: string[]
+): string[] {
   const hasAllRequiredCells = solutionSequence.every((solutionCell, index) => {
-    return solutionCell === 'd' ? userSequence[index] === solutionCell : true; 
+    return solutionCell === "d" ? userSequence[index] === solutionCell : true;
   });
 
   const hasNoWrongCells = userSequence.every((userCell, index) => {
-    return userCell === 'd' ? solutionSequence[index] === userCell : true; 
-  })
+    return userCell === "d" ? solutionSequence[index] === userCell : true;
+  });
 
   const sequenceShouldBeAutoXed = hasAllRequiredCells && hasNoWrongCells;
 
-  return sequenceShouldBeAutoXed ? userSequence.map(cell => cell === 'd' ? 'd' : 'x'): userSequence;
+  return sequenceShouldBeAutoXed
+    ? userSequence.map((cell) => (cell === "d" ? "d" : "x"))
+    : userSequence;
 }
 
 function autoXGrid(grid: Grid, solution: Grid | null): Grid {
   if (!solution) return grid;
-  const gridWithAutoXedRows = [...grid].map((gridRow, rowIndex) => autoXSequence(gridRow, [...solution][rowIndex]) );
-
+  const gridWithAutoXedRows = [...grid].map((gridRow, rowIndex) =>
+    autoXSequence(gridRow, [...solution][rowIndex])
+  );
 
   const autoXedColumns = gridWithAutoXedRows[0].map((cell, columnIndex) => {
-    const userColumn = gridWithAutoXedRows.map((row, rowIndex) => row[columnIndex]);
+    const userColumn = gridWithAutoXedRows.map(
+      (row, rowIndex) => row[columnIndex]
+    );
     const solutionColumn = solution.map((row, rowIndex) => row[columnIndex]);
 
-    return autoXSequence(userColumn, solutionColumn)
-  })
+    return autoXSequence(userColumn, solutionColumn);
+  });
 
   return grid.map((row, rowIndex) => {
     return row.map((cell, columnIndex) => {
-      return autoXedColumns[columnIndex][rowIndex]
-    })
-  })
+      return autoXedColumns[columnIndex][rowIndex];
+    });
+  });
 }
 
-
-
 const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
-  const grid = ref(gridSource || createGrid(10));
+  console.log("=>(useGrid.ts:74) gridSource", gridSource);
+  const puzzleSize = solutionSource?.length || 10;
+  const grid = ref(gridSource || createGrid(puzzleSize));
   const solution = ref(solutionSource || null);
   const puzzle = ref<Puzzle>();
 
   const setPuzzle = (newPuzzle: Puzzle) => {
+    console.log("setting puzzle");
     puzzle.value = newPuzzle;
     setSolution(newPuzzle.solution);
   };
 
   const setGrid = (newGrid: Grid) => {
+    console.log("setting grid", newGrid);
     grid.value = newGrid;
   };
 
-  const setCell = (args: {position: Position, value: string}) => {
-    const {position, value} = args;
-    const [x,y] = position;
+  const setCell = (args: { position: Position; value: string }) => {
+    const { position, value } = args;
+    const [x, y] = position;
     grid.value[y][x] = value;
-  }
+  };
 
   const setSolution = (newSolution: Grid) => {
+    if (grid.value.length !== newSolution.length) {
+      grid.value = createGrid(newSolution.length);
+    }
     solution.value = newSolution;
   };
 
@@ -120,7 +131,7 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
 
   return {
     puzzle,
-    grid: computed(()=> autoXGrid(grid.value, solution.value)),
+    grid: computed(() => autoXGrid(grid.value, solution.value)),
     solution,
     gridSize,
     hitsInRows,

@@ -87,8 +87,9 @@ function cursorStyling(index: number): StyleValue | undefined {
 
 const playfieldStyling = computed((): StyleValue => {
   const rule = shouldShowLegend.value
-    ? `auto repeat(10, 1fr)`
-    : `repeat(10, 1fr)`;
+    ? `auto repeat(${unref(gridSize)}, 1fr)`
+    : `repeat(${unref(gridSize)}, 1fr)`;
+
   return `
     grid-template-columns: ${rule};
     grid-template-rows: ${rule};
@@ -135,7 +136,11 @@ function onCellHover(positionIndex: number) {
   >
     <div class="corner" v-if="shouldShowLegend"></div>
 
-    <div class="legend horizontal" v-if="shouldShowLegend">
+    <div
+      class="legend horizontal"
+      v-if="shouldShowLegend"
+      :style="{ 'grid-column': `span ${gridSize}` }"
+    >
       <div
         class="cell"
         :class="{ highlighted: columnLegendActive(index) }"
@@ -151,7 +156,11 @@ function onCellHover(positionIndex: number) {
         </div>
       </div>
     </div>
-    <div class="legend vertical" v-if="shouldShowLegend">
+    <div
+      class="legend vertical"
+      v-if="shouldShowLegend"
+      :style="{ 'grid-row': `span ${gridSize}` }"
+    >
       <div
         class="cell"
         :class="{ highlighted: rowLegendActive(index) }"
@@ -189,8 +198,14 @@ function onCellHover(positionIndex: number) {
       </transition>
     </div>
 
-    <div class="optical-guide horizontal"></div>
-    <div class="optical-guide vertical"></div>
+    <div
+      class="optical-guide horizontal"
+      :style="{ width: `${28 * gridSize - 1}px` }"
+    ></div>
+    <div
+      class="optical-guide vertical"
+      :style="{ height: `${28 * gridSize - 1}px` }"
+    ></div>
   </div>
 </template>
 

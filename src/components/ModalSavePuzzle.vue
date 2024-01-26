@@ -22,16 +22,19 @@ const nickName = useStorage("nickName", "");
 const response = ref<string>();
 
 const { grid, open } = defineProps<{
-  open: Ref<boolean>;
-  grid: Ref<Grid>;
+  open: boolean;
+  grid: Grid;
 }>();
 
 function onSubmit(e: Event) {
+  console.log(grid[0].length);
   http
     .post("/puzzle", {
       name: puzzleName.value,
       solution: JSON.stringify(grid),
       authorName: nickName.value,
+      width: grid[0].length,
+      height: grid[0].length, //only support square puzzles
     })
     .then((res) => {
       emit("close");
