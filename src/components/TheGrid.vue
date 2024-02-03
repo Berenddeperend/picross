@@ -44,6 +44,10 @@ const shouldShowLegend = computed(() => {
   return unref(solution) && enableControls;
 });
 
+const opticalGuideCount = computed(() => {
+  return Math.ceil(unref(gridSize) / 5) - 1;
+});
+
 if (enableControls) {
   initControls({
     toggleCellValue: (value) => {
@@ -57,6 +61,11 @@ if (enableControls) {
   //ik denk dat dit maar een eventbus moet worden
   // const {controlEvents} = useControls
   // controlEvents.on(moveCursor) ofzo.
+}
+
+function getOpticalGuideOffset(index: number): number {
+  const cellSize = 28;
+  return 2 + index * (5 * cellSize);
 }
 
 function cursorStyling(index: number): StyleValue | undefined {
@@ -199,12 +208,20 @@ function onCellHover(positionIndex: number) {
     </div>
 
     <div
+      v-for="i in opticalGuideCount"
       class="optical-guide horizontal"
-      :style="{ width: `${28 * gridSize - 1}px` }"
+      :style="{
+        width: `${28 * gridSize - 1}px`,
+        bottom: `${getOpticalGuideOffset(i) - 0.5}px`,
+      }"
     ></div>
     <div
+      v-for="i in opticalGuideCount"
       class="optical-guide vertical"
-      :style="{ height: `${28 * gridSize - 1}px` }"
+      :style="{
+        height: `${28 * gridSize - 0.5}px`,
+        right: `${getOpticalGuideOffset(i) - 1}px`,
+      }"
     ></div>
   </div>
 </template>
@@ -302,22 +319,18 @@ $bg-corner: $bg;
 
 .optical-guide {
   background: black;
-  // background: #32e4ff;
   position: absolute;
 
   &.horizontal {
-    bottom: 141px;
     height: 1px;
-    transform: translateY(-50%);
     width: 279px;
     right: 2.5px;
   }
 
   &.vertical {
-    right: 141px;
     width: 1px;
+    bottom: 2px;
     height: 279px;
-    bottom: 2.5px;
     transform: translateX(-50%);
   }
 }
@@ -367,9 +380,9 @@ $bg-corner: $bg;
 }
 
 .cell {
-  width: $cellSize;
-  height: $cellSize;
-  line-height: $cellSize;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  line-height: var(--cell-size);
   background: white;
   transition: background-color 0.1s;
   color: black;
@@ -393,15 +406,10 @@ $bg-corner: $bg;
   }
 
   .cell-x {
-    // font-weight: 400;
-    // font-size: 20px;
-    // color: black;
     display: block;
   }
 
   > div {
-    // width: calc(#{$cellSize} - 2px);
-    // height: calc(#{$cellSize} - 2px);
     width: 20px;
     height: 20px;
     line-height: 20px;

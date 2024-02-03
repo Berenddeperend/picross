@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { clamp, isEqual } from "lodash";
+import { clamp } from "lodash";
 import { createGrid } from "@/utils";
 
 function getHits(arr: string[]): number[] {
@@ -55,10 +55,8 @@ function autoXGrid(grid: Grid, solution: Grid | null): Grid {
   );
 
   const autoXedColumns = gridWithAutoXedRows[0].map((cell, columnIndex) => {
-    const userColumn = gridWithAutoXedRows.map(
-      (row, rowIndex) => row[columnIndex]
-    );
-    const solutionColumn = solution.map((row, rowIndex) => row[columnIndex]);
+    const userColumn = gridWithAutoXedRows.map((row) => row[columnIndex]);
+    const solutionColumn = solution.map((row) => row[columnIndex]);
 
     return autoXSequence(userColumn, solutionColumn);
   });
@@ -71,20 +69,17 @@ function autoXGrid(grid: Grid, solution: Grid | null): Grid {
 }
 
 const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
-  console.log("=>(useGrid.ts:74) gridSource", gridSource);
-  const puzzleSize = solutionSource?.length || 10;
-  const grid = ref(gridSource || createGrid(puzzleSize));
+  const puzzleSize = computed(() => solutionSource?.length || 10);
+  const grid = ref(gridSource || createGrid(puzzleSize.value));
   const solution = ref(solutionSource || null);
   const puzzle = ref<Puzzle>();
 
   const setPuzzle = (newPuzzle: Puzzle) => {
-    console.log("setting puzzle");
     puzzle.value = newPuzzle;
     setSolution(newPuzzle.solution);
   };
 
   const setGrid = (newGrid: Grid) => {
-    console.log("setting grid", newGrid);
     grid.value = newGrid;
   };
 

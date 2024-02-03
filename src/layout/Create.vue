@@ -8,13 +8,14 @@ import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 import ModalPuzzleInvalid from "@/components/ModalPuzzleInvalid.vue";
 import http from "@/services/http";
-import SideBar from "@/components/SideBar.vue";
 
 const showSaveGridModal = ref<Boolean>(false);
 const showPuzzleInvalidModal = ref<Boolean>(false);
 
-const game = useGrid(createGrid(15));
-const { grid, computeHitsInRows, computeHitsInColumns } = game;
+const chosenPuzzleSize = ref(10);
+
+const game = useGrid(createGrid(chosenPuzzleSize.value));
+const { grid, computeHitsInRows, computeHitsInColumns, setPuzzle } = game;
 const { player } = useUserStates("singleplayer", game);
 
 const puzzleIsValidated = ref(false);
@@ -47,7 +48,7 @@ function onToggleCellValue(value: string) {
 }
 
 function onClearClicked() {
-  game.setGrid(createGrid());
+  game.setGrid(createGrid(chosenPuzzleSize.value));
 }
 
 function onCellClicked(index: number) {
@@ -83,6 +84,12 @@ function onSaveClick() {
     showPuzzleInvalidModal.value = true;
   }
 }
+const sizeToggle = ref(false);
+
+watch(sizeToggle, () => {
+  chosenPuzzleSize.value = sizeToggle.value ? 15 : 10;
+  game.setGrid(createGrid(chosenPuzzleSize.value));
+});
 
 watch(
   grid,
@@ -96,29 +103,17 @@ watch(
 
 <template>
   <div class="create">
-    <!--    <side-bar>-->
-    <!--      <template #default>-->
-    <!--        hier een avatar enzo-->
-
-    <!--        <router-link :to="{ name: 'mainMenu' }">Back</router-link>-->
-    <!--      </template>-->
-
-    <!--      <template #footer>-->
-    <!--        <button class="btn btn-link">Clear</button>-->
-
-    <!--        <button-->
-    <!--          class="btn"-->
-    <!--          :class="{ disabled: !puzzleIsValid }"-->
-    <!--          :disabled="!puzzleIsValid"-->
-    <!--          @click="showSaveGridModal = true"-->
-    <!--        >-->
-    <!--          Save puzzle-->
-    <!--        </button>-->
-    <!--      </template>-->
-    <!--    </side-bar>-->
-
     <header>
       <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
+
+      <label class="toggle" style="width: 160px">
+        <input type="checkbox" v-model="sizeToggle" />
+        <a></a>
+        <span>
+          <span class="left-span">10x10</span>
+          <span class="right-span">15x15</span>
+        </span>
+      </label>
     </header>
 
     <ModalPuzzleInvalid
@@ -153,7 +148,6 @@ watch(
       </button>
     </div>
   </div>
-  <!--    dit niet emitten maar exposen als functie! dan kan ik {useMoveCurosr} from grid doen -->
 </template>
 
 <style lang="scss" scoped>
@@ -167,6 +161,7 @@ watch(
 header {
   display: flex;
   margin-bottom: 10px;
+  justify-content: space-between;
   width: 100%;
 }
 
