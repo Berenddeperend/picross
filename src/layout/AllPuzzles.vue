@@ -1,12 +1,24 @@
 <template>
-  <router-link :to="{ name: 'mainMenu' }">Back</router-link>
+  <div class="all-puzzles-container">
+    <div class="header">
+      <router-link class="btn outline" :to="{ name: 'mainMenu' }"
+        >← Back</router-link
+      >
+      <h2>All puzzles</h2>
+    </div>
 
-  <div v-if="!nickName">No puzzles yet.</div>
+    <div v-if="!nickName">No puzzles yet.</div>
 
-  <div class="all-puzzles" v-if="puzzles">
-    <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
-      <!-- <h3>{{ puzzle.name }}</h3> -->
-      <Grid :enable-controls="false" :game="puzzle.game" />
+    <div class="all-puzzles" v-if="puzzles">
+      <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
+        <CanvasPuzzleViewer
+          class="puzzle-preview"
+          v-if="puzzles.length"
+          :puzzle="puzzle"
+          fill="#444"
+          :pixel-size="10"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -18,8 +30,11 @@ import { onMounted, ref } from "@vue/runtime-core";
 import http from "@/services/http";
 import { useStorage } from "@vueuse/core";
 import useGrid from "@/hooks/useGrid";
+import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
 
-const puzzles = ref();
+type Thing = BackendPuzzle & { game: ReturnType<typeof useGrid> };
+
+const puzzles = ref<Thing[]>([]);
 const nickName = useStorage("nickName", "Berend");
 
 onMounted(() => {
@@ -38,30 +53,46 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.header {
+  display: grid;
+  align-items: center;
+  margin-bottom: 20px;
+  justify-content: start;
+  grid-template-columns: repeat(3, 1fr);
+
+  .btn {
+    width: fit-content;
+  }
+
+  h2 {
+    justify-self: center;
+    text-align: center;
+    margin: 0;
+  }
+}
+
+.all-puzzles-container {
+  padding: 0 10px;
+  margin-top: 20px;
+  text-align: left;
+}
+
 .all-puzzles {
   width: 100%;
   max-width: 700px;
-  margin: 0 auto;
+  margin: 20px auto;
   gap: 10px;
   display: flex;
   flex-wrap: wrap;
 
   .puzzle {
-    display: inline-block;
+    line-height: 0;
   }
 
-  :deep(.playfield-container) {
+  .puzzle-preview {
     border: 1px solid #e1e1e1;
     padding: 10px;
     background: white;
-
-    .cell {
-      $size: 8px;
-      border: none;
-      border-radius: 0;
-      width: $size;
-      height: $size;
-    }
   }
 }
 </style>

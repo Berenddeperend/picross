@@ -71,6 +71,20 @@ input {
     cursor: not-allowed;
   }
 
+  &.outline {
+    text-align: center;
+    text-decoration: none;
+    color: #2c3e50;
+    border: 1.5px solid #c0c8cc;
+    background-color: white;
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+
+    &:hover {
+      background-color: #ebf1f4;
+    }
+  }
+
   &.btn-link {
     color: black;
     background: none;

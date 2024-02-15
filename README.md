@@ -9,14 +9,14 @@
 - Better unrefs
 
 # todo
-- Better concurrency
-- Fix puzzle name spoiler
-- Better layout for usernames
-- 'no clue really' renamen naar helikoptervogel
 
 # doing
 
 # done
+- Better concurrency
+- Fix puzzle name spoiler
+- Better layout for usernames
+- 'no clue really' renamen naar helikoptervogel
 - Is puzzle solvable?
 - bug: 'hitsincolumns' could point to playfield or solution
 - cursor sync is broken

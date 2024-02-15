@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useStorage } from "@vueuse/core";
+
+const nickName = useStorage("nickName", "");
+</script>
+
 <template>
   <h1>
     Nonogram <br />
@@ -12,40 +18,34 @@
     </div>
   </label>
 
-  <ul>
-    <li>
-      <router-link to="/play">Play</router-link>
-    </li>
-    <li>
-      <router-link to="/create">Create Level</router-link>
-    </li>
-    <li>
-      <router-link to="/all-puzzles">View puzzles</router-link>
-    </li>
-  </ul>
+  <router-link class="menu-btn" to="/create">Create Level</router-link>
+  <router-link class="menu-btn" to="/all-puzzles">View puzzles</router-link>
 </template>
-
-<script setup lang="ts">
-import { useStorage } from "@vueuse/core";
-
-const nickName = useStorage("nickName", "");
-</script>
 
 <style lang="scss" scoped>
 h1 {
   line-height: 1;
+  margin-bottom: 40px;
 }
 
-li {
-  // text-align: left;
+.menu-btn {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: #2c3e50;
+  border: 1.5px solid #c0c8cc;
+  background-color: white;
+  padding: 0.5em;
+  border-radius: 0.5em;
+
+  &:hover {
+    background-color: #ebf1f4;
+  }
 }
 
 small {
   font-size: 0.6em;
   font-weight: normal;
-}
-ul {
-  padding: 0;
-  list-style-type: none;
 }
 </style>

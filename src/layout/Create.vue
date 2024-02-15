@@ -8,6 +8,7 @@ import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 import ModalPuzzleInvalid from "@/components/ModalPuzzleInvalid.vue";
 import http from "@/services/http";
+import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
 
 const showSaveGridModal = ref<Boolean>(false);
 const showPuzzleInvalidModal = ref<Boolean>(false);
@@ -15,7 +16,8 @@ const showPuzzleInvalidModal = ref<Boolean>(false);
 const chosenPuzzleSize = ref(10);
 
 const game = useGrid(createGrid(chosenPuzzleSize.value));
-const { grid, computeHitsInRows, computeHitsInColumns, setPuzzle } = game;
+const { grid, computeHitsInRows, computeHitsInColumns, setPuzzle, puzzle } =
+  game;
 const { player } = useUserStates("singleplayer", game);
 
 const puzzleIsValidated = ref(false);
@@ -104,7 +106,12 @@ watch(
 <template>
   <div class="create">
     <header>
-      <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
+      <router-link class="link back" :to="{ name: 'mainMenu' }"
+        >← Back</router-link
+      >
+      <!--      <router-link class="btn outline" :to="{ name: 'mainMenu' }"-->
+      <!--        >← Back</router-link-->
+      <!--      >-->
 
       <label class="toggle" style="width: 160px">
         <input type="checkbox" v-model="sizeToggle" />
@@ -158,9 +165,14 @@ watch(
   flex-direction: column;
 }
 
+.back {
+  text-decoration: none;
+}
+
 header {
   display: flex;
   margin-bottom: 10px;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
 }
