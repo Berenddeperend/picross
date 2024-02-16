@@ -31,25 +31,16 @@ import http from "@/services/http";
 import { useStorage } from "@vueuse/core";
 import useGrid from "@/hooks/useGrid";
 import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
+import useStore from "@/store";
 
-type Thing = BackendPuzzle & { game: ReturnType<typeof useGrid> };
+const store = useStore();
+const { puzzles } = store;
 
-const puzzles = ref<Thing[]>([]);
+store.fetchPuzzles();
+if (!puzzles.value.length) {
+}
+
 const nickName = useStorage("nickName", "Berend");
-
-onMounted(() => {
-  http.get("/puzzles").then((response) => {
-    puzzles.value = response.data.map((puzzle: BackendPuzzle) => {
-      //set both working state and solution to be the same. Not ideal but it works.
-      const solution: Grid = JSON.parse(puzzle.solution);
-
-      return {
-        ...puzzle,
-        game: useGrid(solution, solution),
-      };
-    });
-  });
-});
 </script>
 
 <style lang="scss" scoped>

@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { useStorage } from "@vueuse/core";
+import BackgroundPattern from "@/components/BackgroundPattern.vue";
 
 const nickName = useStorage("nickName", "");
 </script>
 
 <template>
+  <BackgroundPattern />
+
   <h1>
     Nonogram <br />
     <small>with Friends</small>
@@ -26,6 +29,10 @@ const nickName = useStorage("nickName", "");
 h1 {
   line-height: 1;
   margin-bottom: 40px;
+}
+
+input {
+  background: white;
 }
 
 .menu-btn {

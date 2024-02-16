@@ -20,7 +20,7 @@ const props = withDefaults(
 );
 
 const grid = computed(() => {
-  return JSON.parse(props.puzzle.solution as unknown as string);
+  return props.puzzle.solution;
 });
 
 // const pixelSize = 8;

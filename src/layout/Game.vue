@@ -10,6 +10,7 @@ import useGrid from "@/hooks/useGrid";
 import http from "@/services/http";
 // import SideBarGame from "@/layout/partials/SideBarGame.vue";
 import SideBar from "@/components/SideBar.vue";
+import BackgroundPattern from "@/components/BackgroundPattern.vue";
 
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
@@ -106,21 +107,13 @@ watch(game.levelIsCleared, (value) => {
 </script>
 
 <template>
+  <BackgroundPattern />
   <SideBar
     v-if="players && player && mode === 'multiplayer'"
     :player="player"
     :players="players"
     :socket="socket"
   />
-  <!-- <SideBarGame
-     v-if="players && player && mode === 'multiplayer'"
-     :player="player"
-     :players="players"
-     :socket="socket"
-   /> -->
-  <!-- <header>
-    <router-link class="link" :to="{ name: 'mainMenu' }">← Back</router-link>
-  </header> -->
 
   <div class="container">
     <Grid
@@ -238,7 +231,7 @@ ul {
 }
 
 .grid {
-  // margin-left: 120px;
+  outline: 20px solid rgba(255, 255, 255, 1);
 }
 
 .puzzle-title {
