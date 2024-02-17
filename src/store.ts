@@ -6,12 +6,12 @@ const isFetchingPuzzles = ref(false);
 
 export default function useStore() {
   const fetchPuzzles = (bustCache = false) => {
-    if (isFetchingPuzzles.value) return;
-    if (!bustCache && puzzles.value.length > 0) return;
+    if (isFetchingPuzzles.value) return Promise.resolve();
+    if (!bustCache && puzzles.value.length > 0) Promise.resolve();
 
     isFetchingPuzzles.value = true;
 
-    http.get("/puzzles").then((response) => {
+    return http.get("/puzzles").then((response) => {
       puzzles.value = response.data.map((puzzle: BackendPuzzle) => {
         return { ...puzzle, solution: JSON.parse(puzzle.solution) };
       });

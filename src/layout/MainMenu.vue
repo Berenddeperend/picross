@@ -8,21 +8,23 @@ const nickName = useStorage("nickName", "");
 <template>
   <BackgroundPattern />
 
-  <h1>
-    Nonogram <br />
-    <small>with Friends</small>
-  </h1>
-  <label>
-    Nickname
+  <div class="main-menu-wrapper">
+    <h1>
+      Nonogram <br />
+      <small>with Friends</small>
+    </h1>
+    <label>
+      Nickname
 
-    <div class="input-with-button">
-      <input type="text" autofocus v-model="nickName" />
-      <router-link class="btn" to="/play">Play</router-link>
-    </div>
-  </label>
+      <div class="input-with-button">
+        <input type="text" autofocus v-model="nickName" />
+        <router-link class="btn" to="/play">Play</router-link>
+      </div>
+    </label>
 
-  <router-link class="menu-btn" to="/create">Create Level</router-link>
-  <router-link class="menu-btn" to="/all-puzzles">View puzzles</router-link>
+    <router-link class="menu-btn" to="/create">Create Level</router-link>
+    <router-link class="menu-btn" to="/all-puzzles">View puzzles</router-link>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -33,6 +35,11 @@ h1 {
 
 input {
   background: white;
+}
+
+.main-menu-wrapper {
+  max-width: 250px;
+  margin: 0 auto;
 }
 
 .menu-btn {
