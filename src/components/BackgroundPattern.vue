@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from "@vue/runtime-core";
-import { shuffle } from "lodash";
+import { debounce, shuffle } from "lodash";
 import useStore from "@/store";
 import { drawSinglePuzzle } from "@/services/canvas";
+import { nextTick, onMounted, watch } from "vue";
 
 const store = useStore();
 const { puzzles } = store;
@@ -45,14 +46,20 @@ const draw = () => {
       drawSinglePuzzle(
         canvas.value,
         relevantPuzzles[(row * rows + column) % relevantPuzzles.length],
-        "#f4f4f4",
+        "#f2f2f6",
         pixelSize,
         xoffset,
         row * pixelSize * (usedPuzzlesSize + 1)
       );
     }
   }
+
+  nextTick().then(() => {
+    canvas.value?.classList.remove("hibbem");
+  });
 };
+
+window.addEventListener("resize", debounce(draw, 1000));
 
 store.fetchPuzzles().then(draw);
 </script>
@@ -65,15 +72,22 @@ store.fetchPuzzles().then(draw);
     }"
     :width="viewportWidth * dpi"
     :height="viewportHeight * dpi"
+    class="hibbem"
     ref="canvas"
   ></canvas>
 </template>
 
 <style scoped lang="scss">
+.hibbem {
+  opacity: 0;
+}
+
 canvas {
   left: 0;
   top: 0;
   position: absolute;
   z-index: -1;
+  opacity: 0.5;
+  transition: opacity 1s;
 }
 </style>

@@ -3,26 +3,23 @@ import { watch, ref } from "vue";
 import confetti from "canvas-confetti";
 import Grid from "@/components/TheGrid.vue";
 
-import { createGrid } from "@/utils";
 import useSocket from "@/hooks/useSocket";
 import useUserStates from "@/hooks/useUserStates";
 import useGrid from "@/hooks/useGrid";
-import http from "@/services/http";
-// import SideBarGame from "@/layout/partials/SideBarGame.vue";
 import SideBar from "@/components/SideBar.vue";
-import BackgroundPattern from "@/components/BackgroundPattern.vue";
+import VoteNextSize from "@/components/VoteNextSize.vue";
+// import VoteNext from "@/components/VoteNext.vue";
 
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid();
 
-const xMode = ref(false);
-
 const { grid, puzzle, setCell } = game;
-
 const { socket } = useSocket();
 const { players, player, initState } = useUserStates(mode, game, socket);
+
+const xMode = ref(false);
 
 initState();
 
@@ -107,13 +104,15 @@ watch(game.levelIsCleared, (value) => {
 </script>
 
 <template>
-  <BackgroundPattern />
   <SideBar
     v-if="players && player && mode === 'multiplayer'"
     :player="player"
     :players="players"
     :socket="socket"
   />
+
+  <VoteNextSize :socket="socket" />
+  <!--  <VoteNext :socket="socket" />-->
 
   <div class="container">
     <Grid
@@ -130,24 +129,6 @@ watch(game.levelIsCleared, (value) => {
       @moveCursor="onMoveCursor"
       @toggleCellValue="onToggleCellValue"
     />
-
-    <!-- <aside>
-      <br />
-      <span class="now-playing"
-        >Now playing ({{ Object.values(players).length }})</span
-      >
-      <ul>
-        <li
-          v-for="player in players"
-          :key="player.id"
-          :class="[{ 'current-player': isCurrentPlayer(player) }, player.id]"
-          ref="playersRef"
-        >
-          <span class="online-indicator"></span>
-          {{ player.name }}
-        </li>
-      </ul>
-    </aside> -->
   </div>
 
   <div
@@ -159,7 +140,6 @@ watch(game.levelIsCleared, (value) => {
         : 'all 0s',
       transitionDelay: game.levelIsCleared.value ? '2s' : '0s',
       letterSpacing: game.levelIsCleared.value ? '1px' : '-2px',
-      // textShadow: game.levelIsCleared.value ? '2px 2px red, -4px -4px orange' :'0px 0px red, 0px 0px orange'
     }"
   >
     {{ puzzle?.name }}
@@ -230,20 +210,13 @@ ul {
   text-decoration: none;
 }
 
-.grid {
-  outline: 20px solid rgba(255, 255, 255, 1);
-}
-
 .puzzle-title {
   margin-top: 10px;
 
   user-select: none;
-  // font-family: 'bebas neue';
 
   font-size: 20px;
-  // color: white;
   font-weight: bold;
   letter-spacing: 0px;
-  // text-shadow: 2px 2px red, 4px 4px orange;
 }
 </style>

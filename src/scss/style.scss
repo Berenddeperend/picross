@@ -106,12 +106,6 @@ input {
 .input-with-button {
   display: flex;
 
-  input {
-    border-right: none;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-  }
-
   .btn {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;

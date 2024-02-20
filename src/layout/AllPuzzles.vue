@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { useStorage } from "@vueuse/core";
+import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
+import useStore from "@/store";
+import { onBeforeMount } from "vue";
+
+const store = useStore();
+const { puzzles, showFancyBackground } = store;
+
+onBeforeMount(() => {
+  showFancyBackground.value = false;
+});
+
+store.fetchPuzzles();
+if (!puzzles.value.length) {
+}
+
+const nickName = useStorage("nickName", "Berend");
+</script>
+
 <template>
   <div class="all-puzzles-container">
     <div class="header">
@@ -22,26 +42,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import Grid from "@/components/TheGrid.vue";
-
-import { onMounted, ref } from "@vue/runtime-core";
-import http from "@/services/http";
-import { useStorage } from "@vueuse/core";
-import useGrid from "@/hooks/useGrid";
-import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
-import useStore from "@/store";
-
-const store = useStore();
-const { puzzles } = store;
-
-store.fetchPuzzles();
-if (!puzzles.value.length) {
-}
-
-const nickName = useStorage("nickName", "Berend");
-</script>
 
 <style lang="scss" scoped>
 .header {

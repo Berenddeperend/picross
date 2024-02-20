@@ -8,8 +8,6 @@ import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 import ModalPuzzleInvalid from "@/components/ModalPuzzleInvalid.vue";
 import http from "@/services/http";
-import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
-import BackgroundPattern from "@/components/BackgroundPattern.vue";
 
 const showSaveGridModal = ref<Boolean>(false);
 const showPuzzleInvalidModal = ref<Boolean>(false);
@@ -105,17 +103,11 @@ watch(
 </script>
 
 <template>
-  <BackgroundPattern />
-
   <div class="create">
     <header>
       <router-link class="link back" :to="{ name: 'mainMenu' }"
         >← Back</router-link
       >
-      <!--      <router-link class="btn outline" :to="{ name: 'mainMenu' }"-->
-      <!--        >← Back</router-link-->
-      <!--      >-->
-
       <label class="toggle" style="width: 160px">
         <input type="checkbox" v-model="sizeToggle" />
         <a></a>
