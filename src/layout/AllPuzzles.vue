@@ -2,7 +2,7 @@
 import { useStorage } from "@vueuse/core";
 import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
 import useStore from "@/store";
-import { onBeforeMount } from "vue";
+import { computed, onBeforeMount } from "vue";
 
 const store = useStore();
 const { puzzles, showFancyBackground } = store;
@@ -10,6 +10,14 @@ const { puzzles, showFancyBackground } = store;
 onBeforeMount(() => {
   showFancyBackground.value = false;
 });
+
+const puzzles10x10 = computed(() =>
+  puzzles.value.filter((puzzle) => puzzle.solution[0].length === 10)
+);
+
+const puzzles15x15 = computed(() =>
+  puzzles.value.filter((puzzle) => puzzle.solution[0].length === 15)
+);
 
 store.fetchPuzzles();
 if (!puzzles.value.length) {
@@ -24,13 +32,37 @@ const nickName = useStorage("nickName", "Berend");
       <router-link class="btn outline" :to="{ name: 'mainMenu' }"
         >← Back</router-link
       >
-      <h2>All puzzles</h2>
+      <h2>
+        All puzzles <small v-if="puzzles">({{ puzzles.length }})</small>
+      </h2>
     </div>
 
     <div v-if="!nickName">No puzzles yet.</div>
 
+    <h2 class="sticky">
+      <div>
+        10x10 <small>({{ puzzles10x10.length }} puzzles)</small>
+      </div>
+    </h2>
     <div class="all-puzzles" v-if="puzzles">
-      <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles">
+      <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles10x10">
+        <CanvasPuzzleViewer
+          class="puzzle-preview"
+          v-if="puzzles.length"
+          :puzzle="puzzle"
+          fill="#444"
+          :pixel-size="10"
+        />
+      </div>
+    </div>
+
+    <h2 class="sticky">
+      <div>
+        15x15 <small>({{ puzzles15x15.length }} puzzles)</small>
+      </div>
+    </h2>
+    <div class="all-puzzles" v-if="puzzles">
+      <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles15x15">
         <CanvasPuzzleViewer
           class="puzzle-preview"
           v-if="puzzles.length"
@@ -44,6 +76,16 @@ const nickName = useStorage("nickName", "Berend");
 </template>
 
 <style lang="scss" scoped>
+//.sticky {
+//  position: sticky;
+//  top: 0;
+//
+//  * {
+//    position: relative;
+//    left: -100px;
+//  }
+//}
+
 .header {
   display: grid;
   align-items: center;

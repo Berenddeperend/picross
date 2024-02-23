@@ -85,7 +85,7 @@ store.fetchPuzzles().then(draw);
 canvas {
   left: 0;
   top: 0;
-  position: absolute;
+  position: fixed;
   z-index: -1;
   opacity: 0.5;
   transition: opacity 1s;

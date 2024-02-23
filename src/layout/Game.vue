@@ -25,6 +25,8 @@ initState();
 
 function onCellHover(cellIndex: number) {
   if (game.levelIsCleared.value) return;
+  if (!player.value) return;
+
   player.value!.position = game.indexToXY(cellIndex);
   socket.emit("cursorUpdated", player.value!.position);
 }

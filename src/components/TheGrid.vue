@@ -76,6 +76,7 @@ function cursorStyling(index: number): StyleValue | undefined {
     }
   }
 
+  //player is nuulll
   if (!cursor || !player || !players) return;
 
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor);
