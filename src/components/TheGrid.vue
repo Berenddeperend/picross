@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { StyleValue, computed, Ref, unref } from "vue";
+import { StyleValue, computed, Ref, unref, watch, toRefs } from "vue";
 import { isEqual } from "lodash";
 import { initControls } from "@/hooks/useControls";
 import useGrid from "@/hooks/useGrid";
+
+const props = defineProps<{
+  enableControls?: boolean;
+  enableSocket?: boolean;
+  players?: Players;
+  player?: Player;
+  game: ReturnType<typeof useGrid>;
+}>();
 
 const {
   enableControls = false,
@@ -10,13 +18,7 @@ const {
   players,
   player,
   game,
-} = defineProps<{
-  enableControls?: boolean;
-  enableSocket?: boolean;
-  players?: Players;
-  player?: Player;
-  game: ReturnType<typeof useGrid>;
-}>();
+} = toRefs(props);
 
 const {
   gridSize,
@@ -27,7 +29,7 @@ const {
   grid,
   solution,
   puzzle,
-} = game;
+} = game.value;
 
 const emit = defineEmits<{
   (e: "onCellClicked", index: number): void;
@@ -38,7 +40,7 @@ const emit = defineEmits<{
   (e: "onCellHover", index: number): void;
 }>();
 
-const cursor = computed<Position>(() => player?.position as Position);
+const cursor = computed<Position>(() => player.value?.position as Position);
 
 const shouldShowLegend = computed(() => {
   return unref(solution) && enableControls;
@@ -69,15 +71,14 @@ function getOpticalGuideOffset(index: number): number {
 }
 
 function cursorStyling(index: number): StyleValue | undefined {
-  if (cursor && player && !players) {
+  if (cursor.value && player.value && !players.value) {
     //build mode, i hate these ifs :(
-    if (isEqual(indexToXY(index), player!.position)) {
+    if (isEqual(indexToXY(index), player.value!.position)) {
       return `outline: 5px solid hotpink; z-index: 4;`;
     }
   }
 
-  //player is nuulll
-  if (!cursor || !player || !players) return;
+  if (!cursor.value || !player.value || !players.value) return;
 
   const cellIsOwnCursor = isEqual(indexToXY(index), cursor);
   if (cellIsOwnCursor) return;
@@ -85,7 +86,7 @@ function cursorStyling(index: number): StyleValue | undefined {
   if (enableSocket) {
     if (levelIsCleared.value) return "";
 
-    const friend = Object.values(players).find((friends) => {
+    const friend = Object.values(players.value).find((friends) => {
       return isEqual(indexToXY(index), friends.position);
     });
 
@@ -112,13 +113,13 @@ function cellIndexIs(index: number, value: string): boolean {
 }
 
 function columnLegendActive(index: number) {
-  if (!player) return;
-  return player.position[0] === index;
+  if (!player.value) return;
+  return player.value.position[0] === index;
 }
 
 function rowLegendActive(index: number) {
-  if (!player) return;
-  return player.position[1] === index;
+  if (!player.value) return;
+  return player.value.position[1] === index;
 }
 
 function onCellClicked(index: number) {

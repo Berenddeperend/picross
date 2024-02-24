@@ -16,7 +16,11 @@ const viewportHeight = ref(window.innerHeight);
 const canvas = ref<HTMLCanvasElement>();
 
 const pixelSize = 6;
-const usedPuzzlesSize = 10;
+
+const { usedPuzzlesSize } = withDefaults(
+  defineProps<{ usedPuzzlesSize?: number }>(),
+  { usedPuzzlesSize: 15 }
+);
 
 const draw = () => {
   if (!canvas.value) return;

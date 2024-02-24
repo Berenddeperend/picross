@@ -113,7 +113,7 @@ watch(game.levelIsCleared, (value) => {
     :socket="socket"
   />
 
-  <VoteNextSize :socket="socket" />
+  <!--  <VoteNextSize :socket="socket" />-->
   <!--  <VoteNext :socket="socket" />-->
 
   <div class="container">
