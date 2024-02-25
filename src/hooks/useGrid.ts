@@ -1,6 +1,9 @@
 import { computed, ref } from "vue";
 import { clamp } from "lodash";
 import { createGrid } from "@/utils";
+import useStore from "@/store";
+
+const store = useStore();
 
 function getHits(arr: string[]): number[] {
   return arr.reduce((acc: number[], curr, i, arr) => {
@@ -77,6 +80,11 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   const setPuzzle = (newPuzzle: Puzzle) => {
     puzzle.value = newPuzzle;
     setSolution(newPuzzle.solution);
+    setGrid(createGrid(newPuzzle.solution.length));
+
+    if (store.currentPuzzleSize.value !== newPuzzle.width) {
+      store.currentPuzzleSize.value = newPuzzle.width as number; //yuck
+    }
   };
 
   const setGrid = (newGrid: Grid) => {
@@ -90,13 +98,12 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
   };
 
   const setSolution = (newSolution: Grid) => {
-    if (grid.value.length !== newSolution.length) {
-      grid.value = createGrid(newSolution.length);
-    }
     solution.value = newSolution;
   };
 
-  const gridSize = computed(() => grid.value[0].length);
+  const gridSize = computed(() => {
+    return grid.value[0].length;
+  });
 
   const indexToXY = (index: number): Position => {
     const x = index % gridSize.value;

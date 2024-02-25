@@ -1,5 +1,5 @@
 <template>
-  <button @click="suggestNext">Volgende puzzel</button>
+  <button @click="suggestNext">Vote to skip this puzzle</button>
 </template>
 
 <script setup lang="ts">

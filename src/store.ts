@@ -4,6 +4,7 @@ import http from "@/services/http";
 const puzzles = ref<Puzzle[]>([]);
 const isFetchingPuzzles = ref(false);
 const showFancyBackground = ref(true);
+const currentPuzzleSize = ref(10);
 
 export default function useStore() {
   const fetchPuzzles = (bustCache = false) => {
@@ -24,5 +25,6 @@ export default function useStore() {
     puzzles,
     fetchPuzzles,
     showFancyBackground,
+    currentPuzzleSize,
   };
 }

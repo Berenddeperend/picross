@@ -1,5 +1,5 @@
 <template>
-  <button @click="suggestClear">Clear</button>
+  <button @click="suggestClear">Vote to clear grid</button>
 </template>
 
 <script setup lang="ts">

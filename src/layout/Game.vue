@@ -7,15 +7,18 @@ import useSocket from "@/hooks/useSocket";
 import useUserStates from "@/hooks/useUserStates";
 import useGrid from "@/hooks/useGrid";
 import SideBar from "@/components/SideBar.vue";
-import VoteNextSize from "@/components/VoteNextSize.vue";
-// import VoteNext from "@/components/VoteNext.vue";
+import VoteNext from "@/components/VoteNext.vue";
+import VoteClear from "@/components/VoteClear.vue";
+import useStore from "@/store";
 
 const { puzzleId } = defineProps<{ puzzleId?: string }>();
 const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid();
+const store = useStore();
+const { showFancyBackground } = store;
 
-const { grid, puzzle, setCell } = game;
+const { grid, puzzle, setCell, gridSize } = game;
 const { socket } = useSocket();
 const { players, player, initState } = useUserStates(mode, game, socket);
 
@@ -87,6 +90,7 @@ function isCurrentPlayer(somePlayer: Player) {
 
 watch(game.levelIsCleared, (value) => {
   if (value) {
+    showFancyBackground.value = false;
     confetti({
       zIndex: -1,
       particleCount: 50,
@@ -113,8 +117,8 @@ watch(game.levelIsCleared, (value) => {
     :socket="socket"
   />
 
-  <!--  <VoteNextSize :socket="socket" />-->
   <!--  <VoteNext :socket="socket" />-->
+  <!--  <VoteClear :socket="socket" />-->
 
   <div class="container">
     <Grid
