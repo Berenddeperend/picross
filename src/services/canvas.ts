@@ -1,3 +1,6 @@
+import { shuffle } from "lodash";
+import { nextTick } from "vue";
+
 export const dpi = Math.max(window.devicePixelRatio, 2);
 
 export function drawSinglePuzzle(

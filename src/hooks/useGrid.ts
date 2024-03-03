@@ -52,7 +52,7 @@ function autoXSequence(
 }
 
 function autoXGrid(grid: Grid, solution: Grid | null): Grid {
-  if (!solution) return grid;
+  if (!solution || !grid) return grid;
   const gridWithAutoXedRows = [...grid].map((gridRow, rowIndex) =>
     autoXSequence(gridRow, [...solution][rowIndex])
   );
@@ -79,8 +79,8 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
 
   const setPuzzle = (newPuzzle: Puzzle) => {
     puzzle.value = newPuzzle;
-    setSolution(newPuzzle.solution);
     setGrid(createGrid(newPuzzle.solution.length));
+    setSolution(newPuzzle.solution);
 
     if (store.currentPuzzleSize.value !== newPuzzle.width) {
       store.currentPuzzleSize.value = newPuzzle.width as number; //yuck

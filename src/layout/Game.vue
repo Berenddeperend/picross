@@ -16,7 +16,7 @@ const mode: Mode = puzzleId ? "singleplayer" : "multiplayer";
 
 const game = useGrid();
 const store = useStore();
-const { showFancyBackground } = store;
+const { clearBackground, drawBackground } = store;
 
 const { grid, puzzle, setCell, gridSize } = game;
 const { socket } = useSocket();
@@ -90,13 +90,17 @@ function isCurrentPlayer(somePlayer: Player) {
 
 watch(game.levelIsCleared, (value) => {
   if (value) {
-    showFancyBackground.value = false;
+    setTimeout(() => {
+      clearBackground();
+    }, 1000);
+
     confetti({
       zIndex: -1,
       particleCount: 50,
       spread: 70,
       angle: 60,
       origin: { y: 0.6 },
+      useWorker: true,
     });
     confetti({
       zIndex: -1,
@@ -105,6 +109,8 @@ watch(game.levelIsCleared, (value) => {
       angle: 120,
       origin: { y: 0.6 },
     });
+  } else {
+    drawBackground();
   }
 });
 </script>

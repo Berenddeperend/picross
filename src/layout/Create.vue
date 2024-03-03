@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { debounce } from "lodash";
 import { createGrid } from "@/utils";
 import useGrid from "@/hooks/useGrid";
@@ -8,6 +8,12 @@ import Grid from "@/components/TheGrid.vue";
 import ModalSavePuzzle from "@/components/ModalSavePuzzle.vue";
 import ModalPuzzleInvalid from "@/components/ModalPuzzleInvalid.vue";
 import http from "@/services/http";
+import useStore from "@/store";
+
+const store = useStore();
+
+const { currentPuzzleSize, clearBackground, drawBackground } = store;
+console.log("=>(Create.vue:16) clearBackground", clearBackground);
 
 const showSaveGridModal = ref<Boolean>(false);
 const showPuzzleInvalidModal = ref<Boolean>(false);
@@ -87,9 +93,31 @@ function onSaveClick() {
 }
 const sizeToggle = ref(false);
 
+onMounted(() => {
+  if (currentPuzzleSize.value !== 10) {
+    currentPuzzleSize.value = 10;
+
+    clearBackground();
+    setTimeout(() => {
+      drawBackground();
+    }, 1100);
+  }
+});
+
 watch(sizeToggle, () => {
-  chosenPuzzleSize.value = sizeToggle.value ? 15 : 10;
+  const newSize = sizeToggle.value ? 15 : 10;
+
+  if (newSize === currentPuzzleSize.value) return;
+
+  chosenPuzzleSize.value = newSize;
+  clearBackground();
+
+  currentPuzzleSize.value = chosenPuzzleSize.value;
   game.setGrid(createGrid(chosenPuzzleSize.value));
+
+  setTimeout(() => {
+    drawBackground();
+  }, 1100);
 });
 
 watch(

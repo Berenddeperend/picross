@@ -7,9 +7,9 @@ import { computed, onBeforeMount } from "vue";
 const store = useStore();
 const { puzzles, showFancyBackground } = store;
 
-onBeforeMount(() => {
-  showFancyBackground.value = false;
-});
+// onBeforeMount(() => {
+//   showFancyBackground.value = false;
+// });
 
 const puzzles10x10 = computed(() =>
   puzzles.value.filter((puzzle) => puzzle.solution[0].length === 10)
