@@ -6,11 +6,8 @@ import Game from "./layout/Game.vue";
 import Create from "./layout/Create.vue";
 import MainMenu from "./layout/MainMenu.vue";
 import AllPuzzles from "./layout/AllPuzzles.vue";
-import {
-  createRouter,
-  createWebHashHistory,
-  createWebHistory,
-} from "vue-router";
+import Admin from "@/layout/Admin.vue";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 import "@/scss/style.scss";
 import "@/scss/toggle.scss";
@@ -26,10 +23,10 @@ const routes = [
   },
   { name: "create", path: "/create", component: Create },
   { name: "allPuzzles", path: "/all-puzzles", component: AllPuzzles },
+  { name: "admin", path: "/admin", component: Admin },
 ];
 
 const router = createRouter({
-  // history: createWebHistory(),
   history: createWebHashHistory(),
   routes,
 });

@@ -79,7 +79,7 @@ const useGrid = (gridSource?: Grid, solutionSource?: Grid) => {
 
   const setPuzzle = (newPuzzle: Puzzle) => {
     puzzle.value = newPuzzle;
-    setGrid(createGrid(newPuzzle.solution.length));
+    // setGrid(createGrid(newPuzzle.solution.length)); //todo: hier gaat iets mis
     setSolution(newPuzzle.solution);
 
     if (store.currentPuzzleSize.value !== newPuzzle.width) {

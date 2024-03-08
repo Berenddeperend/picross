@@ -100,7 +100,6 @@ watch(game.levelIsCleared, (value) => {
       spread: 70,
       angle: 60,
       origin: { y: 0.6 },
-      useWorker: true,
     });
     confetti({
       zIndex: -1,

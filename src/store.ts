@@ -32,7 +32,6 @@ export default function useStore() {
 
   const drawBackground = () => {
     //maybe move this to service.
-    console.log("draw!");
     if (!canvas.value) return;
     if (!puzzles.value.length) return;
 
@@ -45,7 +44,6 @@ export default function useStore() {
     const rows = Math.floor(
       viewportHeight.value / (currentPuzzleSize.value * pixelSize)
     );
-
     const relevantPuzzles = shuffle(
       puzzles.value.filter((puzzle) => puzzle.width === currentPuzzleSize.value)
     );
@@ -70,9 +68,9 @@ export default function useStore() {
       }
     }
 
-    nextTick().then(() => {
+    setTimeout(() => {
       canvas.value?.classList.remove("hibbem");
-    });
+    }, 10); //shame
   };
 
   const fetchPuzzles = (bustCache = false) => {
