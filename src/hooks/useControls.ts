@@ -11,9 +11,6 @@ export function initControls(fns: {
 }) {
   const { toggleCellValue, movePlayerCursor } = fns;
   function controls(e: KeyboardEvent) {
-    // e.preventDefault();
-    // emit("moveCursor");
-
     if (e.key === "ArrowLeft") {
       movePlayerCursor("left");
       if (interaction.value.spacePressed) toggleCellValue("d");
@@ -26,7 +23,7 @@ export function initControls(fns: {
     } else if (e.key === "ArrowDown") {
       movePlayerCursor("down");
       if (interaction.value.spacePressed) toggleCellValue("d");
-    } else if (e.key === "f") {
+    } else if (e.key === "f" || e.key === "x") {
       toggleCellValue("x");
     } else if (e.key === " ") {
       interaction.value.spacePressed = true;
@@ -37,6 +34,7 @@ export function initControls(fns: {
   onMounted(() => {
     window.addEventListener("keydown", controls);
     window.addEventListener("keyup", (e) => {
+      e.preventDefault();
       if (e.key === " ") {
         interaction.value.spacePressed = false;
       }

@@ -4,15 +4,20 @@
 - sudoku.com line clear effect
 - Report puzzle
 - click and hold
+- Vote to clear
+- Vote to skip
 
 # cleanup
-- Better unrefs
 
 # todo
+- bg reisze
 
 # doing
 
 # done
+- make toggle unselectable
+- keep list of last 10 solved puzzles, don't show them again (done but untested)
+- Better unrefs
 - Better concurrency
 - Fix puzzle name spoiler
 - Better layout for usernames
@@ -25,8 +30,7 @@
 - repareer 'my puzzles'
 - repareer game.vue
 - Repair create puzzle
-- Vote to clear
-- Vote to skip
+
 - Nicknames
 - Setting X'es touchscreen
 - Basic touchscreen controls

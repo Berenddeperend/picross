@@ -45,7 +45,9 @@ export default function useStore() {
       viewportHeight.value / (currentPuzzleSize.value * pixelSize)
     );
     const relevantPuzzles = shuffle(
-      puzzles.value.filter((puzzle) => puzzle.width === currentPuzzleSize.value)
+      puzzles.value
+        .filter((puzzle) => puzzle.showInOverview)
+        .filter((puzzle) => puzzle.width === currentPuzzleSize.value)
     );
 
     for (let row = 0; row < rows; row++) {

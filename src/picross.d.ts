@@ -23,6 +23,8 @@ type Puzzle = {
   solution: Grid;
   width: number | null;
   height: number | null;
+  showInOverview: boolean;
+  sanctioned: boolean;
   authorId: number;
   author: {
     id: number;

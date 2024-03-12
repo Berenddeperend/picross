@@ -158,13 +158,15 @@ watch(game.levelIsCleared, (value) => {
 
   <label
     class="toggle"
+    :class="{ checked: xMode }"
+    @click="xMode = !xMode"
     :style="{
       opacity: game.levelIsCleared.value ? 0 : 1,
       transition: game.levelIsCleared.value ? 'opacity 1s' : 'all 0s',
       transitionDelay: game.levelIsCleared.value ? '1s' : '0s',
     }"
   >
-    <input type="checkbox" v-model="xMode" />
+    <!--    <input type="checkbox" v-model="xMode" />-->
     <a></a>
     <span>
       <span class="left-span"><div class="cell"></div></span>

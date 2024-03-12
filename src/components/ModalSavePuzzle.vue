@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref, toRef, toRefs } from "vue";
+import { ref, toRefs, watch } from "vue";
 import http from "@/services/http";
 import TheModal from "@/components/TheModal.vue";
 import { useStorage } from "@vueuse/core";
@@ -7,7 +7,9 @@ import { useStorage } from "@vueuse/core";
 const emit = defineEmits<{ (e: "close"): void }>();
 const puzzleName = ref<string>("");
 const nickName = useStorage("nickName", "");
-const response = ref<string>();
+
+const saved = ref(false);
+const message = ref("");
 
 const props = defineProps<{
   open: boolean;
@@ -15,6 +17,13 @@ const props = defineProps<{
 }>();
 
 const { grid, open } = toRefs(props);
+
+watch(open, (isOpen) => {
+  if (isOpen) {
+    saved.value = false;
+    message.value = "";
+  }
+});
 
 function onSubmit(e: Event) {
   console.log(grid.value[0].length);
@@ -27,14 +36,15 @@ function onSubmit(e: Event) {
       height: grid.value[0].length, //only support square puzzles
     })
     .then((res) => {
-      emit("close");
+      saved.value = true;
+      message.value = "Thank you for submitting a puzzle! <3";
     })
     .catch((err) => {
       if (err.response.status) {
-        response.value = "You've already submitted the same puzzle before.";
+        message.value = "You've already submitted the same puzzle before.";
         setTimeout(() => {
           emit("close");
-          response.value = "";
+          message.value = "";
         }, 2000);
       }
     });
@@ -42,14 +52,13 @@ function onSubmit(e: Event) {
 </script>
 
 <template>
-  {{ grid[0].length }}
   <TheModal :visible="open" @close="emit('close')">
-    <form @submit.prevent="onSubmit" v-if="!response">
+    <form @submit.prevent="onSubmit" v-if="!message">
       <input type="text" placeholder="Your name" v-model="nickName" />
       <input type="text" placeholder="Puzzle name" v-model="puzzleName" />
       <button :disabled="puzzleName === '' || nickName === ''">Save</button>
     </form>
 
-    <p v-else>{{ response }}</p>
+    <p v-else>{{ message }}</p>
   </TheModal>
 </template>

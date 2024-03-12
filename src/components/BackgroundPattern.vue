@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { ref } from "@vue/runtime-core";
 import { debounce, shuffle } from "lodash";
 import useStore from "@/store";
-import { drawSinglePuzzle } from "@/services/canvas";
-import { computed, nextTick, onMounted, provide, watch } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 
 const store = useStore();
 const { puzzles, canvas, drawBackground, viewportWidth, viewportHeight, dpi } =
   store;
 
-window.addEventListener("resize", debounce(drawBackground, 1000));
+const debouncedDrawBackground = debounce(drawBackground, 1000);
 
-store.fetchPuzzles().then(drawBackground);
+onMounted(() => {
+  store.fetchPuzzles().then(drawBackground);
+  window.addEventListener("resize", debouncedDrawBackground);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", debouncedDrawBackground);
+});
 </script>
 
 <template>

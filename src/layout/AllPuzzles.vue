@@ -2,25 +2,25 @@
 import { useStorage } from "@vueuse/core";
 import CanvasPuzzleViewer from "@/components/CanvasPuzzleViewer.vue";
 import useStore from "@/store";
-import { computed, onBeforeMount } from "vue";
+import { computed } from "vue";
 
 const store = useStore();
-const { puzzles, showFancyBackground } = store;
+const { puzzles } = store;
 
-// onBeforeMount(() => {
-//   showFancyBackground.value = false;
-// });
+const visiblePuzzles = computed(() =>
+  puzzles.value.filter((puzzle) => puzzle.showInOverview)
+);
 
 const puzzles10x10 = computed(() =>
-  puzzles.value.filter((puzzle) => puzzle.solution[0].length === 10)
+  visiblePuzzles.value.filter((puzzle) => puzzle.solution[0].length === 10)
 );
 
 const puzzles15x15 = computed(() =>
-  puzzles.value.filter((puzzle) => puzzle.solution[0].length === 15)
+  visiblePuzzles.value.filter((puzzle) => puzzle.solution[0].length === 15)
 );
 
 store.fetchPuzzles();
-if (!puzzles.value.length) {
+if (!visiblePuzzles.value.length) {
 }
 
 const nickName = useStorage("nickName", "Berend");
@@ -33,22 +33,23 @@ const nickName = useStorage("nickName", "Berend");
         >← Back</router-link
       >
       <h2>
-        All puzzles <small v-if="puzzles">({{ puzzles.length }})</small>
+        All puzzles
+        <small v-if="visiblePuzzles">({{ visiblePuzzles.length }})</small>
       </h2>
     </div>
 
-    <div v-if="!nickName">No puzzles yet.</div>
+    <p>Massive thanks to everyone who helped create these puzzles <3</p>
 
     <h2 class="sticky">
       <div>
         10x10 <small>({{ puzzles10x10.length }} puzzles)</small>
       </div>
     </h2>
-    <div class="all-puzzles" v-if="puzzles">
+    <div class="all-puzzles" v-if="visiblePuzzles">
       <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles10x10">
         <CanvasPuzzleViewer
           class="puzzle-preview"
-          v-if="puzzles.length"
+          v-if="puzzles10x10"
           :puzzle="puzzle"
           fill="#444"
           :pixel-size="10"
@@ -61,11 +62,11 @@ const nickName = useStorage("nickName", "Berend");
         15x15 <small>({{ puzzles15x15.length }} puzzles)</small>
       </div>
     </h2>
-    <div class="all-puzzles" v-if="puzzles">
+    <div class="all-puzzles" v-if="visiblePuzzles">
       <div class="puzzle" :key="puzzle.id" v-for="puzzle in puzzles15x15">
         <CanvasPuzzleViewer
           class="puzzle-preview"
-          v-if="puzzles.length"
+          v-if="puzzles15x15"
           :puzzle="puzzle"
           fill="#444"
           :pixel-size="10"
@@ -76,16 +77,6 @@ const nickName = useStorage("nickName", "Berend");
 </template>
 
 <style lang="scss" scoped>
-//.sticky {
-//  position: sticky;
-//  top: 0;
-//
-//  * {
-//    position: relative;
-//    left: -100px;
-//  }
-//}
-
 .header {
   display: grid;
   align-items: center;

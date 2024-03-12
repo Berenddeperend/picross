@@ -23,7 +23,7 @@ const chosenPuzzleSize = ref(10);
 const game = useGrid(createGrid(chosenPuzzleSize.value));
 const { grid, computeHitsInRows, computeHitsInColumns, setPuzzle, puzzle } =
   game;
-const { player } = useUserStates("singleplayer", game);
+const { player, players } = useUserStates("singleplayer", game);
 
 const puzzleIsValidated = ref(false);
 const puzzleIsValid = ref(false);
@@ -109,6 +109,8 @@ watch(sizeToggle, () => {
 
   if (newSize === currentPuzzleSize.value) return;
 
+  players.value["1"].position = [0, 0];
+
   chosenPuzzleSize.value = newSize;
   clearBackground();
 
@@ -136,8 +138,13 @@ watch(
       <router-link class="link back" :to="{ name: 'mainMenu' }"
         >← Back</router-link
       >
-      <label class="toggle" style="width: 160px">
-        <input type="checkbox" v-model="sizeToggle" />
+      <label
+        class="toggle"
+        :class="{ checked: sizeToggle }"
+        style="width: 160px"
+        @click="sizeToggle = !sizeToggle"
+      >
+        <!--        <input type="checkbox" v-model="sizeToggle" />-->
         <a></a>
         <span>
           <span class="left-span">10x10</span>
