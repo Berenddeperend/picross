@@ -10,7 +10,9 @@
 # cleanup
 
 # todo
-- bg reisze
+- rare backend bug where puzzle is not found or something
+- fix confetti on firefox
+- bg reisze bug
 
 # doing
 
@@ -25,7 +27,7 @@
 - Is puzzle solvable?
 - bug: 'hitsincolumns' could point to playfield or solution
 - cursor sync is broken
-- 'new puzzle' knop
+- 'new puzzle' knopd
 - Send new puzzle after clearing
 - repareer 'my puzzles'
 - repareer game.vue

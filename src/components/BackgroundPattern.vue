@@ -4,15 +4,28 @@ import useStore from "@/store";
 import { onBeforeUnmount, onMounted } from "vue";
 
 const store = useStore();
-const { puzzles, canvas, drawBackground, viewportWidth, viewportHeight, dpi } =
-  store;
+const {
+  puzzles,
+  canvas,
+  drawBackground,
+  clearBackground,
+  viewportWidth,
+  viewportHeight,
+  dpi,
+} = store;
 
-const debouncedDrawBackground = debounce(drawBackground, 1000);
+const debouncedDrawBackground = debounce(() => {
+  console.log("die bounce");
+  clearBackground(true);
+  setTimeout(() => {
+    drawBackground();
+  }, 6100);
+}, 500);
 
 onMounted(() => {
   store.fetchPuzzles().then(drawBackground);
-  window.addEventListener("resize", debouncedDrawBackground);
 });
+window.addEventListener("resize", debouncedDrawBackground);
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", debouncedDrawBackground);

@@ -14,20 +14,24 @@ const viewportWidth = ref(window.innerWidth);
 const viewportHeight = ref(window.innerHeight);
 
 export default function useStore() {
-  const clearBackground = () => {
+  const clearBackground = (instantly = false) => {
     const ctx = canvas.value?.getContext("2d");
     if (!ctx) return;
 
+    console.log("adding hibbem");
     canvas.value?.classList.add("hibbem");
 
-    setTimeout(() => {
+    const doClear = () => {
+      console.log("clearing");
       ctx.clearRect(
         0,
         0,
         viewportWidth.value * dpi,
         viewportHeight.value * dpi
       );
-    }, 1000);
+    };
+
+    instantly ? doClear() : setTimeout(doClear, 1000);
   };
 
   const drawBackground = () => {
@@ -50,6 +54,8 @@ export default function useStore() {
         .filter((puzzle) => puzzle.width === currentPuzzleSize.value)
     );
 
+    console.log("drawing");
+
     for (let row = 0; row < rows; row++) {
       for (let column = 0; column < columns + 1; column++) {
         const xoffset =
@@ -71,6 +77,7 @@ export default function useStore() {
     }
 
     setTimeout(() => {
+      console.log("removing hibbem");
       canvas.value?.classList.remove("hibbem");
     }, 10); //shame
   };
