@@ -175,6 +175,12 @@ watch(game.levelIsCleared, (value) => {
   </label>
 </template>
 
+<style lang="scss">
+.toggle {
+  margin-bottom: 30px;
+}
+</style>
+
 <style lang="scss" scoped>
 header {
   display: flex;
