@@ -25,11 +25,6 @@ const debouncedDrawBackground = debounce(() => {
 onMounted(() => {
   store.fetchPuzzles().then(drawBackground);
 });
-window.addEventListener("resize", debouncedDrawBackground);
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", debouncedDrawBackground);
-});
 </script>
 
 <template>

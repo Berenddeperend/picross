@@ -36,6 +36,7 @@ const updateShownInOverview = (puzzle: Puzzle, value: any) => {
       <th>Visible</th>
       <th>Sanctioned</th>
       <th>Puzzle naam</th>
+      <th>Puzzle Id</th>
       <th>Author ID</th>
       <th>Author</th>
     </thead>
@@ -67,6 +68,7 @@ const updateShownInOverview = (puzzle: Puzzle, value: any) => {
           />
         </td>
         <td>{{ row.name }}</td>
+        <td>{{ row.id }}</td>
         <td>{{ row.authorId }}</td>
         <td>{{ row.author.name }}</td>
       </tr>
