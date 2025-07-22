@@ -8,7 +8,7 @@ const theme = ref("light");
 const store = useStore();
 
 const messageToShanecerity = `
-Hey man only you can see this message. Yeah I do have an admin page where I can approve/delete puzzles that users made. So far, just one swastika. The penises I choose to allow. Thanks for playing and for the pixel art. I appreciate you <3
+Thanks homie! I actually get a notification everytime someone enters a game, so if I have the opportunity to join you I will! <3
 `;
 
 onMounted(() => {
