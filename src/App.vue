@@ -9,6 +9,7 @@ const store = useStore();
 
 const messageToShanecerity = `
 Thanks homie! I actually get a notification everytime someone enters a game, so if I have the opportunity to join you I will! <3
+I should also definitely make some chat system, communicating like this is hilarious but so cumbersome haha
 `;
 
 onMounted(() => {
