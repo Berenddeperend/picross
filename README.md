@@ -2,21 +2,22 @@
 
 # nice to haves
 - sudoku.com line clear effect
-- Report puzzle
 - click and hold
 - Vote to clear
 - Vote to skip
 
 # cleanup
 
-# todo
-- rare backend bug where puzzle is not found or something
-- fix confetti on firefox
+# todo (ordered by prio)
+- disallow zoom on mobile
+- 'ghost user'
+- bg doesnt always update
 - bg reisze bug
 
 # doing
 
 # done
+- rare backend bug where puzzle is not found or something
 - make toggle unselectable
 - keep list of last 10 solved puzzles, don't show them again (done but untested)
 - Better unrefs

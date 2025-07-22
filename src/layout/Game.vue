@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, ref } from "vue";
+import { watch, ref, onMounted, onUnmounted } from "vue";
 import confetti from "canvas-confetti";
 import Grid from "@/components/TheGrid.vue";
 
@@ -112,6 +112,14 @@ watch(game.levelIsCleared, (value) => {
     drawBackground();
   }
 });
+
+onMounted(() => {
+  console.log("mounted");
+});
+
+onUnmounted(() => {
+  console.log("unmounted");
+});
 </script>
 
 <template>
@@ -125,7 +133,7 @@ watch(game.levelIsCleared, (value) => {
   <!--  <VoteNext :socket="socket" />-->
   <!--  <VoteClear :socket="socket" />-->
 
-  <div class="container">
+  <div class="container disable-tap-zoom">
     <Grid
       class="grid"
       v-if="game.grid && game.solution"
@@ -192,6 +200,10 @@ header {
   gap: 20px;
   margin: 60px 10px 10px 10px;
   user-select: none;
+}
+
+.disable-tap-zoom {
+  touch-action: manipulation;
 }
 
 .now-playing {

@@ -32,7 +32,7 @@ const nickName = useStorage("nickName", "");
       </div>
     </label>
 
-    <router-link class="menu-btn" to="/create">Create Level</router-link>
+    <router-link class="menu-btn" to="/create">Create puzzle</router-link>
     <router-link class="menu-btn" to="/all-puzzles">View puzzles</router-link>
   </div>
 </template>
