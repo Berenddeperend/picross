@@ -5,35 +5,48 @@ const nickName = useStorage("nickName", "");
 </script>
 
 <template>
-  <div class="main-menu-wrapper">
-    <h1>
-      Nonogram <br />
-      <small>with Friends</small>
-    </h1>
-    <label>
-      <!--      <div class="nickname-label">Nickname</div>-->
+  <div class="page">
+    <div class="main-menu-wrapper">
+      <h1>
+        Nonogram <br />
+        <small>with Friends</small>
+      </h1>
+      <label>
+        <!--      <div class="nickname-label">Nickname</div>-->
 
-      <div class="input-with-button">
-        <input
-          type="text"
-          autofocus
-          v-model="nickName"
-          placeholder="Nickname"
-        />
-        <div style="display: flex" @click="">
-          <router-link
-            :disabled="!nickName"
-            class="btn"
-            :class="{ disabled: !nickName }"
-            to="/play"
-            >Play</router-link
-          >
+        <div class="input-with-button">
+          <input
+            type="text"
+            autofocus
+            v-model="nickName"
+            placeholder="Nickname"
+          />
+          <div style="display: flex" @click="">
+            <router-link
+              :disabled="!nickName"
+              class="btn"
+              :class="{ disabled: !nickName }"
+              to="/play"
+              >Play</router-link
+            >
+          </div>
         </div>
-      </div>
-    </label>
+      </label>
 
-    <router-link class="menu-btn" to="/create">Create puzzle</router-link>
-    <router-link class="menu-btn" to="/all-puzzles">View puzzles</router-link>
+      <router-link class="menu-btn" to="/create">Create puzzle</router-link>
+      <router-link class="menu-btn" to="/all-puzzles">View puzzles</router-link>
+    </div>
+
+    <a
+      href="https://buymeacoffee.com/berenddeperend"
+      target="_blank"
+      class="bmc-link"
+    >
+      <img
+        src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+        alt="Buy Me A Coffee"
+      />
+    </a>
   </div>
 </template>
 
@@ -73,7 +86,7 @@ input {
 
 .main-menu-wrapper {
   max-width: 250px;
-  margin: 0 auto;
+  margin: auto;
 }
 
 .nickname-label {
@@ -104,5 +117,22 @@ input {
 small {
   font-size: 0.6em;
   font-weight: normal;
+}
+
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.bmc-link {
+  padding-top: 30px;
+
+  img {
+    height: 40px;
+  }
 }
 </style>
