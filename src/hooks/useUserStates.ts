@@ -77,6 +77,10 @@ export function useUserStates(
     }
   }
 
+  function onConnect() {
+    socket!.emit("join", localStorage.getItem("nickName"));
+  }
+
   function initState() {
     onMounted(() => {
       if (!isMultiplayer) return;
@@ -91,8 +95,12 @@ export function useUserStates(
       socket!.on("gameCreated", (puzzle) => {
         game.setPuzzle(puzzle);
       });
+      socket!.on("connect", onConnect);
 
-      socket!.emit("join", localStorage.getItem("nickName"));
+      // Re-join immediately if already connected (covers initial page load)
+      if (socket!.connected) {
+        onConnect();
+      }
 
       window.addEventListener("visibilitychange", onVisibilityChange);
     });
@@ -101,6 +109,7 @@ export function useUserStates(
       if (!isMultiplayer) return;
       socket!.off("gridUpdated", game.setGrid);
       socket!.off("playersStateUpdated", setPlayersState);
+      socket!.off("connect", onConnect);
       window.removeEventListener("visibilitychange", onVisibilityChange);
     });
   }
